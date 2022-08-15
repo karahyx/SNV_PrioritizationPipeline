@@ -12,7 +12,7 @@
 
 # SETTINGS ----------------------------------------------------------------
 
-if (!require(kit)) {
+if (!require(kit)){
   install.packages("kit")
   library(kit)
 }
@@ -197,7 +197,7 @@ add_coding_tag <- function(data) {
 # 1.4. Define damage
 
 # Coding LOF
-add_coding_lof_tag <- function(data) {
+add_coding_lof_tag <- function(data, eff_lof.chv) {
   
   lof_var <- with(data, which(F_Coding == "Coding" & (effect_priority %in% eff_lof.chv | typeseq_priority %in% c ("splicing", "exonic;splicing"))))
   
@@ -208,7 +208,7 @@ add_coding_lof_tag <- function(data) {
   
 }
 
-add_coding_lof_spliceJunction_tag <- function(data) {
+add_coding_lof_spliceJunction_tag <- function(data, eff_lof.chv) {
   
   lof_spliceJunction_var <- with (data, which(F_Coding == "Coding" 
                                               & (effect_priority %in% eff_lof.chv 
@@ -339,7 +339,7 @@ add_nc_dmg_tag <- function(data, cutoffs, rank) {
 # 1.4. Phenotype filter 
 
 add_HPO_CGD_dominant_tag <- function(data, database, pattern) {
-  
+  data <- data.frame(data)
   col_name <- paste("G_AXD_", database, sep = "")
   data[, col_name] <- 0
   
@@ -496,7 +496,7 @@ add_pathogenic_tag <- function(data) {
   data$F_Clinvar_Pathg <- 0
   
   data$F_Clinvar_notPathg[clinvar_not_pathg_var] <- 1
-  data$F_Clinvar_Pathg[clinvar_not_pathg_var] <- 1
+  data$F_Clinvar_Pathg[clinvar_pathg_var] <- 1
   
   return(data)
   
@@ -674,7 +674,7 @@ add_ACMG_tag <- function(data) {
   
 }
 
-add_ACMG_coding_tag <- function(data) {
+add_ACMG_coding_tag <- function(data, typeseq_coding.chv) {
   
   ACMG_coding_var <- with(data, which(!is.na(ACMG_disease) & typeseq_priority %in% typeseq_coding.chv))
   
@@ -715,18 +715,7 @@ get_rare05_variants <- function(data) {
   
 }
 
-# 1.7.2. HQ Variants (FILTER == "PASS")
-get_hq_variants <- function(data) {
-  
-  data <- subset(data, subset = (FILTER == "PASS"))
-  data <- add_qual_tag(data, DP_cutoff, GQ_snp_cutoff, alt_frac_snp_cutoff, GQ_non_snp_cutoff, 
-                       alt_frac_non_snp_cutoff, GQ_homalt_cutoff, alt_frac_homalt_cutoff) # the cutoffs are global variables
-  
-  return(data)
-  
-}
-
-# 1.7.3. HQ Rare Variants
+# 1.7.2. HQ Rare Variants (FILTER == "PASS")
 
 # input: data = v_full_r05.df
 get_hq_rare05_variants <- function(data) {
@@ -747,8 +736,8 @@ get_hq_rare05_variants <- function(data) {
   data <- add_missense_tag(data, sift_cutoff, polyphen_cutoff, ma_cutoff, phylopMam_missense_cutoff, phylopVert_missense_cutoff, 
                            CADD_phred_missense_cutoff, missense_rank1_cutoff, missense_rank2_cutoff)
   
-  data <- add_otherc_tag(data, otherc_rk1_cr1_cutoffs, otherc_rk1_cr2_cutoffs, rank = 1)
-  data <- add_otherc_tag(data, otherc_rk2_cr1_cutoffs, otherc_rk2_cr2_cutoffs, rank = 2)
+  data <- add_otherc_tag(data, otherc_rk1_cr1_cutoffs, otherc_rk1_cr2_cutoffs, 1)
+  data <- add_otherc_tag(data, otherc_rk2_cr1_cutoffs, otherc_rk2_cr2_cutoffs, 2)
   
   data <- add_splicing_tag(data, spliceAI_DS_AG_r1_cutoff, spliceAI_DP_AG_r1_cutoff, 
                            spliceAI_DS_AL_r1_cutoff, spliceAI_DP_AL_r1_cutoff,
@@ -801,16 +790,15 @@ get_hq_rare05_variants <- function(data) {
   
   data <- add_ACMG_tag(data)
   data <- add_ACMG_coding_tag(data)
-  
-  return(data)
-  
 }
 
 
 # (1.5) FILE IMPORTING & PRE-PROCESSING -----------------------------------
 
-v_full.temp.df <- read.table("/Users/karahan/Desktop/PrioritizationPipeline/data/starting_data/NA12878.hard-filtered.vcf.gz.annovar.out_SUBSET_rev27.7_hg38.tsv", 
-                             sep = "\t", header = T, quote = "\"", comment.char = "", stringsAsFactors = F)
+# system.time(
+# v_full.temp.df <- read.table("NA12878.hard-filtered.vcf.gz.annovar.out_SUBSET_rev27.7_hg38.tsv", 
+#                              sep = "\t", header = T, quote = "\"", comment.char = "", stringsAsFactors = F))
+v_full.temp.df <- data.table::fread("NA12878.hard-filtered.vcf.gz.annovar.out_SUBSET_rev27.7_hg38.tsv", data.table = T)
 
 names(v_full.temp.df) <- gsub(alt_input_var_genome.name, "", names(v_full.temp.df)) # remove "genomeName." from columns
 names(v_full.temp.df)[1] <- "CHROM" # modify "X.CHROM" as "CHROM"
@@ -864,11 +852,11 @@ v_full_hq_r05.df$F_S_DamageType <- "NotDmg"
 
 # 5.1. Coding LOF
 
-v_full_r05.df <- add_coding_lof_tag(v_full_r05.df)
-v_full_r05.df <- add_coding_lof_spliceJunction_tag(v_full_r05.df)
+v_full_r05.df <- add_coding_lof_tag(v_full_r05.df, eff_lof.chv)
+v_full_r05.df <- add_coding_lof_spliceJunction_tag(v_full_r05.df, eff_lof.chv)
 
-v_full_hq_r05.df <- add_coding_lof_tag(v_full_hq_r05.df)
-v_full_hq_r05.df <- add_coding_lof_spliceJunction_tag(v_full_hq_r05.df)
+v_full_hq_r05.df <- add_coding_lof_tag(v_full_hq_r05.df, eff_lof.chv)
+v_full_hq_r05.df <- add_coding_lof_spliceJunction_tag(v_full_hq_r05.df, eff_lof.chv)
 
 
 # 5.2. Missense
@@ -914,7 +902,7 @@ v_full_hq_r05.df <- add_nc_dmg_tag(v_full_hq_r05.df, nc_rk1_cutoffs, rank = 1)
 v_full_hq_r05.df <- add_nc_dmg_tag(v_full_hq_r05.df, nc_rk2_cutoffs, rank = 2)
 
 
-# (6) PHENotDmgTYPE FILTER ----------------------------------------------------
+# (6) PHENOTYPE FILTER ----------------------------------------------------
 
 # 6.1. HPO dominant
 
@@ -1017,15 +1005,15 @@ v_full_hq_r05.df <- add_secondary_findings_rank3_tag(v_full_hq_r05.df)
 # 8.4. ACMG Disease
 
 v_full_hq_r05.df <- add_ACMG_tag(v_full_hq_r05.df)
-v_full_hq_r05.df <- add_ACMG_coding_tag(v_full_hq_r05.df)
+v_full_hq_r05.df <- add_ACMG_coding_tag(v_full_hq_r05.df, typeseq_coding.chv)
 
 
 
 # (9) Main ----------------------------------------------------------------
 
 file_location <- "/Users/karahan/Desktop/PrioritizationPipeline/data/starting_data/NA12878.hard-filtered.vcf.gz.annovar.out_SUBSET_rev27.7_hg38.tsv"
-v_full.temp.df <- read.table(file_location, 
-                             sep = "\t", header = T, quote = "\"", comment.char = "", stringsAsFactors = F)
+v_full.temp.df <- data.table::fread(file_location, 
+                             data.table = F)
 
 names(v_full.temp.df) <- gsub(alt_input_var_genome.name, "", names(v_full.temp.df)) # remove "genomeName." from columns
 names(v_full.temp.df)[1] <- "CHROM" # modify "X.CHROM" as "CHROM"
@@ -1040,261 +1028,7 @@ rm(v_full.temp.df)
 gc (); gc (); gc ()
 
 v_full_r05.df <- get_rare05_variants(v_full.df)
-v_full_hq.df <- get_hq_variants(v_full.df) # used for stats.ls
 v_full_hq_r05.df <- get_hq_rare05_variants(v_full_r05.df)
-
-stats.ls <- add_stats_full_df(v_full.df)
-stats.ls <- add_stats_full_hq_df(v_full_hq.df)
-stats.ls <- add_stats_full_hq_r05_df(v_full_hq_r05.df)
 
 
 sessionInfo()
-
-
-# Stats -------------------------------------------------------------------
-
-get_chromosome_counts <- function(data) {
-  
-  # plot: histogram by chr + add labels
-  
-  chrom_list <- paste("chr", c(1:22, "X", "Y", "M"), sep = "")
-  
-  counts <- table(data[data$CHROM %in% chrom_list, ]$CHROM)
-  counts <- counts[order(factor(names(counts), levels = chrom_list))]
-  
-  return(counts)
-
-}
-
-get_chr_zygosity_counts <- function(data) {
-  
-  # plot: histogram by chr for counts and HomPerc (two)
-  
-  chrom_list <- paste("chr", c(1:22, "X", "Y", "M"), sep = "")
-  data <- data[data$CHROM %in% chrom_list, ]
-  
-  chr_counts.mx <- as.data.frame.matrix(table(data[, c ("Zygosity", "CHROM")]))
-  chr_counts.mx <- chr_counts.mx[order(factor(names(chr_counts.mx), levels = chrom_list))]
-  chr_counts.mx <- t(chr_counts.mx)
-  chr_counts.mx <- cbind(chr_counts.mx, (chr_counts.mx[, "hom-alt"]) / (chr_counts.mx[, "ref-alt"] + chr_counts.mx[, "hom-alt"] + chr_counts.mx[, "alt-alt"]) * 100)
-  colnames(chr_counts.mx)[ncol(chr_counts.mx)] <- "HomPerc"
-  
-  return(chr_counts.mx)
-  
-}
-
-
-add_stats_full_df <- function(data) {
-  
-  # input: data = v_full.df
-  stats.ls$VarN_AllQ_AllSeq_AllFreq <- length (unique (data$Original_VCFKEY))
-  stats.ls$VarN_AllQ_Coding_AllFreq <- length (unique (subset (data, subset = typeseq_priority %in% typeseq_coding.chv, select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_AllQ_ncRNA_AllFreq  <- length (unique (subset (data, subset = typeseq_priority %in% typeseq_ncrna.chv,  select = Original_VCFKEY, drop = T)))
-  
-  return(stats.ls)
-  
-}
-
-add_stats_full_hq_df <- function(data) {
-  
-  # input: data = v_full_hq.df
-  stats.ls$VarN_Q1_AllSeq_AllFreq <- length (unique (data$Original_VCFKEY))
-  stats.ls$VarN_Q2_AllSeq_AllFreq <- length (unique (subset (data, subset = F_Qual_tag != "LowQuality", select = Original_VCFKEY, drop = T)))
-  
-  stats.ls$VarN_Q1_Coding_AllFreq <- length (unique (subset (data, subset = typeseq_priority %in% typeseq_coding.chv, select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_Q2_Coding_AllFreq <- length (unique (subset (data, subset = F_Qual_tag != "LowQuality" & typeseq_priority %in% typeseq_coding.chv, select = Original_VCFKEY, drop = T))) 
-  
-  stats.ls$VarN_Q1_ncRNA_AllFreq <- length (unique (subset (data, subset = typeseq_priority %in% typeseq_ncrna.chv,                              select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_Q2_ncRNA_AllFreq <- length (unique (subset (data, subset = F_Qual_tag != "LowQuality" & typeseq_priority %in% typeseq_ncrna.chv, select = Original_VCFKEY, drop = T))) 
-  
-  stats.ls$VarN_Q1_AllSeq_AllFreq_Xhom <- length (unique (subset (data, subset = CHROM == "chrX" & Zygosity == "hom-alt",                              select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_Q2_AllSeq_AllFreq_Xhom <- length (unique (subset (data, subset = CHROM == "chrX" & Zygosity == "hom-alt" & F_Qual_tag != "LowQuality", select = Original_VCFKEY, drop = T)))
-  
-  stats.ls$VarN_Q1_AllSeq_AllFreq_Xhet <- length (unique (subset (data, subset = CHROM == "chrX" & Zygosity == "ref-alt",                              select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_Q2_AllSeq_AllFreq_Xhet <- length (unique (subset (data, subset = CHROM == "chrX" & Zygosity == "ref-alt" & F_Qual_tag != "LowQuality", select = Original_VCFKEY, drop = T)))
-  
-  stats.ls$VarN_Q1_AllSeq_AllFreq_Hom  <- length (unique (subset (data, subset = Zygosity == "hom-alt", select = Original_VCFKEY, drop = T)))     
-  stats.ls$VarN_Q2_AllSeq_AllFreq_Hom  <- length (unique (subset (data, subset = Zygosity == "hom-alt" & F_Qual_tag != "LowQuality", select = Original_VCFKEY, drop = T))) 
-  
-  stats.ls$VarN_Q1_AllSeq_AllFreq_HetR <- length (unique (subset (data, subset = Zygosity == "ref-alt",                              select = Original_VCFKEY, drop = T))) 
-  stats.ls$VarN_Q2_AllSeq_AllFreq_HetR <- length (unique (subset (data, subset = Zygosity == "ref-alt" & F_Qual_tag != "LowQuality", select = Original_VCFKEY, drop = T))) 
-  stats.ls$VarN_Q1_AllSeq_AllFreq_HetA <- length (unique (subset (data, subset = Zygosity == "alt-alt",                              select = Original_VCFKEY, drop = T))) 
-  stats.ls$VarN_Q2_AllSeq_AllFreq_HetA <- length (unique (subset (data, subset = Zygosity == "alt-alt" & F_Qual_tag != "LowQuality", select = Original_VCFKEY, drop = T))) 
-  
-  return(stats.ls)
-  
-}
-
-add_stats_full_hq_r05_df <- function(data) {
-  
-  # input: data = v_full_hq_r05.df
-  stats.ls$VarN_Q1_AllSeq_Rare050  <- length (unique (data$Original_VCFKEY))
-  stats.ls$VarN_Q2_AllSeq_Rare050  <- length (unique (subset (data, subset = F_Qual_tag != "LowQuality",                   select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_Q1_AllSeq_Rare010  <- length (unique (subset (data, subset = F_Rare <= 0.01,                               select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_Q2_AllSeq_Rare010  <- length (unique (subset (data, subset = F_Rare <= 0.01 & F_Qual_tag != "LowQuality",  select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_Q1_AllSeq_Rare005  <- length (unique (subset (data, subset = F_Rare <= 0.005,                              select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_Q2_AllSeq_Rare005  <- length (unique (subset (data, subset = F_Rare <= 0.005 & F_Qual_tag != "LowQuality", select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_Q1_AllSeq_Rare0015 <- length (unique (subset (data, subset = F_Rare <= 0.0015,                             select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_Q2_AllSeq_Rare0015 <- length (unique (subset (data, subset = F_Rare <= 0.0015 & F_Qual_tag != "LowQuality",select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_Q1_AllSeq_Rare000  <- length (unique (subset (data, subset = F_Rare == 0,                                  select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_Q2_AllSeq_Rare000  <- length (unique (subset (data, subset = F_Rare == 0 & F_Qual_tag != "LowQuality",     select = Original_VCFKEY, drop = T)))
-  
-  stats.ls$VarN_Q1_Coding_Rare050  <- length (unique (subset (data, subset = typeseq_priority %in% typeseq_coding.chv,                                                 select = Original_VCFKEY, drop = T)))
-  # Why is the condition for the one below not F_Qual_tag != "LowQuality"?
-  stats.ls$VarN_Q2_Coding_Rare050  <- length (unique (subset (data, subset = F_Pass == 1 & typeseq_priority %in% typeseq_coding.chv,                                   select = Original_VCFKEY, drop = T))) 
-  stats.ls$VarN_Q1_Coding_Rare010  <- length (unique (subset (data, subset = F_Rare <= 0.01 & typeseq_priority  %in% typeseq_coding.chv,                               select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_Q2_Coding_Rare010  <- length (unique (subset (data, subset = F_Rare <= 0.01 & F_Qual_tag != "LowQuality" & typeseq_priority %in% typeseq_coding.chv,   select = Original_VCFKEY, drop = T))) 
-  stats.ls$VarN_Q1_Coding_Rare005  <- length (unique (subset (data, subset = F_Rare <= 0.005 & typeseq_priority %in% typeseq_coding.chv,                               select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_Q2_Coding_Rare005  <- length (unique (subset (data, subset = F_Rare <= 0.005 & F_Qual_tag != "LowQuality" & typeseq_priority %in% typeseq_coding.chv,  select = Original_VCFKEY, drop = T))) 
-  stats.ls$VarN_Q1_Coding_Rare0015 <- length (unique (subset (data, subset = F_Rare <= 0.0015 & typeseq_priority %in% typeseq_coding.chv,                              select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_Q2_Coding_Rare0015 <- length (unique (subset (data, subset = F_Rare <= 0.0015 & F_Qual_tag != "LowQuality" & typeseq_priority %in% typeseq_coding.chv, select = Original_VCFKEY, drop = T))) 
-  stats.ls$VarN_Q1_Coding_Rare000  <- length (unique (subset (data, subset = F_Rare == 0 & typeseq_priority %in% typeseq_coding.chv,                                   select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_Q2_Coding_Rare000  <- length (unique (subset (data, subset = F_Rare == 0 & F_Qual_tag != "LowQuality" & typeseq_priority %in% typeseq_coding.chv,      select = Original_VCFKEY, drop = T))) 
-  
-  stats.ls$VarN_Q1_ncRNA_Rare050  <- length (unique (subset (data, subset = typeseq_priority %in% typeseq_ncrna.chv,                                                   select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_Q2_ncRNA_Rare050  <- length (unique (subset (data, subset = F_Pass == 1 & typeseq_priority %in% typeseq_ncrna.chv,                                     select = Original_VCFKEY, drop = T))) 
-  stats.ls$VarN_Q1_ncRNA_Rare010  <- length (unique (subset (data, subset = F_Rare <= 0.01 & typeseq_priority %in% typeseq_ncrna.chv,                                  select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_Q2_ncRNA_Rare010  <- length (unique (subset (data, subset = F_Rare <= 0.01 & F_Qual_tag != "LowQuality" & typeseq_priority %in% typeseq_ncrna.chv,     select = Original_VCFKEY, drop = T))) 
-  stats.ls$VarN_Q1_ncRNA_Rare005  <- length (unique (subset (data, subset = F_Rare <= 0.005 & typeseq_priority %in% typeseq_ncrna.chv,                                 select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_Q2_ncRNA_Rare005  <- length (unique (subset (data, subset = F_Rare <= 0.005 & F_Qual_tag != "LowQuality" & typeseq_priority %in% typeseq_ncrna.chv,    select = Original_VCFKEY, drop = T))) 
-  stats.ls$VarN_Q1_ncRNA_Rare0015 <- length (unique (subset (data, subset = F_Rare <= 0.0015 & typeseq_priority %in% typeseq_ncrna.chv,                                select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_Q2_ncRNA_Rare0015 <- length (unique (subset (data, subset = F_Rare <= 0.0015 & F_Qual_tag != "LowQuality" & typeseq_priority %in% typeseq_ncrna.chv,   select = Original_VCFKEY, drop = T))) 
-  stats.ls$VarN_Q1_ncRNA_Rare000  <- length (unique (subset (data, subset = F_Rare == 0 & typeseq_priority %in% typeseq_ncrna.chv,                                     select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_Q2_ncRNA_Rare000  <- length (unique (subset (data, subset = F_Rare == 0 & F_Qual_tag != "LowQuality" & typeseq_priority %in% typeseq_ncrna.chv,        select = Original_VCFKEY, drop = T))) 
-  
-  stats.ls$VarN_Q1_AllSeq_Rare050_Xhom <- length (unique (subset (data, subset = CHROM == "chrX" & Zygosity == "hom-alt",                              select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_Q2_AllSeq_Rare050_Xhom <- length (unique (subset (data, subset = CHROM == "chrX" & Zygosity == "hom-alt" & F_Qual_tag != "LowQuality", select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_Q1_AllSeq_Rare050_Hom  <- length (unique (subset (data, subset = Zygosity == "hom-alt",                                                select = Original_VCFKEY, drop = T)))     
-  stats.ls$VarN_Q2_AllSeq_Rare050_Hom  <- length (unique (subset (data, subset = Zygosity == "hom-alt"     & F_Qual_tag != "LowQuality",               select = Original_VCFKEY, drop = T)))     
-  stats.ls$VarN_Q1_AllSeq_Rare050_HetR <- length (unique (subset (data, subset = Zygosity == "ref-alt",                                                select = Original_VCFKEY, drop = T))) 
-  stats.ls$VarN_Q2_AllSeq_Rare050_HetR <- length (unique (subset (data, subset = Zygosity == "ref-alt" & F_Qual_tag != "LowQuality",                   select = Original_VCFKEY, drop = T))) 
-  stats.ls$VarN_Q1_AllSeq_Rare050_HetA <- length (unique (subset (data, subset = Zygosity == "alt-alt",                                                select = Original_VCFKEY, drop = T))) 
-  stats.ls$VarN_Q2_AllSeq_Rare050_HetA <- length (unique (subset (data, subset = Zygosity == "alt-alt" & F_Qual_tag != "LowQuality",                   select = Original_VCFKEY, drop = T))) 
-  
-  stats.ls$GeneN_Pheno_rare050 <- length (unique (data[data$F_PhenoRank == 2, ]$entrez_id))
-  stats.ls$GeneN_Dominant_rare050 <- length (setdiff (c (data$entrez_id[grep ("@AD", data$HPO)], data$entrez_id[grep ("AD", data$CGD_inheritance)]), NA))
-  
-  stats.ls$VarN_Q1_Coding_Rare010_LOF <- length (unique (subset (data, subset = F_Pass == 1 & F_Rare <= 0.01 & F_DamageType == "LOF", select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_Q2_Coding_Rare010_LOF <- length (unique (subset (data, subset = F_Qual_tag != "LowQuality" & F_Rare <= 0.01 & F_DamageType == "LOF", select = Original_VCFKEY, drop = T)))
-  
-  stats.ls$VarN_Q1_Coding_Rare010_MissDmgR1 <- length (unique (subset (data, subset = F_Pass == 1 & F_Rare <= 0.01 & F_DamageType == "Missense" & F_DamageRank >= 1, select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_Q2_Coding_Rare010_MissDmgR1 <- length (unique (subset (data, subset = F_Qual_tag != "LowQuality" & F_Rare <= 0.01 & F_DamageType == "Missense" & F_DamageRank >= 1, select = Original_VCFKEY, drop = T)))
-  
-  stats.ls$VarN_Q1_Coding_Rare010_MissDmgR2 <- length (unique (subset (data, subset = F_Pass == 1 & F_Rare <= 0.01 & F_DamageType == "Missense" & F_DamageRank == 2, select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_Q2_Coding_Rare010_MissDmgR2 <- length (unique (subset (data, subset = F_Qual_tag != "LowQuality" & F_Rare <= 0.01 & F_DamageType == "Missense" & F_DamageRank == 2, select = Original_VCFKEY, drop = T)))
-  
-  stats.ls$VarN_Q1_Coding_Rare010_SplcR1 <- length (unique (subset (data, subset = F_Pass == 1 & F_Rare <= 0.01 & F_DamageType == "Splc" & F_DamageRank >= 1, select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_Q2_Coding_Rare010_SplcR1 <- length (unique (subset (data, subset = F_Qual_tag != "LowQuality" & F_Rare <= 0.01 & F_DamageType == "Splc" & F_DamageRank >= 1, select = Original_VCFKEY, drop = T)))
-  
-  stats.ls$VarN_Q1_Coding_Rare010_SplcR2 <- length (unique (subset (data, subset = F_Pass == 1 & F_Rare <= 0.01 & F_DamageType == "Splc" & F_DamageRank == 2, select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_Q2_Coding_Rare010_SplcR2 <- length (unique (subset (data, subset = F_Qual_tag != "LowQuality" & F_Rare <= 0.01 & F_DamageType == "Splc" & F_DamageRank == 2, select = Original_VCFKEY, drop = T)))
-  
-  stats.ls$Coding_HQ1_Rare010_OtherDmg <- length (unique (subset (data, subset = F_Pass == 1 & F_Rare <= 0.01 & F_DamageType == "OtherC", select = Original_VCFKEY, drop = T)))
-  stats.ls$Coding_HQ2_Rare010_OtherDmg <- length (unique (subset (data, subset = F_Qual_tag != "LowQuality" & F_Rare <= 0.01 & F_DamageType == "OtherC", select = Original_VCFKEY, drop = T)))
-  
-  stats.ls$VarN_Q1_ncRNA_Rare010_DmgR1 <- length (unique (subset (data, subset = F_Pass == 1 & F_Rare <= 0.01 & F_DamageType == "DmgNcRNA" & F_DamageRank >= 1, select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_Q2_ncRNA_Rare010_DmgR1 <- length (unique (subset (data, subset = F_Qual_tag != "LowQuality" & F_Rare <= 0.01 & F_DamageType == "DmgNcRNA" & F_DamageRank >= 1, select = Original_VCFKEY, drop = T)))
-  
-  stats.ls$VarN_Q1_ncRNA_Rare010_DmgR2 <- length (unique (subset (data, subset = F_Pass == 1 & F_Rare <= 0.01 & F_DamageType == "DmgNcRNA" & F_DamageRank == 2, select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_Q2_ncRNA_Rare010_DmgR2 <- length (unique (subset (data, subset = F_Qual_tag != "LowQuality" & F_Rare <= 0.01 & F_DamageType == "DmgNcRNA" & F_DamageRank == 2, select = Original_VCFKEY, drop = T)))
-  
-  stats.ls$VarN_Q1_Coding_Rare010_Dmg_AXD_HPO <- length (unique (subset (data, subset = F_Pass == 1 & F_Rare <= 0.01 & F_Coding == "Coding" & F_DamageType != "NotDmg" & (G_AXD_HPO == 1), select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_Q2_Coding_Rare010_Dmg_AXD_HPO <- length (unique (subset (data, subset = F_Qual_tag != "LowQuality" & F_Rare <= 0.01 & F_Coding == "Coding" & F_DamageType != "NotDmg" & (G_AXD_HPO == 1), select = Original_VCFKEY, drop = T)))
-  
-  stats.ls$VarN_Q1_Coding_Rare010_DmG_AXD_CGD <- length (unique (subset (data, subset = F_Pass == 1 & F_Rare <= 0.01 & F_Coding == "Coding" & F_DamageType != "NotDmg" & (G_AXD_CGD == 1), select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_Q2_Coding_Rare010_DmG_AXD_CGD <- length (unique (subset (data, subset = F_Qual_tag != "LowQuality" & F_Rare <= 0.01 & F_Coding == "Coding" & F_DamageType != "NotDmg" & (G_AXD_CGD == 1), select = Original_VCFKEY, drop = T)))
-  
-  stats.ls$VarN_Q1_Coding_Rare010_Dmg_AXD_All <- length (unique (subset (data, subset = F_Pass == 1 & F_Rare <= 0.01 & F_Coding == "Coding" & F_DamageType != "NotDmg" & (G_AXD_HPO == 1 | G_AXD_CGD == 1), select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_Q2_Coding_Rare010_Dmg_AXD_All <- length (unique (subset (data, subset = F_Qual_tag != "LowQuality" & F_Rare <= 0.01 & F_Coding == "Coding" & F_DamageType != "NotDmg" & (G_AXD_HPO == 1 | G_AXD_CGD == 1), select = Original_VCFKEY, drop = T)))
-  
-  stats.ls$VarN_Q1_Coding_Rare010_Dmg_PhenoRank1 <- length (unique (subset (data, subset = F_Pass == 1 & F_Rare <= 0.01 & F_DamageType != "NotDmg" & F_PhenoRank >= 1, select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_Q2_Coding_Rare010_Dmg_PhenoRank1 <- length (unique (subset (data, subset = F_Qual_tag != "LowQuality" & F_Rare <= 0.01 & F_DamageType != "NotDmg" & F_PhenoRank >= 1, select = Original_VCFKEY, drop = T)))
-  
-  stats.ls$VarN_Q1_Coding_Rare010_Dmg_PhenoRank2 <- length (unique (subset (data, subset = F_Pass == 1 & F_Rare <= 0.01 & F_DamageType != "NotDmg" & F_PhenoRank >= 2, select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_Q2_Coding_Rare010_Dmg_PhenoRank2 <- length (unique (subset (data, subset = F_Qual_tag != "LowQuality" & F_Rare <= 0.01 & F_DamageType != "NotDmg" & F_PhenoRank >= 2, select = Original_VCFKEY, drop = T)))
-  
-  stats.ls$VarN_Q1_Rare050_DmgR2_Hom_PhenoRank0 <- length (unique (subset (data, subset = FM_HOM == 1 & F_Pass == 1 & F_PhenoRank >= 0 & F_DamageRank == 2, select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_Q2_Rare050_DmgR2_Hom_PhenoRank0 <- length (unique (subset (data, subset = FM_HOM == 1 & F_Qual_tag != "LowQuality" & F_PhenoRank >= 0 & F_DamageRank == 2, select = Original_VCFKEY, drop = T)))
-  
-  stats.ls$VarN_Q1_Rare050_DmgR2_Hom_PhenoRank1 <- length (unique (subset (data, subset = FM_HOM == 1 & F_Pass == 1 & F_PhenoRank >= 1 & F_DamageRank == 2, select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_Q2_Rare050_DmgR2_Hom_PhenoRank1 <- length (unique (subset (data, subset = FM_HOM == 1 & F_Qual_tag != "LowQuality" & F_PhenoRank >= 1 & F_DamageRank == 2, select = Original_VCFKEY, drop = T)))
-  
-  stats.ls$VarN_Q1_Rare050_DmgR2_Hom_PhenoRank2 <- length (unique (subset (data, subset = FM_HOM == 1 & F_Pass == 1 & F_PhenoRank >= 2 & F_DamageRank == 2, select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_Q2_Rare050_DmgR2_Hom_PhenoRank2 <- length (unique (subset (data, subset = FM_HOM == 1 & F_Qual_tag != "LowQuality" & F_PhenoRank >= 2 & F_DamageRank == 2, select = Original_VCFKEY, drop = T)))
-  
-  stats.ls$VarN_Q1_Rare050_DmgR2_Xhom_PhenoRank0 <- length (unique (subset (data, subset = FM_XHAP == 1 & F_Pass == 1 & F_PhenoRank >= 0 & F_DamageRank == 2, select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_Q2_Rare050_DmgR2_Xhom_PhenoRank0 <- length (unique (subset (data, subset = FM_XHAP == 1 & F_Qual_tag != "LowQuality" & F_PhenoRank >= 0 & F_DamageRank == 2, select = Original_VCFKEY, drop = T)))
-  
-  stats.ls$VarN_Q1_Rare050_DmgR2_Xhom_PhenoRank1 <- length (unique (subset (data, subset = FM_XHAP == 1 & F_Pass == 1 & F_PhenoRank >= 1 & F_DamageRank == 2, select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_Q2_Rare050_DmgR2_Xhom_PhenoRank1 <- length (unique (subset (data, subset = FM_XHAP == 1 & F_Qual_tag != "LowQuality" & F_PhenoRank >= 1 & F_DamageRank == 2, select = Original_VCFKEY, drop = T)))
-  
-  stats.ls$VarN_Q1_Rare050_DmgR2_Xhom_PhenoRank2 <- length (unique (subset (data, subset = FM_XHAP == 1 & F_Pass == 1 & F_PhenoRank >= 2 & F_DamageRank == 2, select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_Q2_Rare050_DmgR2_Xhom_PhenoRank2 <- length (unique (subset (data, subset = FM_XHAP == 1 & F_Qual_tag != "LowQuality" & F_PhenoRank >= 2 & F_DamageRank == 2, select = Original_VCFKEY, drop = T)))
-  
-  stats.ls$VarN_Q1_Rare050_DmgR1_CmpHet_PhenoRank0 <- length (unique (subset (data, subset = FM_PCHET >= 1 & F_PhenoRank >= 0 & F_DamageRank >= 1, select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_Q2_Rare050_DmgR1_CmpHet_PhenoRank0 <- length (unique (subset (data, subset = FM_PCHET == 2 & F_PhenoRank >= 0 & F_DamageRank >= 1, select = Original_VCFKEY, drop = T)))
-  
-  stats.ls$VarN_Q1_Rare050_DmgR1_CmpHet_PhenoRank1 <- length (unique (subset (data, subset = FM_PCHET >= 1 & F_PhenoRank >= 1 & F_DamageRank >= 1, select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_Q2_Rare050_DmgR1_CmpHet_PhenoRank1 <- length (unique (subset (data, subset = FM_PCHET == 2 & F_PhenoRank >= 1 & F_DamageRank >= 1, select = Original_VCFKEY, drop = T)))
-  
-  stats.ls$VarN_Q1_Rare050_DmgR1_CmpHet_PhenoRank2 <- length (unique (subset (data, subset = FM_PCHET >= 1 & F_PhenoRank >= 2 & F_DamageRank >= 1, select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_Q2_Rare050_DmgR1_CmpHet_PhenoRank2 <- length (unique (subset (data, subset = FM_PCHET == 2 & F_PhenoRank >= 2 & F_DamageRank >= 1, select = Original_VCFKEY, drop = T)))
-  
-  stats.ls$VarN_Q1_Rare005_DmgR2_AXDom_PhenoRank0 <- length (unique (subset (data, subset = FM_AXDOM == 1 & F_Pass == 1 & F_PhenoRank >= 0 & F_DamageRank == 2, select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_Q2_Rare005_DmgR2_AXDom_PhenoRank0 <- length (unique (subset (data, subset = FM_AXDOM == 1 & F_Qual_tag != "LowQuality" & F_PhenoRank >= 0 & F_DamageRank == 2, select = Original_VCFKEY, drop = T)))
-  
-  stats.ls$VarN_Q1_Rare005_DmgR2_AXDom_PhenoRank1 <- length (unique (subset (data, subset = FM_AXDOM == 1 & F_Pass == 1 & F_PhenoRank >= 1 & F_DamageRank == 2, select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_Q2_Rare005_DmgR2_AXDom_PhenoRank1 <- length (unique (subset (data, subset = FM_AXDOM == 1 & F_Qual_tag != "LowQuality" & F_PhenoRank >= 1 & F_DamageRank == 2, select = Original_VCFKEY, drop = T)))
-  
-  stats.ls$VarN_Q1_Rare005_DmgR2_AXDom_PhenoRank2 <- length (unique (subset (data, subset = FM_AXDOM == 1 & F_Pass == 1 & F_PhenoRank >= 2 & F_DamageRank == 2, select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_Q2_Rare005_DmgR2_AXDom_PhenoRank2 <- length (unique (subset (data, subset = FM_AXDOM == 1 & F_Qual_tag != "LowQuality" & F_PhenoRank >= 2 & F_DamageRank == 2, select = Original_VCFKEY, drop = T)))
-  
-  stats.ls$VarN_Q1_Rare005_DmgR2_HI_PhenoRank0 <- length (unique (subset (data, subset = FM_HZ == 1 & F_Pass == 1 & F_PhenoRank >= 0, select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_Q2_Rare005_DmgR2_HI_PhenoRank0 <- length (unique (subset (data, subset = FM_HZ == 1 & F_Qual_tag != "LowQuality" & F_PhenoRank >= 0, select = Original_VCFKEY, drop = T)))
-  
-  stats.ls$VarN_Q1_Rare005_DmgR2_HI_PhenoRank1 <- length (unique (subset (data, subset = FM_HZ == 1 & F_Pass == 1 & F_PhenoRank >= 1, select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_Q2_Rare005_DmgR2_HI_PhenoRank1 <- length (unique (subset (data, subset = FM_HZ == 1 & F_Qual_tag != "LowQuality" & F_PhenoRank >= 1, select = Original_VCFKEY, drop = T)))
-  
-  stats.ls$VarN_FS1_Q1_Rare050_Tot     <- length (unique (subset (data, subset = FS1_Select == 1, select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_FS2_Q2_Rare010_Tot     <- length (unique (subset (data, subset = FS2_Select == 1, select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_FS3_Q2_Rare010_Dmg_Tot <- length (unique (subset (data, subset = FS3_Select == 1, select = Original_VCFKEY, drop = T)))
-  
-  stats.ls$VarN_FS1_Q1_Rare050_AD_Pathg_Any        <- length (unique (subset (data, subset = FS1_Select == 1 & FS1_AD_Pathg_Any        == 1, select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_FS1_Q1_Rare050_AR_Pathg_Hom        <- length (unique (subset (data, subset = FS1_Select == 1 & FS1_AR_Pathg_Hom        == 1, select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_FS1_Q1_Rare050_AR_Pathg_PotCompHet <- length (unique (subset (data, subset = FS1_Select == 1 & FS1_AR_Pathg_PotCompHet == 1, select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_FS1_Q1_Rare050_XL_Pathg_Hap        <- length (unique (subset (data, subset = FS1_Select == 1 & FS1_XL_Pathg_Hap        == 1, select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_FS1_Q1_Rare050_XL_Pathg_Hom        <- length (unique (subset (data, subset = FS1_Select == 1 & FS1_XL_Pathg_Hom        == 1, select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_FS1_Q1_Rare050_CX_Pathg_HomHap     <- length (unique (subset (data, subset = FS1_Select == 1 & FS1_CX_Pathg_HomHap     == 1, select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_FS1_Q1_Rare050_CX_Pathg_PotCompHet <- length (unique (subset (data, subset = FS1_Select == 1 & FS1_CX_Pathg_PotCompHet == 1, select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_FS1_Q1_Rare050_CX_Uncertain        <- length (unique (subset (data, subset = FS1_Select == 1 & FS1_CX_Uncertain        == 1, select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_FS1_Q1_Rare050_AR_Carrier          <- length (unique (subset (data, subset = FS1_Select == 1 & FS1_AR_Carrier          == 1, select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_FS1_Q1_Rare050_XL_Carrier          <- length (unique (subset (data, subset = FS1_Select == 1 & FS1_XL_Carrier          == 1, select = Original_VCFKEY, drop = T)))
-  
-  stats.ls$VarN_FS2_Q2_Rare010_AD_Pathg_Any        <- length (unique (subset (data, subset = FS2_Select == 1 & FS1_AD_Pathg_Any        == 1, select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_FS2_Q2_Rare010_AR_Pathg_Hom        <- length (unique (subset (data, subset = FS2_Select == 1 & FS1_AR_Pathg_Hom        == 1, select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_FS2_Q2_Rare010_AR_Pathg_PotCompHet <- length (unique (subset (data, subset = FS2_Select == 1 & FS1_AR_Pathg_PotCompHet == 1, select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_FS2_Q2_Rare010_XL_Pathg_Hap        <- length (unique (subset (data, subset = FS2_Select == 1 & FS1_XL_Pathg_Hap        == 1, select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_FS2_Q2_Rare010_XL_Pathg_Hom        <- length (unique (subset (data, subset = FS2_Select == 1 & FS1_XL_Pathg_Hom        == 1, select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_FS2_Q2_Rare010_CX_Pathg_HomHap     <- length (unique (subset (data, subset = FS2_Select == 1 & FS1_CX_Pathg_HomHap     == 1, select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_FS2_Q2_Rare010_CX_Pathg_PotCompHet <- length (unique (subset (data, subset = FS2_Select == 1 & FS1_CX_Pathg_PotCompHet == 1, select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_FS2_Q2_Rare010_CX_Uncertain        <- length (unique (subset (data, subset = FS2_Select == 1 & FS1_CX_Uncertain        == 1, select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_FS2_Q2_Rare010_AR_Carrier          <- length (unique (subset (data, subset = FS2_Select == 1 & FS1_AR_Carrier          == 1, select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_FS2_Q2_Rare010_XL_Carrier          <- length (unique (subset (data, subset = FS2_Select == 1 & FS1_XL_Carrier          == 1, select = Original_VCFKEY, drop = T)))
-  
-  stats.ls$VarN_FS3_Q2_Rare010_Dmg_AD_Pathg_Any        <- length (unique (subset (data, subset = FS3_Select == 1 & FS1_AD_Pathg_Any        == 1, select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_FS3_Q2_Rare010_Dmg_AR_Pathg_Hom        <- length (unique (subset (data, subset = FS3_Select == 1 & FS1_AR_Pathg_Hom        == 1, select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_FS3_Q2_Rare010_Dmg_AR_Pathg_PotCompHet <- length (unique (subset (data, subset = FS3_Select == 1 & FS1_AR_Pathg_PotCompHet == 1, select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_FS3_Q2_Rare010_Dmg_XL_Pathg_Hap        <- length (unique (subset (data, subset = FS3_Select == 1 & FS1_XL_Pathg_Hap        == 1, select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_FS3_Q2_Rare010_Dmg_XL_Pathg_Hom        <- length (unique (subset (data, subset = FS3_Select == 1 & FS1_XL_Pathg_Hom        == 1, select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_FS3_Q2_Rare010_Dmg_CX_Pathg_HomHap     <- length (unique (subset (data, subset = FS3_Select == 1 & FS1_CX_Pathg_HomHap     == 1, select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_FS3_Q2_Rare010_Dmg_CX_Pathg_PotCompHet <- length (unique (subset (data, subset = FS3_Select == 1 & FS1_CX_Pathg_PotCompHet == 1, select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_FS3_Q2_Rare010_Dmg_CX_Uncertain        <- length (unique (subset (data, subset = FS3_Select == 1 & FS1_CX_Uncertain        == 1, select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_FS3_Q2_Rare010_Dmg_AR_Carrier          <- length (unique (subset (data, subset = FS3_Select == 1 & FS1_AR_Carrier          == 1, select = Original_VCFKEY, drop = T)))
-  stats.ls$VarN_FS3_Q2_Rare010_Dmg_XL_Carrier          <- length (unique (subset (data, subset = FS3_Select == 1 & FS1_XL_Carrier          == 1, select = Original_VCFKEY, drop = T)))
-  
-  return(stats.ls)
-  
-}
-
-
-
