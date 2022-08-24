@@ -12,9 +12,14 @@
 
 # SETTINGS ----------------------------------------------------------------
 
-if (!require(kit)){
+if (!require(kit)) {
   install.packages("kit")
-  library(kit)
+  library(data.table)
+}
+
+if (!require(data.table)) {
+  install.packages("data.table")
+  library(data.table)
 }
 
 options(echo = TRUE)
@@ -25,14 +30,28 @@ args <- commandArgs(trailingOnly = TRUE)
 
 # 0.1. Input Variables
 
+# Sample used for the original script:
+# input_var_genome.file <- "89931_100.hc.vqsr.vcf.gz.annovar.out_FINAL_rev27.4_hg19.tsv.gz"
+# input_var_genome.name <- "89931_100"
+# file_location <- "/Users/karahan/Desktop/PrioritizationPipeline/data/starting_data/89931_100.hc.vqsr.vcf.gz.annovar.out_SUBSET_rev27.4_hg19.tsv"
+# test <- data.table::fread(file_location, data.table = T)
+
+# The line below was originally used for genome names that start with a number because they were 
+# formatted as "X_genomeName." in several column names when the data was read in using read.table.
+
+# NOTE: This is not a problem if data.table::fread is used, X will not be added in front of genome 
+# names that start with a number (run line above to see an example). Therefore, the generation of 
+# alt_input_var_genome.name was changed to simply adding ":" after input_var_genome.name.
+
+# alt_input_var_genome.name <- ifelse(grepl("^[0-9]", input_var_genome.name),
+#                                     paste("X", input_var_genome.name, ":", sep = ""),
+#                                     paste(input_var_genome.name, ":", sep = ""))
+
 input_var_genome.file <- "NA12878.hard-filtered.vcf.gz.annovar.out_SUBSET_rev27.7_hg38.tsv"
 input_var_genome.name <- "NA12878"
 
-# Since genomes that start with a number is formatted as "X_genomeName." in several column names,
-# the alternative genome name is initialized for later use
-alt_input_var_genome.name <- ifelse(grepl("^[0-9]", input_var_genome.name),
-                                    paste("X", input_var_genome.name, ".", sep = ""),
-                                    paste(input_var_genome.name, ".", sep = ""))
+alt_input_var_genome.name <- paste(input_var_genome.name, ":", sep = "")
+
 
 # 0.2. Output Variables
 
@@ -139,8 +158,8 @@ stats.ls <- list()
 add_freq_tag <- function(data, freq_max_cutoff) {
   
   freq_max_var <- with(data,
-                        which((is.na (gnomAD_exome_freq_max)  | gnomAD_exome_freq_max  <= freq_max_cutoff) &
-                              (is.na (gnomAD_genome_freq_max)  | gnomAD_genome_freq_max  <= freq_max_cutoff)))
+                       which((is.na (gnomAD_exome_freq_max)  | gnomAD_exome_freq_max  <= freq_max_cutoff) &
+                               (is.na (gnomAD_genome_freq_max)  | gnomAD_genome_freq_max  <= freq_max_cutoff)))
   
   data$F_Rare[freq_max_var] <- freq_max_cutoff
   
@@ -339,6 +358,7 @@ add_nc_dmg_tag <- function(data, cutoffs, rank) {
 # 1.4. Phenotype filter 
 
 add_HPO_CGD_dominant_tag <- function(data, database, pattern) {
+  
   data <- data.frame(data)
   col_name <- paste("G_AXD_", database, sep = "")
   data[, col_name] <- 0
@@ -351,6 +371,7 @@ add_HPO_CGD_dominant_tag <- function(data, database, pattern) {
   data[, col_name][database_dom_var] <- 1
   
   return(data)
+  
 }
 
 add_phenotype_rank_tag <- function(data) {
@@ -459,7 +480,7 @@ add_potential_dmg_compound_heterozygous_tag <- function(data) {
 
 # DOMINANT
 add_dom_tag <- function(data) {
-
+  
   dom_var <- with(data, which (F_Rare <= 0.005 & F_DamageType != "NotDmg" & (G_AXD_CGD == 1 | G_AXD_HPO == 1)))
   
   data$FM_AXDOM <- 0
@@ -705,8 +726,8 @@ get_rare05_variants <- function(data) {
   data$F_DamageRank <- 0
   data$F_S_DamageType <- "NotDmg"
   
-  data <- add_coding_lof_tag(data)
-  data <- add_coding_lof_spliceJunction_tag(data)
+  data <- add_coding_lof_tag(data, eff_lof.chv)
+  data <- add_coding_lof_spliceJunction_tag(data, eff_lof.chv)
   
   data <- add_pathogenic_tag(data)
   data <- add_secondary_findings_rank1_tag(data)
@@ -715,7 +736,18 @@ get_rare05_variants <- function(data) {
   
 }
 
-# 1.7.2. HQ Rare Variants (FILTER == "PASS")
+# 1.7.2. HQ Variants (FILTER == "PASS")
+get_hq_variants <- function(data) {
+  
+  data <- subset(data, subset = (FILTER == "PASS"))
+  data <- add_qual_tag(data, DP_cutoff, GQ_snp_cutoff, alt_frac_snp_cutoff, GQ_non_snp_cutoff, 
+                       alt_frac_non_snp_cutoff, GQ_homalt_cutoff, alt_frac_homalt_cutoff) # the cutoffs are global variables
+  
+  return(data)
+  
+}
+
+# 1.7.3. HQ Rare Variants
 
 # input: data = v_full_r05.df
 get_hq_rare05_variants <- function(data) {
@@ -730,14 +762,14 @@ get_hq_rare05_variants <- function(data) {
   data$F_DamageRank <- 0
   data$F_S_DamageType <- "NotDmg"
   
-  data <- add_coding_lof_tag(data)
-  data <- add_coding_lof_spliceJunction_tag(data)
+  data <- add_coding_lof_tag(data, eff_lof.chv)
+  data <- add_coding_lof_spliceJunction_tag(data, eff_lof.chv)
   
   data <- add_missense_tag(data, sift_cutoff, polyphen_cutoff, ma_cutoff, phylopMam_missense_cutoff, phylopVert_missense_cutoff, 
                            CADD_phred_missense_cutoff, missense_rank1_cutoff, missense_rank2_cutoff)
   
-  data <- add_otherc_tag(data, otherc_rk1_cr1_cutoffs, otherc_rk1_cr2_cutoffs, 1)
-  data <- add_otherc_tag(data, otherc_rk2_cr1_cutoffs, otherc_rk2_cr2_cutoffs, 2)
+  data <- add_otherc_tag(data, otherc_rk1_cr1_cutoffs, otherc_rk1_cr2_cutoffs, rank = 1)
+  data <- add_otherc_tag(data, otherc_rk2_cr1_cutoffs, otherc_rk2_cr2_cutoffs, rank = 2)
   
   data <- add_splicing_tag(data, spliceAI_DS_AG_r1_cutoff, spliceAI_DP_AG_r1_cutoff, 
                            spliceAI_DS_AL_r1_cutoff, spliceAI_DP_AL_r1_cutoff,
@@ -789,16 +821,17 @@ get_hq_rare05_variants <- function(data) {
   data <- add_secondary_findings_rank3_tag(data)
   
   data <- add_ACMG_tag(data)
-  data <- add_ACMG_coding_tag(data)
+  data <- add_ACMG_coding_tag(data, typeseq_coding.chv)
+  
 }
 
 
 # (1.5) FILE IMPORTING & PRE-PROCESSING -----------------------------------
 
-# system.time(
-# v_full.temp.df <- read.table("NA12878.hard-filtered.vcf.gz.annovar.out_SUBSET_rev27.7_hg38.tsv", 
-#                              sep = "\t", header = T, quote = "\"", comment.char = "", stringsAsFactors = F))
-v_full.temp.df <- data.table::fread("NA12878.hard-filtered.vcf.gz.annovar.out_SUBSET_rev27.7_hg38.tsv", data.table = T)
+v_full.temp.df <- read.table("/Users/karahan/Desktop/PrioritizationPipeline/data/starting_data/NA12878.hard-filtered.vcf.gz.annovar.out_SUBSET_rev27.7_hg38.tsv", 
+                             sep = "\t", header = T, quote = "\"", comment.char = "", stringsAsFactors = F)
+
+v_full.temp.df <- subset(v_full.temp.df, select = -c(DP))
 
 names(v_full.temp.df) <- gsub(alt_input_var_genome.name, "", names(v_full.temp.df)) # remove "genomeName." from columns
 names(v_full.temp.df)[1] <- "CHROM" # modify "X.CHROM" as "CHROM"
@@ -1012,10 +1045,13 @@ v_full_hq_r05.df <- add_ACMG_coding_tag(v_full_hq_r05.df, typeseq_coding.chv)
 # (9) Main ----------------------------------------------------------------
 
 file_location <- "/Users/karahan/Desktop/PrioritizationPipeline/data/starting_data/NA12878.hard-filtered.vcf.gz.annovar.out_SUBSET_rev27.7_hg38.tsv"
-v_full.temp.df <- data.table::fread(file_location, 
-                             data.table = F)
 
-names(v_full.temp.df) <- gsub(alt_input_var_genome.name, "", names(v_full.temp.df)) # remove "genomeName." from columns
+# v_full.temp.df <- read.table(file_location, sep = "\t", header = T, quote = "\"", comment.char = "", stringsAsFactors = F)
+v_full.temp.df <- data.table::fread(file_location, data.table = T)
+v_full.temp.df <- subset(v_full.temp.df, select = -c(DP))
+
+names(v_full.temp.df) <- gsub(alt_input_var_genome.name, "", names(v_full.temp.df)) # remove "genomeName:" from columns
+# Problem: two columns named DP
 names(v_full.temp.df)[1] <- "CHROM" # modify "X.CHROM" as "CHROM"
 names(v_full.temp.df)
 
