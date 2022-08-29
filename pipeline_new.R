@@ -52,7 +52,7 @@ args <- commandArgs(trailingOnly = TRUE)
 #                                     paste("X", input_var_genome.name, ":", sep = ""),
 #                                     paste(input_var_genome.name, ":", sep = ""))
 
-input_var_genome.file <- "NA12878.hard-filtered.vcf.gz.annovar.out_SUBSET_rev27.7_hg38.tsv"
+input_var_genome.file <- "/Users/karahan/Desktop/PrioritizationPipeline/data/starting_data/NA12878.hard-filtered.vcf.gz.annovar.out_SUBSET_rev27.7_hg38.tsv"
 input_var_genome.name <- "NA12878"
 alt_input_var_genome.name <- paste(input_var_genome.name, ":", sep = "")
 
@@ -96,14 +96,14 @@ alt_frac_homalt_cutoff <- 0.8
 sift_cutoff <- 0.05
 polyphen_cutoff <- 0.90
 ma_cutoff <- 1.90
-phylopMam_missense_cutoff <- 2.30 
-phylopVert_missense_cutoff <- 4.0
-CADD_phred_missense_cutoff <- 15
+phylopMam_missense_cutoff <- 1.3 
+phylopVert_missense_cutoff <- 3.9
+CADD_phred_missense_cutoff <- 21.1
 
 missense_rank1_cutoff <- 2
 missense_rank2_cutoff <- 4
 
-# Other coding - in order: phylopMam_avg, phylopVert100_avg, CADD_phred
+# Other coding - in order: phylopMam_avg, phylopVert100_avg, CADD_phred (TBD)
 otherc_rk1_cr1_cutoffs <- c(1.2, 2.5, 13.5)
 otherc_rk1_cr2_cutoffs <- c(1.5, 2.0, 13.0)
 otherc_rk2_cr1_cutoffs <- c(2.0, 3.5, 14)
@@ -131,14 +131,14 @@ dbscSNV_ADA_SCORE_cutoff <- 0.6
 dbscSNV_RF_SCORE_cutoff <- 0.6
 
 # UTR
-phylopMam_utr_rk1_cutoff <- 0
-CADD_phred_utr_rk1_cutoff <- 12.5
-phylopMam_utr_rk2_cutoff <- 1.5
-CADD_phred_utr_rk2_cutoff <- 15
+phylopMam_utr_rk1_cutoff <- 1.1
+CADD_phred_utr_rk1_cutoff <- 13.7
+phylopMam_utr_rk2_cutoff <- 1.3
+CADD_phred_utr_rk2_cutoff <- 21.1
 
 # Non-coding (nc) - in order: phylopMam_avg, phylopVert100_avg, CADD_phred
-nc_rk1_cutoffs <- c(1.25, 2, 12)
-nc_rk2_cutoffs <- c(2.3, 4, 15)
+nc_rk1_cutoffs <- c(1.1, 1.6, 13.7)
+nc_rk2_cutoffs <- c(1.3, 3.9, 21.1)
 
 # 0.4.3 Main Findings
 
@@ -1219,8 +1219,7 @@ get_all_stats <- function() {
 
 # (1.5) FILE IMPORTING & PRE-PROCESSING -----------------------------------
 
-file_location <- "/Users/karahan/Desktop/PrioritizationPipeline/data/starting_data/NA12878.hard-filtered.vcf.gz.annovar.out_SUBSET_rev27.7_hg38.tsv"
-v_full.temp.df <- data.table::fread(file_location, data.table = T)
+v_full.temp.df <- data.table::fread(input_var_genome.file, data.table = T)
 v_full.temp.df <- subset(v_full.temp.df, select = -c(DP, cg_freq_max))
 
 names(v_full.temp.df) <- gsub(alt_input_var_genome.name, "", names(v_full.temp.df)) # remove "genomeName." from columns
@@ -1231,7 +1230,7 @@ v_full.df <- subset(v_full.temp.df, subset = (Zygosity != "hom-ref" & Zygosity !
 v_full.df$alt_fraction <- v_full.df$AD_ALT/(v_full.df$AD_REF + v_full.df$AD_ALT)
 
 rm(v_full.temp.df)
-gc(); gc(); gc()
+gc()
 
 
 # (2) FREQUENCY FILTER ----------------------------------------------------
@@ -1390,45 +1389,47 @@ v_full_hq_r05.df <- add_ACMG_tag(v_full_hq_r05.df)
 v_full_hq_r05.df <- add_ACMG_coding_tag(v_full_hq_r05.df, typeseq_coding.chv)
 
 
-
 # (9) Main ----------------------------------------------------------------
 
-file_location <- "/Users/karahan/Desktop/PrioritizationPipeline/data/starting_data/NA12878.hard-filtered.vcf.gz.annovar.out_SUBSET_rev27.7_hg38.tsv"
-v_full.temp.df <- data.table::fread(file_location, data.table = F)
+# File import
+v_full.temp.df <- data.table::fread(input_var_genome.file, data.table = F)
 v_full.temp.df <- subset(v_full.temp.df, select = -c(DP, cg_freq_max)) # DP is removed because there would be two DP columns after removing "genomeName:"
 
+# Re-format column names
 names(v_full.temp.df) <- gsub(alt_input_var_genome.name, "", names(v_full.temp.df)) # remove "genomeName:" from columns
 names(v_full.temp.df)[1] <- "CHROM"
 names(v_full.temp.df)
 
+# Process the full data
 v_full.df <- subset(v_full.temp.df, subset = (Zygosity != "hom-ref" & Zygosity != "unknown"))
 v_full.df <- add_pass_tag(v_full.df)
 v_full.df$alt_fraction <- v_full.df$AD_ALT/(v_full.df$AD_REF + v_full.df$AD_ALT)
 
+# Free up memory
 rm(v_full.temp.df)
-gc(); gc(); gc()
+gc()
 
+# Annotate data
 v_full_r05.df <- get_rare05_variants(v_full.df)
 v_full_hq_r05.df <- get_hq_rare05_variants(v_full_r05.df)
 v_full_hq.df <- get_hq_variants(v_full.df) # used for stats.ls
 
-# Get chromosomecounts + chromosome-wise zygosity counts
+# Get chromosome counts + chromosome-wise zygosity counts
 chr_zygosity_stats_full <- get_chr_zygosity_stats(v_full.df)
 chr_zygosity_stats_full_hq <- get_chr_zygosity_stats(v_full_hq.df)
 chr_zygosity_stats_full_hq_r05 <- get_chr_zygosity_stats(v_full_hq_r05.df)
 
-# Get all stats of interest
+# Get stats list for each data frame
 stats.ls.full <- add_stats_full_df(v_full.df)
 stats.ls.hq <- add_stats_full_hq_df(v_full_hq.df)
 stats.ls.hq.r05 <- add_stats_full_hq_r05_df(v_full_hq_r05.df)
 
-# Convert stats.ls to readable data frames
-
+# Convert stats lists to readable data frames
 stats.df.full <- convert_stats_list_to_df(stats.ls.full)
 stats.df.hq <- convert_stats_list_to_df(stats.ls.hq)
 stats.df.hq.r05 <- convert_stats_list_to_df(stats.ls.hq.r05)
 
+# Get all stats
 stats.df.all <- get_all_stats()
-View(stats.df.all)
 
 sessionInfo()
