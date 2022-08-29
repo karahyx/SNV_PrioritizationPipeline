@@ -5,7 +5,7 @@
 
 # Please run the following sections:
 # - SETTINGS
-# - (0) VARIABLES & CUTOFFS
+# - (0) VARIABLES & CUTOFFS: 0.1 Input variables needs to be modified
 # - (1) FUNCTIONS
 # - (9) Main: runs sections (2-8)
 
@@ -52,8 +52,8 @@ args <- commandArgs(trailingOnly = TRUE)
 #                                     paste("X", input_var_genome.name, ":", sep = ""),
 #                                     paste(input_var_genome.name, ":", sep = ""))
 
-input_var_genome.file <- "/Users/karahan/Desktop/PrioritizationPipeline/data/starting_data/NA12878.hard-filtered.vcf.gz.annovar.out_SUBSET_rev27.7_hg38.tsv"
-input_var_genome.name <- "NA12878"
+input_var_genome.file <- "/Users/karahan/Desktop/PrioritizationPipeline/data/mis-c/21-25921-A-02-00.hard-filtered.vcf.gz.annovar.out_SUBSET_rev27.7_hg38.tsv"
+input_var_genome.name <- "21-25921-A-02-00"
 alt_input_var_genome.name <- paste(input_var_genome.name, ":", sep = "")
 
 # 0.2. Output Variables
@@ -82,13 +82,13 @@ eff_syn.chv <- "synonymous SNV"
 # 0.4. Cutoffs
 
 # 0.4.1. High-quality Filter
-DP_cutoff <- 10
-GQ_snp_cutoff <- 99
-alt_frac_snp_cutoff <- 0.3
-GQ_non_snp_cutoff <- 90
-alt_frac_non_snp_cutoff <- 0.3
-GQ_homalt_cutoff <- 25
-alt_frac_homalt_cutoff <- 0.8
+DP_cutoff <- 2
+# GQ_snp_cutoff <- 99
+# alt_frac_snp_cutoff <- 0.3
+# GQ_non_snp_cutoff <- 90
+# alt_frac_non_snp_cutoff <- 0.3
+# GQ_homalt_cutoff <- 25
+# alt_frac_homalt_cutoff <- 0.8
 
 # 0.4.2. Define Damage
 
@@ -179,11 +179,13 @@ add_qual_tag <- function(data, DP_cutoff, GQ_snp_cutoff, alt_frac_snp_cutoff,
                          GQ_non_snp_cutoff, alt_frac_non_snp_cutoff,
                          GQ_homalt_cutoff, alt_frac_homalt_cutoff) {
   
-  ok_qual_var <- with(data, 
-                      which(DP >= DP_cutoff &
-                              ((Zygosity %in% c("ref-alt","alt-alt") & var_type == "snp" & GQ >= GQ_snp_cutoff & alt_fraction >= alt_frac_snp_cutoff) | 
-                                 (Zygosity %in% c("ref-alt","alt-alt") & var_type != "snp" & GQ >= GQ_non_snp_cutoff & alt_fraction >= alt_frac_non_snp_cutoff) | 
-                                 (Zygosity %in% c("hom-alt") & GQ >= GQ_homalt_cutoff & alt_fraction >= alt_frac_homalt_cutoff)))) 
+  # ok_qual_var <- with(data, 
+  #                     which(DP >= DP_cutoff &
+  #                             ((Zygosity %in% c("ref-alt","alt-alt") & var_type == "snp" & GQ >= GQ_snp_cutoff & alt_fraction >= alt_frac_snp_cutoff) | 
+  #                                (Zygosity %in% c("ref-alt","alt-alt") & var_type != "snp" & GQ >= GQ_non_snp_cutoff & alt_fraction >= alt_frac_non_snp_cutoff) | 
+  #                                (Zygosity %in% c("hom-alt") & GQ >= GQ_homalt_cutoff & alt_fraction >= alt_frac_homalt_cutoff)))) 
+  
+  ok_qual_var <- with(data, which(DP >= DP_cutoff))
   
   data$F_Qual_tag <- "LowQuality"
   data$F_Qual_tag[ok_qual_var] <- "OK"
