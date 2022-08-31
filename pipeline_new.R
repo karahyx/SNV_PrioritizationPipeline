@@ -1,7 +1,17 @@
+# ---
 # Title: Variant Prioritization
 # Purpose: An adaption of the original variant prioritization pipeline to DRAGEN
-# Author: Kara Han
+# Author: Kara Han <kara.han@sickkids.ca>
 # Date script created: 2022-07-20 14:32:21 EDT
+# Date last modified: 2022-08-31 16:13:05 EDT
+# Version: 0.1.0
+# Depends: 
+#     R (>= 3.4.0)
+# Imports:
+#     data.table_1.14.2
+#     dplyr_1.0.9
+#     tibble_3.1.8
+# ---
 
 # Please run the following sections:
 # - SETTINGS
@@ -9,13 +19,7 @@
 # - (1) FUNCTIONS
 # - (9) Main: runs sections (2-8)
 
-
 # SETTINGS ----------------------------------------------------------------
-
-if (!require(kit)) {
-  install.packages("kit")
-  library(data.table)
-}
 
 if (!require(data.table)) {
   install.packages("data.table")
@@ -27,9 +31,13 @@ if (!require(dplyr)) {
   library(dplyr)
 }
 
+if (!require(tibble)) {
+  install.packages("tibble")
+  library(tibble)
+}
+
 options(echo = TRUE)
 args <- commandArgs(trailingOnly = TRUE)
-
 
 # (0) VARIABLES & CUTOFFS -----------------------------------------------------
 
@@ -52,13 +60,13 @@ args <- commandArgs(trailingOnly = TRUE)
 #                                     paste("X", input_var_genome.name, ":", sep = ""),
 #                                     paste(input_var_genome.name, ":", sep = ""))
 
-input_var_genome.file <- "/Users/karahan/Desktop/PrioritizationPipeline/data/mis-c/21-25921-A-02-00.hard-filtered.vcf.gz.annovar.out_SUBSET_rev27.7_hg38.tsv"
-input_var_genome.name <- "21-25921-A-02-00"
+input_var_genome.file <- "~/Desktop/PrioritizationPipeline/data/starting_data/NA12878.hard-filtered.vcf.gz.annovar.out_SUBSET_rev27.7_hg38.tsv"
+input_var_genome.name <- "NA12878"
 alt_input_var_genome.name <- paste(input_var_genome.name, ":", sep = "")
 
 # 0.2. Output Variables
 
-output_path <- "/hpf/largeprojects/tcagstor/users/kara.han/PrioritizationPipeline/Results"
+output_path <- "~/Desktop/PrioritizationPipeline/results/new_prioritization_script_results/NA12878"
 output_prefix <- paste(output_path, input_var_genome.name, sep = "/")
 
 # print input and output
@@ -74,9 +82,9 @@ typeseq_coding.chv <- c("exonic", "exonic;splicing", "splicing")
 typeseq_ncrna.chv  <- c("ncRNA_exonic", "ncRNA_splicing","ncRNA_exonic;ncRNA_splicing")
 typeseq_utr.chv    <- c("UTR3", "UTR5", "UTR3;UTR5", "UTR5;UTR3")
 
-eff_lof.chv    <- c("frameshift deletion", "frameshift insertion", "frameshift substitution", "stopgain", "stoploss", "stopgain SNV", "stoploss SNV")
+eff_lof.chv    <- c("frameshift deletion", "frameshift insertion", "frameshift substitution", "frameshift block substitution", "stopgain", "stoploss", "stopgain SNV", "stoploss SNV")
 eff_missn.chv  <- c("nonsynonymous SNV")
-eff_other_sub.chv  <- c("nonframeshift deletion", "nonframeshift insertion", "nonframeshift substitution")
+eff_other_sub.chv  <- c("nonframeshift deletion", "nonframeshift insertion", "nonframeshift substitution", "nonframeshift block substitution")
 eff_syn.chv <- "synonymous SNV"
 
 # 0.4. Cutoffs
@@ -150,7 +158,6 @@ gnomAD_oe_lof_upper_cutoff <- 0.35
 
 # 1.1. Frequency filter
 
-#' Add column F_Rare as a maximum frequency filter
 add_freq_tag <- function(data, freq_max_cutoff) {
   
   freq_max_var <- with(data,
@@ -175,9 +182,7 @@ add_pass_tag <- function(data) {
 }
 
 #' Assumption: data is high-quality (FILTER == "PASS") variants 
-add_qual_tag <- function(data, DP_cutoff, GQ_snp_cutoff, alt_frac_snp_cutoff, 
-                         GQ_non_snp_cutoff, alt_frac_non_snp_cutoff,
-                         GQ_homalt_cutoff, alt_frac_homalt_cutoff) {
+add_qual_tag <- function(data, DP_cutoff) {
   
   # ok_qual_var <- with(data, 
   #                     which(DP >= DP_cutoff &
@@ -233,13 +238,14 @@ add_coding_lof_spliceJunction_tag <- function(data, eff_lof.chv) {
 }
 
 # Missense
-add_missense_tag <- function(data, sift_cutoff, polyphen_cutoff, ma_cutoff, phylopMam_missense_cutoff,
-                             phylopVert_missense_cutoff, CADD_phred_missense_cutoff, missense_rank1_cutoff,
+add_missense_tag <- function(data, sift_cutoff, polyphen_cutoff, ma_cutoff, 
+                             phylopMam_missense_cutoff, phylopVert_missense_cutoff, 
+                             CADD_phred_missense_cutoff, missense_rank1_cutoff,
                              missense_rank2_cutoff) {
   
   if (missense_rank1_cutoff > missense_rank2_cutoff) {
-    stop("missense_rank1_cutoff should be <= missense_rank2_cutoff, otherwise F_DamageType would not be 
-         correctly labelled as 'Missense'")
+    stop("missense_rank1_cutoff should be <= missense_rank2_cutoff, otherwise 
+         F_DamageType would not be correctly labelled as 'Missense'")
   }
   
   missense_mx <- matrix(data = 0, nrow = nrow(data), ncol = 6)
@@ -285,9 +291,11 @@ add_otherc_tag <- function(data, cutoffs1, cutoffs2, rank) {
 } 
 
 # Splicing predictions
-add_splicing_tag <- function(data, spliceAI_DS_AG_cutoff, spliceAI_DP_AG_cutoff, spliceAI_DS_AL_cutoff,
-                             spliceAI_DP_AL_cutoff, spliceAI_DS_DG_cutoff, spliceAI_DP_DG_cutoff,
-                             spliceAI_DS_DL_cutoff, spliceAI_DP_DL_cutoff, dbsc_SNV_ADA_SCORE_cutoff = 0, 
+add_splicing_tag <- function(data, spliceAI_DS_AG_cutoff, spliceAI_DP_AG_cutoff, 
+                             spliceAI_DS_AL_cutoff, spliceAI_DP_AL_cutoff, 
+                             spliceAI_DS_DG_cutoff, spliceAI_DP_DG_cutoff,
+                             spliceAI_DS_DL_cutoff, spliceAI_DP_DL_cutoff, 
+                             dbsc_SNV_ADA_SCORE_cutoff = 0, 
                              dbscSNV_RF_SCORE_cutoff = 0, rank) {
   
   if (rank == 1) {
@@ -411,14 +419,16 @@ add_X_haploid_tag <- function(data) {
 
 get_potential_cmphet_df <- function(cmp_hets_df) { # help function for add_potential_compound_heterozygous_tag
   
-  cmp_hets_df <- funique(cmp_hets_df)
-  cmp_hets_df_final <- subset(cmp_hets_df, subset = gene_symbol %in% na.omit(cmp_hets_df$gene_symbol[fduplicated(cmp_hets_df$gene_symbol)]), select = c(Original_VCFKEY, gene_symbol))
+  cmp_hets_df <- unique(cmp_hets_df)
+  cmp_hets_df_final <- subset(cmp_hets_df, 
+                              subset = gene_symbol %in% na.omit(cmp_hets_df$gene_symbol[duplicated(cmp_hets_df$gene_symbol)]), 
+                              select = c(Original_VCFKEY, gene_symbol))
   
   return(cmp_hets_df_final)
 }
 
 #' Assumption: data is v_full_hq_r05.df for rank == 2 because of F_Qual_tag
-#' This function is used for both main and secondary findings.
+#' This function is used for both main and secondary findings
 add_potential_compound_heterozygous_tag <- function(data, secondary_findings = FALSE) {
   
   if (secondary_findings == TRUE) {
@@ -429,8 +439,12 @@ add_potential_compound_heterozygous_tag <- function(data, secondary_findings = F
   }
   else {
     col_name <- "FM_PCHET"
-    cmp_hets_r1_df <- subset(data, subset = F_Rare <= 0.05 & F_DamageType != "NotDmg", select = c(gene_symbol, Original_VCFKEY))
-    cmp_hets_r2_df <- subset(data, subset = F_Rare <= 0.05 & F_DamageType != "NotDmg" & F_Qual_tag != "LowQuality", select = c(gene_symbol, Original_VCFKEY))
+    cmp_hets_r1_df <- subset(data, 
+                             subset = F_Rare <= 0.05 & F_DamageType != "NotDmg", 
+                             select = c(gene_symbol, Original_VCFKEY))
+    cmp_hets_r2_df <- subset(data, 
+                             subset = F_Rare <= 0.05 & F_DamageType != "NotDmg" & F_Qual_tag != "LowQuality", 
+                             select = c(gene_symbol, Original_VCFKEY))
   }
   
   cmp_hets_r1_df_final <- get_potential_cmphet_df(cmp_hets_r1_df)
@@ -447,7 +461,7 @@ add_potential_compound_heterozygous_tag <- function(data, secondary_findings = F
 add_potential_dmg_compound_heterozygous_tag <- function(data) {
   
   dmg_cmp_hets_df <- subset(data, subset = FM_PCHET == 2 & F_DamageRank == 2, select = gene_symbol, drop = T)
-  dmg_cmp_hets_df_final <- dmg_cmp_hets_df[fduplicated(dmg_cmp_hets_df)]
+  dmg_cmp_hets_df_final <- dmg_cmp_hets_df[duplicated(dmg_cmp_hets_df)]
   
   data$FM_PCHET_DMG <- 0 
   data$FM_PCHET_DMG[with(data, which(gene_symbol %in% dmg_cmp_hets_df_final & FM_PCHET == 2))] <- 1 
@@ -457,7 +471,7 @@ add_potential_dmg_compound_heterozygous_tag <- function(data) {
 
 # DOMINANT
 add_dom_tag <- function(data) {
-
+  
   dom_var <- with(data, which(F_Rare <= 0.005 & F_DamageType != "NotDmg" & (G_AXD_CGD == 1 | G_AXD_HPO == 1)))
   
   data$FM_AXDOM <- 0
@@ -612,7 +626,9 @@ add_complex_cmphet_pathg_tag <- function(data) {
 # complex + single het: uncertain
 add_complex_single_het_uncertain_tag <- function(data) {
   
-  complex_single_het_uncertain_var <- with(data, which(FS1_Select == 1 & (! grepl("AD|AR|XL", CGD_inheritance)) & Zygosity %in% c ("ref-alt", "alt-alt") & F_CmpHet_S1 == 0))
+  complex_single_het_uncertain_var <- with(data, 
+                                           which(FS1_Select == 1 & (! grepl("AD|AR|XL", CGD_inheritance)) & 
+                                                   Zygosity %in% c ("ref-alt", "alt-alt") & F_CmpHet_S1 == 0))
   
   data$FS1_CX_Uncertain <- 0
   data$FS1_CX_Uncertain[complex_single_het_uncertain_var] <- 1
@@ -623,7 +639,8 @@ add_complex_single_het_uncertain_tag <- function(data) {
 # recessive + single het: carrier
 add_recessive_single_het_carrier_tag <- function(data) {
   
-  rec_single_het_var <- with(data, which(FS1_Select == 1 & grepl("AR", CGD_inheritance) & Zygosity %in% c ("ref-alt", "alt-alt") & F_CmpHet_S1 == 0))
+  rec_single_het_var <- with(data, which(FS1_Select == 1 & grepl("AR", CGD_inheritance) & 
+                                           Zygosity %in% c ("ref-alt", "alt-alt") & F_CmpHet_S1 == 0))
   
   data$FS1_AR_Carrier <- 0
   data$FS1_AR_Carrier[rec_single_het_var] <- 1
@@ -634,7 +651,8 @@ add_recessive_single_het_carrier_tag <- function(data) {
 # X-linked + het: carrier
 add_X_het_carrier_tag <- function(data){
   
-  X_het_carrier_var <- with(data, which(FS1_Select == 1 & grepl("XL", CGD_inheritance) & Zygosity %in% c ("ref-alt", "alt-alt") & CHROM == "chrX"))
+  X_het_carrier_var <- with(data, which(FS1_Select == 1 & grepl("XL", CGD_inheritance) & 
+                                          Zygosity %in% c ("ref-alt", "alt-alt") & CHROM == "chrX"))
   
   data$FS1_XL_Carrier <- 0
   data$FS1_XL_Carrier[X_het_carrier_var] <- 1
@@ -696,8 +714,7 @@ get_rare05_variants <- function(data) {
 get_hq_variants <- function(data) {
   
   data <- subset(data, subset = (FILTER == "PASS"))
-  data <- add_qual_tag(data, DP_cutoff, GQ_snp_cutoff, alt_frac_snp_cutoff, GQ_non_snp_cutoff, 
-                       alt_frac_non_snp_cutoff, GQ_homalt_cutoff, alt_frac_homalt_cutoff) # the cutoffs are global variables
+  data <- add_qual_tag(data, DP_cutoff) 
   
   return(data)
 }
@@ -708,8 +725,7 @@ get_hq_variants <- function(data) {
 get_hq_rare05_variants <- function(data) {
   
   data <- subset(data, subset = (FILTER == "PASS"))
-  data <- add_qual_tag(data, DP_cutoff, GQ_snp_cutoff, alt_frac_snp_cutoff, GQ_non_snp_cutoff, 
-                       alt_frac_non_snp_cutoff, GQ_homalt_cutoff, alt_frac_homalt_cutoff)
+  data <- add_qual_tag(data, DP_cutoff)
   data <- add_coding_tag(data)
   
   data$F_DamageType <- "NotDmg"
@@ -762,7 +778,7 @@ get_hq_rare05_variants <- function(data) {
   
   data <- add_dominant_pathogenic_tag(data)
   data <- add_recessive_hom_pathg_tag(data)
-  data <- add_potential_compound_heterozygous_tag(data, secondary_findings = TRUE)
+  data <- add_potential_compound_heterozygous_tag(data, secondary_findings = T)
   data <- add_recessive_cmphet_pathg_tag(data)
   data <- add_X_hom_or_hap_pathg_tag(data, type = "hom")
   data <- add_X_hom_or_hap_pathg_tag(data, type = "hap")
@@ -783,15 +799,20 @@ get_hq_rare05_variants <- function(data) {
 get_chr_zygosity_stats <- function(data) {
   
   chrom_list <- paste("chr", c(1:22, "X", "Y", "M"), sep = "")
-  data <- data[data$CHROM %in% chrom_list, ]
+  data <- as.data.table(data)
+  data <- data[CHROM %in% chrom_list]
   
-  counts <- as.data.frame(table(data[data$CHROM %in% chrom_list, ]$CHROM))
-  chr_counts.mx <- as.data.frame.matrix(table(data[, c ("CHROM", "Zygosity")]))
-  chr_counts.mx <- chr_counts.mx[order(factor(rownames(chr_counts.mx), levels = chrom_list)),]
-  chr_counts.mx <- cbind(counts, chr_counts.mx)[, -c(1)]
+  chr_counts.mx <- table(data$CHROM) %>% as.matrix()
+  zygosity_counts.mx <- table(data[, c("CHROM", "Zygosity")]) %>% as.data.frame.matrix()
   
-  chr_zygosity_counts.mx <- cbind(chr_counts.mx, (chr_counts.mx[, "hom-alt"]) / (chr_counts.mx[, "ref-alt"] + chr_counts.mx[, "hom-alt"] + chr_counts.mx[, "alt-alt"]) * 100)
-  colnames(chr_zygosity_counts.mx)[ncol(chr_zygosity_counts.mx)] <- "HomPerc"
+  chr_zygosity_counts.mx <- cbind(chr_counts.mx, zygosity_counts.mx)
+  chr_zygosity_counts.mx <- chr_zygosity_counts.mx[order(factor(rownames(chr_zygosity_counts.mx), levels = chrom_list)), ]
+  
+  chr_zygosity_counts.mx$HomPerc <- (zygosity_counts.mx[, "hom-alt"]) / 
+    (zygosity_counts.mx[, "ref-alt"] + zygosity_counts.mx[, "hom-alt"] + zygosity_counts.mx[, "alt-alt"]) * 100
+  
+  colnames(chr_zygosity_counts.mx)[1] <- "Freq"
+  chr_zygosity_counts.mx <- tibble::rownames_to_column(chr_zygosity_counts.mx, "Chrom")
   
   return(chr_zygosity_counts.mx)
 }
@@ -799,7 +820,8 @@ get_chr_zygosity_stats <- function(data) {
 add_stats_unique_vcfkey <- function(data, high_quality = FALSE) {
   
   if (high_quality == TRUE) {
-    num_var <- length(unique(subset(data, subset = F_Qual_tag != "LowQuality", select = Original_VCFKEY, drop = T))) # Didn't use a wrapper here for better readability
+    num_var <- length(unique(subset(data, subset = F_Qual_tag != "LowQuality", 
+                                    select = Original_VCFKEY, drop = T))) # Didn't use a wrapper here for better readability
   } else {
     num_var <- length(unique(data$Original_VCFKEY))
   }
@@ -811,7 +833,6 @@ get_num_var <- function(data, cond) {
   
   envir_use <- parent.frame()
   num_var <- data %>% subset(eval(cond, envir = data, enclos = envir_use)) %>% select(Original_VCFKEY) %>% unique() %>% nrow()
-  # num_var <- nrow(unique(subset(data, subset = eval(cond), select = Original_VCFKEY, drop = T))) did not work
   
   return(num_var)
 }
@@ -869,7 +890,6 @@ add_stats_zygosity_tag <- function(data, zygosity, chrX = FALSE, high_quality = 
   num_var <- get_num_var(data, cond)
   
   return(num_var)
-  
 }
 
 add_stats_dmg_tag <- function(data, freq_cutoff, dmg_type, dmg_rank = 0, high_quality) {
@@ -1198,7 +1218,7 @@ add_stats_full_hq_r05_df <- function(data) {
 
 convert_stats_list_to_df <- function(stats.ls, df_name = NA) {
   
-  vals <- sapply(1:length(stats.ls), function(i) {stats.ls[i][[1]]})
+  vals <- sapply(seq_along(stats.ls), function(i) {stats.ls[i][[1]]})
   
   if (!is.na(df_name)) {
     stats.df <- cbind(names(stats.ls), vals, rep(df_name, length(stats.ls))) %>% as.data.frame() %>% setNames(c("Name", "Count", "Source"))
@@ -1218,10 +1238,9 @@ get_all_stats <- function() {
   return(stats.df.all)
 }
 
-
 # (1.5) FILE IMPORTING & PRE-PROCESSING -----------------------------------
 
-v_full.temp.df <- data.table::fread(input_var_genome.file, data.table = T)
+v_full.temp.df <- data.table::fread(input_var_genome.file, data.table = F)
 v_full.temp.df <- subset(v_full.temp.df, select = -c(DP, cg_freq_max))
 
 names(v_full.temp.df) <- gsub(alt_input_var_genome.name, "", names(v_full.temp.df)) # remove "genomeName." from columns
@@ -1229,11 +1248,10 @@ names(v_full.temp.df)[1] <- "CHROM" # modify "X.CHROM" as "CHROM"
 names(v_full.temp.df)
 
 v_full.df <- subset(v_full.temp.df, subset = (Zygosity != "hom-ref" & Zygosity != "unknown"))
-v_full.df$alt_fraction <- v_full.df$AD_ALT/(v_full.df$AD_REF + v_full.df$AD_ALT)
+v_full.df$alt_fraction <- v_full.df$AD_ALT / (v_full.df$AD_REF + v_full.df$AD_ALT)
 
 rm(v_full.temp.df)
 gc()
-
 
 # (2) FREQUENCY FILTER ----------------------------------------------------
 
@@ -1243,22 +1261,18 @@ v_full_r05.df <- add_freq_tag(v_full_r05.df, freq_max_cutoff = 0.005)
 v_full_r05.df <- add_freq_tag(v_full_r05.df, freq_max_cutoff = 0.0015)
 v_full_r05.df <- add_freq_tag(v_full_r05.df, freq_max_cutoff = 0)
 
-
 # (3) QUALITY FILTER ------------------------------------------------------
 
 v_full.df <- add_pass_tag(v_full.df)
 v_full_r05.df <- add_pass_tag(v_full_r05.df)
 
 v_full_hq_r05.df <- subset(v_full_r05.df, subset = (FILTER == "PASS"))
-v_full_hq_r05.df <- add_qual_tag(v_full_hq_r05.df, DP_cutoff, GQ_snp_cutoff, alt_frac_snp_cutoff, 
-                                 GQ_non_snp_cutoff, alt_frac_non_snp_cutoff, GQ_homalt_cutoff, alt_frac_homalt_cutoff)
-
+v_full_hq_r05.df <- add_qual_tag(v_full_hq_r05.df, DP_cutoff)
 
 # (4) CODING TAG ----------------------------------------------------------
 
 v_full_r05.df <- add_coding_tag(v_full_r05.df)
 v_full_hq_r05.df <- add_coding_tag(v_full_hq_r05.df)
-
 
 # (5) DEFINE DAMAGE -------------------------------------------------------
 
@@ -1309,7 +1323,6 @@ v_full_hq_r05.df <- add_utr_dmg_tag(v_full_hq_r05.df, phylopMam_utr_rk2_cutoff,
 v_full_hq_r05.df <- add_nc_dmg_tag(v_full_hq_r05.df, nc_rk1_cutoffs, rank = 1)
 v_full_hq_r05.df <- add_nc_dmg_tag(v_full_hq_r05.df, nc_rk2_cutoffs, rank = 2)
 
-
 # (6) PHENOTYPE FILTER ----------------------------------------------------
 
 # 6.1. HPO dominant
@@ -1320,7 +1333,6 @@ v_full_hq_r05.df <- add_HPO_CGD_dominant_tag(v_full_hq_r05.df, database = "CGD",
 
 # 6.3. Phenotype ranks
 v_full_hq_r05.df <- add_phenotype_rank_tag(v_full_hq_r05.df)
-
 
 # (7) MAIN FINDINGS -------------------------------------------------------
 
@@ -1339,7 +1351,6 @@ v_full_hq_r05.df <- add_dom_tag(v_full_hq_r05.df)
 
 # 7.5. HETEROZYGOUS HOTZONE - What is it?
 v_full_hq_r05.df <- add_het_hotzone_tag(data, gnomAD_oe_lof_upper_cutoff)
-
 
 # (8) SECONDARY FINDINGS --------------------------------------------------
 
@@ -1390,7 +1401,6 @@ v_full_hq_r05.df <- add_secondary_findings_rank3_tag(v_full_hq_r05.df)
 v_full_hq_r05.df <- add_ACMG_tag(v_full_hq_r05.df)
 v_full_hq_r05.df <- add_ACMG_coding_tag(v_full_hq_r05.df, typeseq_coding.chv)
 
-
 # (9) Main ----------------------------------------------------------------
 
 # File import
@@ -1405,7 +1415,7 @@ names(v_full.temp.df)
 # Process the full data
 v_full.df <- subset(v_full.temp.df, subset = (Zygosity != "hom-ref" & Zygosity != "unknown"))
 v_full.df <- add_pass_tag(v_full.df)
-v_full.df$alt_fraction <- v_full.df$AD_ALT/(v_full.df$AD_REF + v_full.df$AD_ALT)
+v_full.df$alt_fraction <- v_full.df$AD_ALT / (v_full.df$AD_REF + v_full.df$AD_ALT)
 
 # Free up memory
 rm(v_full.temp.df)
@@ -1416,22 +1426,51 @@ v_full_r05.df <- get_rare05_variants(v_full.df)
 v_full_hq_r05.df <- get_hq_rare05_variants(v_full_r05.df)
 v_full_hq.df <- get_hq_variants(v_full.df) # used for stats.ls
 
+system.time(get_rare05_variants(v_full.df))
+system.time(get_hq_rare05_variants(v_full_r05.df))
+system.time(get_hq_variants(v_full.df))
+
 # Get chromosome counts + chromosome-wise zygosity counts
 chr_zygosity_stats_full <- get_chr_zygosity_stats(v_full.df)
 chr_zygosity_stats_full_hq <- get_chr_zygosity_stats(v_full_hq.df)
 chr_zygosity_stats_full_hq_r05 <- get_chr_zygosity_stats(v_full_hq_r05.df)
+
+# system.time(get_chr_zygosity_stats(v_full.df))
+# system.time(get_chr_zygosity_stats(v_full_hq.df))
+# system.time(get_chr_zygosity_stats(v_full_hq_r05.df))
 
 # Get stats list for each data frame
 stats.ls.full <- add_stats_full_df(v_full.df)
 stats.ls.hq <- add_stats_full_hq_df(v_full_hq.df)
 stats.ls.hq.r05 <- add_stats_full_hq_r05_df(v_full_hq_r05.df)
 
+# system.time(add_stats_full_df(v_full.df))
+# system.time(add_stats_full_hq_df(v_full_hq.df))
+# system.time(add_stats_full_hq_r05_df(v_full_hq_r05.df))
+
 # Convert stats lists to readable data frames
 stats.df.full <- convert_stats_list_to_df(stats.ls.full)
 stats.df.hq <- convert_stats_list_to_df(stats.ls.hq)
 stats.df.hq.r05 <- convert_stats_list_to_df(stats.ls.hq.r05)
 
+# system.time(convert_stats_list_to_df(stats.ls.full))
+# system.time(convert_stats_list_to_df(stats.ls.hq))
+# system.time(convert_stats_list_to_df(stats.ls.hq.r05))
+
 # Get all stats
 stats.df.all <- get_all_stats()
+
+# Output
+write.table(v_full_r05.df, col.names = T, row.names = F, quote = F, sep = "\t", file = paste(output_prefix, "_Full_Rare05", ".txt", sep = ""))
+write.table(v_full_hq_r05.df, col.names = T, row.names = F, quote = F, sep = "\t", file = paste(output_prefix, "_Full_HQ_Rare05", ".txt", sep = ""))
+
+write.table(chr_zygosity_stats_full, col.names = T, row.names = F, quote = F, sep = "\t", file = paste(output_prefix, "_Stats_chr_zygosity_counts_AllQ_AllSeq_AllFreq", ".txt", sep = ""))
+write.table(chr_zygosity_stats_full_hq, col.names = T, row.names = F, quote = F, sep = "\t", file = paste(output_prefix, "_Stats_chr_zygosity_counts_HQ_AllSeq_AllFreq", ".txt", sep = ""))
+write.table(chr_zygosity_stats_full_hq_r05, col.names = T, row.names = F, quote = F, sep = "\t", file = paste(output_prefix, "_Stats_chr_zygosity_counts_HQ_AllSeq_Rare05", ".txt", sep = ""))
+
+write.table(stats.df.full, col.names = T, row.names = F, quote = F, sep = "\t", file = paste(output_prefix, "_Stats_Full", ".txt", sep = ""))
+write.table(stats.df.hq, col.names = T, row.names = F, quote = F, sep = "\t", file = paste(output_prefix, "_Stats_Full_HQ", ".txt", sep = ""))
+write.table(stats.df.hq.r05, col.names = T, row.names = F, quote = F, sep = "\t", file = paste(output_prefix, "_Stats_Full_HQ_Rare05", ".txt", sep = ""))
+write.table(stats.df.all, col.names = T, row.names = F, quote = F, sep = "\t", file = paste(output_prefix, "_Stats_All", ".txt", sep = ""))
 
 sessionInfo()
