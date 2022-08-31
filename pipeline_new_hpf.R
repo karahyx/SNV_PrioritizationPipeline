@@ -1217,7 +1217,7 @@ names(v_full.temp.df)
 # Process the full data
 v_full.df <- subset(v_full.temp.df, subset = (Zygosity != "hom-ref" & Zygosity != "unknown"))
 v_full.df <- add_pass_tag(v_full.df)
-v_full.df$alt_fraction <- v_full.df$AD_ALT/(v_full.df$AD_REF + v_full.df$AD_ALT)
+v_full.df$alt_fraction <- v_full.df$AD_ALT / (v_full.df$AD_REF + v_full.df$AD_ALT)
 
 # Free up memory
 rm(v_full.temp.df)
