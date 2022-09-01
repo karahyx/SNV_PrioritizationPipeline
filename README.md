@@ -16,6 +16,8 @@ The main change from the old script is the utilization of functions that reduce 
 
 ### Working with PrioritizationPipeline Version 1 (General Version)
 
+#### Script Structure Overview
+
 Section | Name | Purpose | Content |
 --- | --- | --- | --- |
 0 | Variables & Cutoffs | Modify file locations and cutoffs here | 0.1. Input Variables <br /> 0.2. Output Variables <br /> 0.3. Internal Variables <br /> 0.4. Cutoffs <br /> 0.4.1. High-quality Filter <br /> 0.4.2. Define Damage <br /> 0.4.3. Main Findings |
