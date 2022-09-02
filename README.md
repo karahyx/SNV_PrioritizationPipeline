@@ -165,7 +165,7 @@ The main change from the old script is the utilization of functions that reduce 
   <tr>
     <td>5.1. Coding LOF</td>
     <td><code>add_coding_lof_tag()</code> identify variants of type Coding LOF and change their F_DamageRank tag to 2;<br><br><code>add_coding_lof_spliceJunction_tag()</code> identifies variants of type Coding LOF with distance_spliceJunction &lt; 3; note that no change is made to F_DamageRank here</td>
-    <td></td>
+    <td>The variant is Coding LOF if it is coding, has frameshift or point mutations or its type of sequence overlapped is splicing or exonic splicing</td>
   </tr>
   <tr>
     <td>5.2. Missense</td>
