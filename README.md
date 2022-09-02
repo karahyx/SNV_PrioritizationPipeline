@@ -158,13 +158,13 @@ The main change from the old script is the utilization of functions that reduce 
        <br><code>F_S_DamageType</code> = <br> a more stringent Coding LOF damage type tag with the distance from the nearest exon boundary as an additional condition
         <ul>
           <li>Note that F_S_DamageType is specific to the Coding LOF category, thus one of <code>LOF</code> or <code>NotDmg</code></li>
-          <li>Used if desire to focus on more stringent Coding LOF variants
+          <li>May be used if more stringent Coding LOF variants are desired
         </ul>
     </td>
   </tr>
   <tr>
     <td>5.1. Coding LOF</td>
-    <td>Identify variants of type Coding LOF and change their F_DamageRank tag to 2;<br><br>Identify variants of type Coding LOF with distance_spliceJunction &lt; 3; note that F_DamageRank is not changed here</td>
+    <td><code>add_coding_lof_tag()</code> identify variants of type Coding LOF and change their F_DamageRank tag to 2;<br><br><code>add_coding_lof_spliceJunction_tag()</code> identifies variants of type Coding LOF with distance_spliceJunction &lt; 3; note that no change is made to F_DamageRank here</td>
     <td></td>
   </tr>
   <tr>
