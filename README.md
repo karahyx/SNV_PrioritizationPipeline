@@ -18,19 +18,346 @@ The main change from the old script is the utilization of functions that reduce 
 
 #### Script Structure Overview
 
-Section | Name | Content | Purpose | Column Definitions | 
---- | --- | --- | --- | --- |
-0 | Variables & Cutoffs | 0.1. Input Variables <br /> 0.2. Output Variables <br /> 0.3. Internal Variables <br /> 0.4. Cutoffs <br /> 0.4.1. High-quality Filter <br /> 0.4.2. Define Damage <br /> 0.4.3. Main Findings | Modify file locations and cutoffs here | N/A |
-1 | Functions | 1.1. Frequency Filter <br /> 1.2. Quality Filter <br /> 1.3. Coding Tag <br /> 1.4. Define Damage <br /> 1.5. Phenotype Filter <br /> 1.6. Main Findings <br /> 1.7. Secondary Findings <br /> 1.8. Get Final Results <br /> 1.8.1. Rare Variants <br /> 1.8.2. HQ Variants (FILTER == "PASS") <br /> 1.8.3. HQ Rare Variants <br /> 1.9. Stats | All functions used in the script can be found here | N/A |
-1.5 | File Import & Pre-processing | N/A | Imports the original variant data and remove those variants with homozygous reference or unknown zygosity | N/A |
-2 | Frequency Filter | freq_cutoff = 0.05 <br /> freq_cutoff = 0.01 <br /> freq_cutoff = 0.005 <br /> freq_cutoff = 0.0015 <br /> freq_cutoff = 0 | Add a frequency filter to filter for variants that pass a specific allele frequency cutoff | `F_Rare` = the smallest allele frequency that the variant passes |
-3 | Quality Filter | 3.1. Pass tag <br /> 3.2. Quality tag | 3.1. Add a pass tag that indicates whether the variant has a "PASS" FILTER <br /> <br /> 3.2. Add a quality tag that indicates whether variants with "PASS" FILTER pass the DP cutoff | 3.1. `F_Pass` = whether the variant has a "PASS" FILTER <br /> <br /> 3.2. `F_Qual_tag` = <br /> <ul> <li> "OK" if the variant has DP greater than or equal to 2 </li> <li> "LowQuality" otherwise </li> |
-4 | Coding Tag | Coding <br /> ncRNA <br /> Other | Add a coding tag that indicates whether the variant's type of sequence overlapped is coding, ncRNA or other types | `F_Coding` = <br /> <ul> <li> "Coding" if the variant's `typeseq_priority` is one of `exonic`, `exonic;splicing`, or `splicing` </li> <li> "ncRNA" if the variant's `typeseq_priority` is one of `ncRNA_exonic`, `ncRNA_splicing`, or `ncRNA_exonic;ncRNA_splicing` </li> <li> "Other" otherwise </li> |
-5 | Define Damage | 5.0. Variable Initialization <br /> 5.1. Coding LOF <br /> 5.2. Missense <br /> 5.3. Other Coding <br /> 5.4. Splicing Predictions <br /> 5.5. UTR <br /> 5.6. Non-coding | 5.0. Initialize columns `F_DamageType = "NotDmg"` , `F_DamageRank = 0`, and `F_S_DamageType = "NotDmg"` <br /> <br /> 5.1.-5.5. Add specific damaging type tags | 5.1. The variant is Coding LOF if <br />  |
-6 | Phenotype Filter |  | 6.1. HPO dominant <br /> 6.2. CGD dominant <br /> 6.3. Phenotype ranks |
-7 | Main Findings | | 7.1. Recessive Homozygous <br /> 7.2. X-linked Haploid <br /> 7.3. Potential Compound Heterozygous <br /> 7.4. Dominant <br /> 7.5. Heterozygous Hotzone | 
-8 | Secondary Findings | | 8.0. Pathogenicity flag <br /> 8.1. Rank 1 <br /> 8.1.0. Dominant, Pathogenic <br /> 8.1.1. Recessive, Homozygous, Pathogenic <br /> 8.1.2. Recessive, Potential Compound Heterozygous, Pathogenic <br /> 8.1.3. X-linked, Homozygous/Haploid, Pathogenic <br /> 8.1.4. Complex, Homozygous, Pathogenic <br /> 8.1.5. Complex, Potential Compound Heterozygous, Pathogenic <br /> 8.1.6. Complex, Single Heterozygous, Uncertain <br /> 8.1.7. Recessive, Single Heterozygous <br /> 8.1.8. X-linked, Heterozygous, Carrier <br /> 8.2. Rank 2 <br /> 8.3. Rank 3 <br /> 8.4. ACMG Disease |
-9 | Main | | Step 1. File import <br /> Step 2. Re-format column names <br /> Step 3. Process the full data <br /> Step 4. Free up memory <br /> Step 5. Annotate data <br /> Step 6. Get chromosome counts and chromosome-wise zygosity counts <br /> Step 7. Get stats list for each data set <br /> Step 8. Convert stats lists to readable data frames <br /> Step 9. Get all stats in one data frame <br /> Step 10. Output results as .txt files |
+<table>
+<thead>
+  <tr>
+    <th>Section</th>
+    <th>Content</th>
+    <th>Purpose</th>
+    <th>Column Definitions</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td rowspan="7">(0) Variables &amp; Cutoffs</td>
+    <td>0.1. Input variables</td>
+    <td rowspan="7">Modify file locations and cutoffs here</td>
+    <td rowspan="7">N/A</td>
+  </tr>
+  <tr>
+    <td>0.2. Output variables</td>
+  </tr>
+  <tr>
+    <td>0.3. Internal variables</td>
+  </tr>
+  <tr>
+    <td>0.4. Cutoffs</td>
+  </tr>
+  <tr>
+    <td>0.4.1. High-quality filter</td>
+  </tr>
+  <tr>
+    <td>0.4.2. Define damage</td>
+  </tr>
+  <tr>
+    <td>0.4.3. Main findings</td>
+  </tr>
+  <tr>
+    <td rowspan="12">(1) Functions<br></td>
+    <td>1.1. Frequency filter</td>
+    <td rowspan="12">All functions used in the script can be found here</td>
+    <td rowspan="12">N/A</td>
+  </tr>
+  <tr>
+    <td>1.2. Quality filter</td>
+  </tr>
+  <tr>
+    <td>1.3. Coding tag</td>
+  </tr>
+  <tr>
+    <td>1.4. Define damage</td>
+  </tr>
+  <tr>
+    <td>1.5. Phenotype filter</td>
+  </tr>
+  <tr>
+    <td>1.6. Main findings</td>
+  </tr>
+  <tr>
+    <td>1.7. Secondary findings</td>
+  </tr>
+  <tr>
+    <td>1.8. Get final results</td>
+  </tr>
+  <tr>
+    <td>1.8.1. Get rare variants</td>
+  </tr>
+  <tr>
+    <td>1.8.2. Get HQ variants (FILTER = "PASS")</td>
+  </tr>
+  <tr>
+    <td>1.8.3. Get HQ rare variants</td>
+  </tr>
+  <tr>
+    <td>1.9. Stats</td>
+  </tr>
+  <tr>
+    <td>(1.5) File Import &amp; Pre-processing</td>
+    <td>N/A</td>
+    <td>Imports the original variant data and removes those variants with homozygous reference or unknown zygosity</td>
+    <td>N/A</td>
+  </tr>
+  <tr>
+    <td rowspan="5">(2) Frequency Filter</td>
+    <td>allele frequency cutoff = 0.05</td>
+    <td rowspan="5">Add a frequency filter that filters for variants that pass a specific allele frequency cutoff</td>
+    <td rowspan="5"><code>F_Rare</code> = <br> the smallest allele frequency cutoff that the variant passes</td>
+  </tr>
+  <tr>
+    <td>allele frequency cutoff = 0.01</td>
+  </tr>
+  <tr>
+    <td>allele frequency cutoff = 0.005</td>
+  </tr>
+  <tr>
+    <td>allele frequency cutoff = 0.0015</td>
+  </tr>
+  <tr>
+    <td>allele frequency cutoff = 0</td>
+  </tr>
+  <tr>
+    <td rowspan="2">(3) Quality Filter</td>
+    <td>3.1. Pass tag</td>
+    <td>Add a pass tag that indicates whether the variant has FILTER = "PASS"</td>
+    <td><code>F_Pass</code> = <br> whether the variant has a "PASS" FILTER</td>
+  </tr>
+  <tr>
+    <td>3.2. Quality tag</td>
+    <td>Add a quality tag that indicates whether variants with a "PASS" FILTER pass the DP cutoff</td>
+    <td><code>F_Qual_tag</code> = 
+      <ul>
+        <li>"OK" if the variant has DP &ge; 2</li>
+        <li>"LowQuality" if the variant has DP < 2 </li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td>(4) Coding Tag/td>
+    <td>Add coding tags to the variant data</td>
+    <td>Add a coding tag that indicates whether the variants' type of sequence overlapped is Coding, ncRNA, or Other</td>
+    <td><code>F_Coding</code> = 
+      <ul>
+        <li>"Coding" if the variant's <code>typeseq_priority</code> is one of <code>exonic</code>, <code>exonic;splicing</code>, or <code>splicing</code></li>
+        <li>"ncRNA" if the variant's <code>typeseq_priority</code> is one of <code>ncRNA_exonic</code>, <code>ncRNA_splicing</code>, or <code>ncRNA_exonic;ncRNA_splicing</code></li>
+        <li>"Other" otherwise </li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td rowspan="7">(5) Define Damage</td>
+    <td>5.0. Variable initialization</td>
+    <td>Initialize the following columns:<br><code>F_DamageType = "NotDmg"</code><br><code>F_DamageRank = 0</code><br><code>F_S_DamageType = "NotDmg"</code></td>
+    <td><code>F_DamageType</code> = a variant's damage type
+      <ul>
+        <li> one of <code>LOF</code>, <code>Missense</code>, <code>OtherC</code>, <code>Splc</code>, <code>UTR</code>, <code>DmgNcRNA</code>, or <code>NotDmg</code></li>
+      </ul>
+      <br><code>F_DamageRank</code> = a variant's damage rank &isin; {0, 1, 2}
+        <ul>
+          <li>Note that the higher the rank (i.e. the bigger the number), the more damaging a variant is</li>
+        </ul>
+       <br><code>F_S_DamageType</code> = <br> a more stringent Coding LOF damage type tag with the distance from the nearest exon boundary as an additional condition
+        <ul>
+          <li>Note that F_S_DamageType is specific to the Coding LOF category, thus one of <code>LOF</code> or <code>NotDmg</code></li>
+          <li>Used if desire to focus on more stringent Coding LOF variants
+        </ul>
+    </td>
+  </tr>
+  <tr>
+    <td>5.1. Coding LOF</td>
+    <td>Identify variants of type Coding LOF and change their F_DamageRank tag to 2;<br><br>Identify variants of type Coding LOF with distance_spliceJunction &lt; 3; note that F_DamageRank is not changed here</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>5.2. Missense</td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>5.3. Other coding</td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>5.4. Splicing predictions</td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>5.5. UTR</td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>5.6. Non-coding</td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td rowspan="3">(6) Phenotype Filter<br><br></td>
+    <td>6.1. HPO dominant</td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>6.2. CGD dominant</td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>6.3. Phenotype ranks</td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td rowspan="5">(7) Main Findings<br></td>
+    <td>7.1. Recessive homozygous</td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>7.2. X-linked haploid</td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>7.3. Potential compound heterozygous</td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>7.4. Dominant</td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>7.5. Heterozygous hotzone</td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td rowspan="14">(8) Secondary Findings<br></td>
+    <td>8.0. Pathogenicity flag</td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>8.1. Rank 1</td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>8.1.1. Dominant, pathogenic</td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>8.1.2. Recessive, homozygous, pathogenic</td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>8.1.3. Recessive, potential compound heterozygous, <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pathogenic</td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>8.1.4. X-linked, homozygous/haploid, pathogenic</td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>8.1.5. Complex, homozygous, pathogenic</td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>8.1.6. Complex, potential compound heterozygous,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pathogenic</td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>8.1.7. Complex, single heterozygous, uncertain</td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>8.1.8. Recessive, single heterozygous</td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>8.1.9. X-linked, heterozygous, carrier</td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>8.2. Rank 2</td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>8.3. Rank 3</td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>8.4. ACMG disease</td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td rowspan="10">(9) Main<br></td>
+    <td>Step 1. File import</td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>Step 2. Re-format column names</td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>Step 3. Process the original imported variant data</td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>Step 4. Free up memory</td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>Step 5. Annotate the data</td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>Step 6. Get chromosome counts and chromosome-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;wise zygosity counts</td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>Step 7. Get a summary stats list for each data set</td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>Step 8. Convert the stats lists to readable data frames</td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>Step 9. Get all the summary stats in one data frame</td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>Step 10. Output desired results as .txt files</td>
+    <td></td>
+    <td></td>
+  </tr>
+</tbody>
+</table>
 
 #### Running the Script
 
