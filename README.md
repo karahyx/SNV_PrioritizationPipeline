@@ -351,13 +351,30 @@ The main change from the old script is the utilization of functions that reduce 
   </tr>
   <tr>
     <td>7.4. Dominant</td>
-    <td></td>
-    <td></td>
+    <td> Add a tag <code>FM_AXDOM</code> that indicates whether the variant is autosomal dominant </td>
+    <td> <code>FM_AXDOM = 1</code> if the variant
+      <ul>
+        <li> is a rare variant with a maximum allele frequency of 0.005 </li>
+        <li> is damaging, i.e. <code>F_DamageType</code> != "NotDmg" </li>
+        <li> has either <code>G_AXD_CGD == 1</code> or <code>G_AXD_HPO == 1</code> </li>
+      </ul>
+    </td>
   </tr>
   <tr>
     <td>7.5. Heterozygous hotzone</td>
-    <td></td>
-    <td></td>
+    <td> Add a tag <code>FM_HZ</code> that indicates whether the variant is part of a heterozygous hotzone </td>
+    <td> <code>FM_HZ = 1</code> if the variant
+      <ul>
+        <li> is a rare variant with a maximum allele frequency of 0.0015 </li>
+        <li> has zygosity "ref-alt" </li>
+        <li> has <code>gnomAD_oe_lof_upper</code> < 0.35 </li>
+        <li> satisfies one of the following: </li>
+          <ul>
+            <li> <code>F_DamageType</code> is one of "LOF", "Splc", or "OtherC" </li>
+            <li> <code>F_DamageType</code> is "Missense" and <code>F_DamageRank = 2</code> </li>
+          </ul>
+      </ul>
+    </td>
   </tr>
   <tr>
     <td rowspan="14">(8) Secondary Findings<br></td>
