@@ -134,7 +134,7 @@ The main change from the old script is the utilization of functions that reduce 
   <tr>
     <td>(4) Coding Tag/td>
     <td>Add coding tags to the variant data</td>
-    <td>Add a coding tag that indicates whether the variants' type of sequence overlapped is Coding, ncRNA, or Other</td>
+    <td>Add a coding tag that indicates whether the variants' type of sequence overlapped with respect to known genes/transcripts is Coding, ncRNA, or Other</td>
     <td><code>F_Coding</code> = 
       <ul>
         <li>"Coding" if the variant's <code>typeseq_priority</code> is one of <code>exonic</code>, <code>exonic;splicing</code>, or <code>splicing</code></li>
@@ -206,7 +206,7 @@ The main change from the old script is the utilization of functions that reduce 
   </tr>
   <tr>
     <td>5.3. Other coding</td>
-    <td> Identify variants of type <code>Other coding</code> and change its <code>F_DamageRank</code> to either 1 or 2 based on specific conditions </td>
+    <td> Identify variants of type <code>Other coding</code> and change its <code>F_DamageRank</code> to either 1 or 2 based on specific cutoffs </td>
     <td> The variant is <code>Other coding</code> if it
       <ul>
         <li> is coding </li> 
@@ -231,7 +231,7 @@ The main change from the old script is the utilization of functions that reduce 
   </tr>
   <tr>
     <td>5.4. Splicing predictions</td>
-    <td> Predict whether the variant is of type "Splicing" and change its <code>F_DamageRank</code> to either 1 or 2 based on specific conditions </td>
+    <td> Predict whether the variant is of type <code>Splicing</code> and change its <code>F_DamageRank</code> to either 1 or 2 based on specific conditions </td>
     <td> The variant is predicted to be "Splicing" and has <code>F_DamageRank = 1</code> if
       <ul>
         <li> its <code>F_DamageType</code> is not "LOF", "Splc" or "Missense" </li>
@@ -260,8 +260,16 @@ The main change from the old script is the utilization of functions that reduce 
   </tr>
   <tr>
     <td>5.5. UTR</td>
-    <td></td>
-    <td></td>
+    <td> Identify variants of type <code>UTR</code> and change its <code>F_DamageRank</code> to 1 or 2 based on specific cutoffs </td>
+    <td> The variant is <code>UTR</code> if 
+      <ul>
+        <li> the type of sequence overlapped with respect to known genes/transcripts is "UTR3", "UTR5", or both </li>
+        <li> has a PhastCons score for the Placental Mammal genome group </li>
+        <li> satisfies <code>phylopMam_avg</code> &ge; <code>phylopMam_cutoff</code> or <code>CADD_phred</code> &ge; <code>CADD_phred_cutoff</code> </li>
+      </ul> <br>
+      <code>F_DamageRank = 1</code> if <code>phylopMam_cutoff</code> = 1.1 and <code>CADD_phred_cutoff</code> = 13.7 <br><br>
+      <code>F_DamageRank = 2</code> if <code>phylopMam_cutoff</code> = 1.3 and <code>CADD_phred_cutoff</code> = 21.1
+    </td>
   </tr>
   <tr>
     <td>5.6. Non-coding</td>
