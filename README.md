@@ -379,7 +379,12 @@ The main change from the old script is the utilization of functions that reduce 
   <tr>
     <td rowspan="14">(8) Secondary Findings<br></td>
     <td>8.0. Pathogenicity flag</td>
-    <td> </td>
+    <td> Add two pathogenicity related flags:
+      <ul> 
+        <li> flag <code>F_Clinvar_Pathg</code> indicates whether the variant has at least one record submitted with pathogenic or likely pathogenic based on ClinVar </li>
+        <li> flag <code>F_Clinvar_notPathg</code> indicates whether the variant has no current value of pathogenic based on ClinVar
+      </ul>
+    </td>
     <td></td>
   </tr>
   <tr>
