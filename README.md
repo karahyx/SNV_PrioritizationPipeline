@@ -273,8 +273,8 @@ The main change from the old script is the utilization of functions that reduce 
   </tr>
   <tr>
     <td>5.6. Non-coding</td>
-    <td> Identify variants of type <code>Non-coding (nc)</code> and change its <code>F_DamageRank</code> to either 1 or 2 based on specific cutoffs </td>
-      <td> The variant is <code>Non-coding (nc)</code> if 
+    <td> Identify variants of type <code>Non-coding</code> and change its <code>F_DamageRank</code> to either 1 or 2 based on specific cutoffs </td>
+      <td> The variant is <code>Non-coding</code> if 
         <ul>
           <li> it is identified as "ncRNA" in <code>F_Coding</code> </li>
           <li> its full gene name is not "pseudogene" </li>
