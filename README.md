@@ -462,8 +462,14 @@ The main change from the old script is the utilization of functions that reduce 
   </tr>
   <tr>
     <td>8.1.4. X-linked, homozygous/haploid, pathogenic</td>
-    <td></td>
-    <td></td>
+    <td> Add a tag <code>FS1_XL_Pathg_Hom</code> that indicates whether a variant is X-linked homozygous and pathogenic <br><br>
+    Add a tag <code>FS1_XL_Pathg_Hap</code> that indicates whether a variant is X-linked haploid and pathogenic </td>
+    <td> <code>FS1_XL_Pathg_Hom = 1</code> or <code>FS1_XL_Pathg_Hap = 1</code> if a variant
+      <ul>
+        <li> belongs to rank 1 for secondary findings </li>
+        <li> has X-linked (XL) as one of its modes of inheritance based on <code>CGD_inheritance</code> </li>
+      </ul>
+    </td>
   </tr>
   <tr>
     <td>8.1.5. Complex, homozygous, pathogenic</td>
