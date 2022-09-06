@@ -292,18 +292,33 @@ The main change from the old script is the utilization of functions that reduce 
   <tr>
     <td rowspan="3">(6) Phenotype Filter<br><br></td>
     <td>6.1. HPO dominant</td>
-    <td></td>
-    <td></td>
+    <td> Add a tag <code>G_AXD_HPO</code> that indicates whether the variant has autosomal dominant (AD) as their mode of inheritance based on the HPO annotations </td>
+    <td> <code>G_AXD_HPO</code> = 
+      <ul>
+        <li> 1, if the pattern "@AD" is found in column <code>HPO</code> </li>
+        <li> 0, otherwise </li>
+      </ul>
+    </td>
   </tr>
   <tr>
     <td>6.2. CGD dominant</td>
-    <td></td>
-    <td></td>
+    <td> Add a tag <code>G_AXD_CGD</code> that indicates whether the variant has autosomal dominant (AD) as their mode of inheritance based on the CGD inheritance annotations </td>
+    <td> <code>G_AXD_CGD</code> = 
+      <ul>
+        <li> 1, if the pattern "AD" is found in column <code>CGD_inheritance</code> </li>
+        <li> 0, otherwise </li>
+      </ul></td>
   </tr>
   <tr>
     <td>6.3. Phenotype ranks</td>
-    <td></td>
-    <td></td>
+    <td> Add a tag <code>F_PhenoRank</code> that indicates the phenotype rank of a variant. Here, rank 1 and 2 are based on mouse and human phenotype annotations, respectively </td>
+    <td> <code>F_PhenoRank</code> =
+      <ul>
+        <li> 1, if the variant has an MPO annotation imported from MGI (Mouse Genome Informatics) and mapped from an orthologous mouse gene </li>
+        <li> 2, if the variant has one or more annotations from OMIM, HPO, or CGD </li>
+        <li> 0, otherwise </li>
+      </ul>
+    </td>
   </tr>
   <tr>
     <td rowspan="5">(7) Main Findings<br></td>
