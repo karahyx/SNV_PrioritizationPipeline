@@ -168,7 +168,7 @@ The main change from the old script is the utilization of functions that reduce 
     <td>The variant is <code>Coding LOF</code> if it
       <ul>
         <li> is coding </li>
-        <li> causes frameshift or point mutations; or its type of sequence overlapped is splicing or exonic splicing </li>
+        <li> causes frameshift or point mutations in the coding sequence; or its type of sequence overlapped is splicing or exonic splicing </li>
       </ul>
       <br>The <code>F_S_DamageType</code> is changed to "LOF" from "NotDmg" when
       <ul>
@@ -206,8 +206,24 @@ The main change from the old script is the utilization of functions that reduce 
   </tr>
   <tr>
     <td>5.3. Other coding</td>
-    <td></td>
-    <td></td>
+    <td> Identify variants of type <code>Other coding</code> and change its <code>F_DamageRank</code> to either 1 or 2 based on specific conditions </td>
+    <td> The variant is <code>Other coding</code> and has <code>F_DamageRank</code> = 1 if it
+      <ul>
+        <li> is coding </li> 
+        <li> causes nonframeshift mutations in the coding sequence </li>
+        <li> satisfies one of the two conditions: </li>
+          <ul>
+            <li> is not an exact match to common dbSNP track UCSC, and <code>phylopMam_avg</code> &ge; 1.2 or <code>phylopVert100_avg</code> &ge; 2.5 or <code>CADD_phred</code> &ge; 13.5 </li>
+              <ul>
+                <li> The corresponding cutoffs are 2.0, 3.5, 14.0 for <code>F_DamageRank</code> to become 2 </li>
+              </ul>
+            <li> is not an exact match to dbSNP or overlap-based match for dbSNP, and <code>phylopMam_avg</code> &ge; 1.5 or <code>phylopVert100_avg</code> &ge; 2.0 or <code>CADD_phred</code> &ge; 13.0 </li>
+              <ul>
+                <li> The corresponding cutoffs are 1.5, 2.5, 13.5 for <code>F_DamageRank</code> to become 2 </li>
+              </ul>
+          </ul>
+      </ul>
+    </td>
   </tr>
   <tr>
     <td>5.4. Splicing predictions</td>
