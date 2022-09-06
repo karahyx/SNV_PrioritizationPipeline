@@ -382,10 +382,12 @@ The main change from the old script is the utilization of functions that reduce 
     <td> Add two pathogenicity related flags:
       <ul> 
         <li> flag <code>F_Clinvar_Pathg</code> indicates whether the variant has at least one record submitted with pathogenic or likely pathogenic based on ClinVar </li>
-        <li> flag <code>F_Clinvar_notPathg</code> indicates whether the variant has no current value of pathogenic based on ClinVar
+        <li> flag <code>F_Clinvar_notPathg</code> indicates whether the variant has no current value of pathogenic based on ClinVar </li>
       </ul>
     </td>
-    <td></td>
+    <td> <code>F_Clinvar_Pathg = 1</code> if <code>Clinvar_SIG_Simple</code> = 1
+    <br><br> <code>F_Clinvar_notPathg = 1</code> if <code>Clinvar_SIG_Simple</code> = 0 
+    </td>
   </tr>
   <tr>
     <td>8.1. Rank 1</td>
