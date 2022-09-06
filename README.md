@@ -323,13 +323,26 @@ The main change from the old script is the utilization of functions that reduce 
   <tr>
     <td rowspan="5">(7) Main Findings<br></td>
     <td>7.1. Recessive homozygous</td>
-    <td></td>
-    <td></td>
+    <td> Add a tag <code>FM_HOM</code> that indicates whether the variant is recessive homozygous </td>
+    <td> <code>FM_HOM = 1</code> if the variant
+      <ul>
+        <li> is a rare variant with a maximum allele frequency of 0.05 </li>
+        <li> is damaging, i.e. <code>F_DamageType</code> != "NotDmg" </li>
+        <li> has zygosity "homozygous alternative" (hom-alt) </li>
+      </ul>
+    </td>
   </tr>
   <tr>
     <td>7.2. X-linked haploid</td>
-    <td></td>
-    <td></td>
+    <td> Add a tag <code>FM_XHAP</code> that indicates whether the variant is an X-linked haploid </td>
+    <td> <code>FM_XHAP = 1</code> if the variant
+      <ul>
+        <li> is a rare variant with a maximum allele frequency of 0.05 </li>
+        <li> is damaging, i.e. <code>F_DamageType</code> != "NotDmg" </li>
+        <li> has zygosity "homozygous alternative" (hom-alt) </li>
+        <li> is found in chromosome X </li>
+      </ul>
+    </td>
   </tr>
   <tr>
     <td>7.3. Potential compound heterozygous</td>
