@@ -207,28 +207,56 @@ The main change from the old script is the utilization of functions that reduce 
   <tr>
     <td>5.3. Other coding</td>
     <td> Identify variants of type <code>Other coding</code> and change its <code>F_DamageRank</code> to either 1 or 2 based on specific conditions </td>
-    <td> The variant is <code>Other coding</code> and has <code>F_DamageRank</code> = 1 if it
+    <td> The variant is <code>Other coding</code> if it
       <ul>
         <li> is coding </li> 
         <li> causes nonframeshift mutations in the coding sequence </li>
         <li> satisfies one of the two conditions: </li>
           <ul>
-            <li> is not an exact match to common dbSNP track UCSC, and <code>phylopMam_avg</code> &ge; 1.2 or <code>phylopVert100_avg</code> &ge; 2.5 or <code>CADD_phred</code> &ge; 13.5 </li>
-              <ul>
-                <li> The corresponding cutoffs are 2.0, 3.5, 14.0 for <code>F_DamageRank</code> to become 2 </li>
-              </ul>
-            <li> is not an exact match to dbSNP or overlap-based match for dbSNP, and <code>phylopMam_avg</code> &ge; 1.5 or <code>phylopVert100_avg</code> &ge; 2.0 or <code>CADD_phred</code> &ge; 13.0 </li>
-              <ul>
-                <li> The corresponding cutoffs are 1.5, 2.5, 13.5 for <code>F_DamageRank</code> to become 2 </li>
-              </ul>
+            <li> is not an exact match to common dbSNP track UCSC, and <code>phylopMam_avg</code> &ge; <code>phylopMam_cutoff_cond1</code> or <code>phylopVert100_avg</code> &ge; <code>phylopVert_cutoff_cond1</code> or <code>CADD_phred</code> &ge; <code>CADD_phred_cutoff_cond1</code> </li>
+            <li> is not an exact match to dbSNP or overlap-based match for dbSNP, and <code>phylopMam_avg</code> &ge; <code>phylopMam_cutoff_cond2</code> or <code>phylopVert100_avg</code> &ge; <code>phylopVert_cutoff_cond2</code> or <code>CADD_phred</code> &ge; <code>CADD_phred_cutoff_cond2</code> </li>
           </ul>
+      </ul><br>
+      <code>F_DamageRank</code> = 1 if 
+      <ul>
+        <li><code>phylopMam_cutoff_cond1</code> = 1.2, <code>phylopVert_cutoff_cond1</code> = 2.5, <code>CADD_phred_cutoff_cond1</code> = 13.5 </li>
+        <li><code>phylopMam_cutoff_cond2</code> = 1.5, <code>phylopVert_cutoff_cond2</code> = 2.0, <code>CADD_phred_cutoff_cond2</code> = 13.0 </li>
+      </ul><br>
+      <code>F_DamageRank</code> = 2 if 
+      <ul>
+        <li><code>phylopMam_cutoff_cond1</code> = 2.0, <code>phylopVert_cutoff_cond1</code> = 3.5, <code>CADD_phred_cutoff_cond1</code> = 14.0 </li>
+        <li><code>phylopMam_cutoff_cond2</code> = 1.5, <code>phylopVert_cutoff_cond2</code> = 2.5, <code>CADD_phred_cutoff_cond2</code> = 13.5 </li>
       </ul>
     </td>
   </tr>
   <tr>
     <td>5.4. Splicing predictions</td>
-    <td>  </td>
-    <td></td>
+    <td> Predict whether the variant is of type "Splicing" and change its <code>F_DamageRank</code> to either 1 or 2 based on specific conditions </td>
+    <td> The variant is predicted to be "Splicing" and has <code>F_DamageRank = 1</code> if
+      <ul>
+        <li> its <code>F_DamageType</code> is not "LOF", "Splc" or "Missense" </li>
+        <li> its <code>F_DamageRank</code> &ne; 2 </li>
+        <li> satisfies one or more of the following: </li>
+          <ul>
+            <li> <code>spliceAI_DS_AG</code> > 0.2 & <code>|spliceAI_DP_AG|</code> &le; 50 </li>
+            <li> <code>spliceAI_DS_AL</code> > 0.2 & <code>|spliceAI_DP_AL|</code> &le; 50 </li>
+            <li> <code>spliceAI_DS_DG</code> > 0.2 & <code>|spliceAI_DP_DG|</code> &le; 50 </li>
+            <li> <code>spliceAI_DS_DL</code> > 0.2 & <code>|spliceAI_DP_DL|</code> &le; 50 </li>
+          </ul>
+      </ul> <br>
+      The variant is predicted to be "Splicing" and has <code>F_DamageRank = 2</code> if
+      <ul>
+        <li> its <code>F_DamageType</code> is not "LOF" </li>
+        <li> satisfies one or more of the following: </li>
+          <ul>
+            <li> <code>spliceAI_DS_AG</code> > 0.2 & <code>|spliceAI_DP_AG|</code> &le; 50 </li>
+            <li> <code>spliceAI_DS_AL</code> > 0.2 & <code>|spliceAI_DP_AL|</code> &le; 50 </li>
+            <li> <code>spliceAI_DS_DG</code> > 0.2 & <code>|spliceAI_DP_DG|</code> &le; 50 </li>
+            <li> <code>spliceAI_DS_DL</code> > 0.2 & <code>|spliceAI_DP_DL|</code> &le; 50 </li>
+            <li> <code>dbscSNV_ADA_SCORE</code> > 0.6 & <code>dbscSNV_RF_SCORE</code> > 0.6 </li>
+          </ul>
+      </ul>
+    </td>
   </tr>
   <tr>
     <td>5.5. UTR</td>
