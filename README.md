@@ -404,7 +404,7 @@ The main change from the old script is the utilization of functions that reduce 
   </tr>
   <tr>
     <td>8.1. Rank 1</td>
-    <td> Add a tag <code>FS1_Select</code> that indicates whether a variant belongs to rank 1 in secondary findings </td>
+    <td> Add a tag <code>FS1_Select</code> that indicates whether a variant belongs to rank 1 for secondary findings </td>
     <td> <code>FS1_Select = 1</code> if the variant
       <ul>
         <li> has CGD disease annotations </li>
@@ -421,7 +421,7 @@ The main change from the old script is the utilization of functions that reduce 
     <td> Add a tag <code>FS1_AD_Pathg_Any</code> that indicates whether a variant is dominant and pathogenic </td>
     <td> A variant has <code>FS1_AD_Pathg_Any = 1</code> if
       <ul>
-        <li> it belongs to rank 1 in secondary findings, i.e. <code>FS1_Select = 1</code> </li>
+        <li> it belongs to rank 1 for secondary findings, i.e. <code>FS1_Select = 1</code> </li>
         <li> it has autosomal dominant (AD) as one of its modes of inheritance based on <code>CGD_inheritance</code> </li>
       </ul>
     </td>
@@ -439,12 +439,24 @@ The main change from the old script is the utilization of functions that reduce 
   </tr>
   <tr>
     <td>8.1.3. Recessive, potential compound heterozygous, pathogenic</td>
-    <td> Add a tag <code>FS1_AR_Pathg_PotCompHet</code> that indicates whether a variant is recessive, potential compound heterozygous, and pathogenic </td>
-    <td> A variant has <code>FS1_AR_Pathg_PotCompHet</code> if it
+    <td> Two tags are being added here:
       <ul>
-        <li> belongs to rank 1 in secondary findings, i.e. <code>FS1_Select = 1</code> </li>
+        <li> Add a tag <code>F_CmpHet_S1</code> that indicates whether a variant is a potential compound heterozygote </li>
+        <li> Add a tag <code>FS1_AR_Pathg_PotCompHet</code> that indicates whether a variant is recessive, potential compound heterozygous, and pathogenic </li>
+      </ul>
+    </td>
+    <td>
+      <code>F_CmpHet_S1</code> =
+      <ul>
+        <li> 1, if it has a "PASS" FILTER and belongs to rank 1 for secondary findings </li>
+        <li> 2, if it has a "PASS" FILTER and DP &ge; 2 and belongs to rank 1 for secondary findings </li>
+        <li> 0, otherwise </li>
+      </ul><br>
+      A variant has <code>FS1_AR_Pathg_PotCompHet = 1</code> if it
+      <ul>
+        <li> belongs to rank 1 for secondary findings </li>
         <li> has autosomal recessive (AR) as one of its modes of inheritance based on <code>CGD_inheritance</code> </li>
-        <li> is indicated as  </li>
+        <li> has <code>F_CmpHet_S1</code> &ge; 1 </li>
       </ul>
     </td>
   </tr>
