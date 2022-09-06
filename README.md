@@ -346,8 +346,15 @@ The main change from the old script is the utilization of functions that reduce 
   </tr>
   <tr>
     <td>7.3. Potential compound heterozygous</td>
-    <td></td>
-    <td></td>
+    <td> Add a tag <code>FM_PCHET</code> that indicates whether the variant is a potential compound heterozygote. <br>
+    <br> Note that the method used involves looking for multiple mutations on the same gene. </td>
+    <td> <code>FM_PCHET</code> = 
+      <ul>
+        <li> 1, if the variant has a maximum allele frequency of 0.05 and is damaging </li>
+        <li> 2, if the variant has a maximum allele frequency of 0.05, is damaging, and is high quality (i.e. has a "PASS" FILTER and DP &ge; 2) </li>
+        <li> 0, otherwise </li>
+      </ul>
+    </td>
   </tr>
   <tr>
     <td>7.4. Dominant</td>
