@@ -472,44 +472,113 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td>8.1.5. Complex, homozygous, pathogenic</td>
-    <td></td>
-    <td></td>
+    <td>8.1.5. Complex, homozygous/haploid, pathogenic</td>
+    <td> Add a tag <code>FS1_CX_Pathg_HomHap</code> that indicates whether a variant is complex, homozygous/haploid, and pathogenic </td>
+    <td> A variant has <code>FS1_CX_Pathg_HomHap = 1</code> if it
+      <ul>
+        <li> belongs to rank 1 for secondary findings </li>
+        <li> does not have AD, AR, or XL as one of its modes of inheritance based on <code>CGD_inheritance</code> </li>
+        <li> has zygosity "hom-alt" </li>
+      </ul>
+    </td>
   </tr>
   <tr>
     <td>8.1.6. Complex, potential compound heterozygous, pathogenic</td>
-    <td></td>
-    <td></td>
+    <td> Add a tag <code>FS1_CX_Pathg_PotCompHet</code> that indicates whether a variant is complex, potential compound heterozygous, and pathogenic </td>
+    <td> A variant has <code>FS1_CX_Pathg_HomHap = 1</code> if it
+      <ul>
+        <li> belongs to rank 1 for secondary findings </li>
+        <li> does not have AD, AR, or XL as one of its modes of inheritance based on <code>CGD_inheritance</code> </li>
+        <li> has <code>F_CmpHet_S1</code> &ge; 1 </li>
+      </ul>
+    </td>
   </tr>
   <tr>
     <td>8.1.7. Complex, single heterozygous, uncertain</td>
-    <td></td>
-    <td></td>
+    <td> Add a tag <code>FS1_CX_Uncertain</code> that indicates whether a variant is complex, single heterozygous, and pathogenicity uncertain </td>
+    <td> A variant has <code>FS1_CX_Uncertain = 1</code> if it
+      <ul>
+        <li> belongs to rank 1 for secondary findings </li>
+        <li> does not have AD, AR, or XL as one of its modes of inheritance based on <code>CGD_inheritance</code> </li>
+        <li> is not potential compound heterozygous, i.e. has <code>F_CmpHet_S1 = 0 </code> </li>
+        <li> has zygosity "heterozygous reference" (ref-alt) or "heterozygous alternate" (alt-alt) </li>
+      </ul>
+    </td>
   </tr>
   <tr>
-    <td>8.1.8. Recessive, single heterozygous</td>
-    <td></td>
-    <td></td>
+    <td>8.1.8. Recessive, single heterozygous, carrier</td>
+    <td> Add a tag <code>FS1_AR_Carrier</code> that indicates whether a variant is recessive, single heterozygous, and a carrier </td>
+    <td> A variant has <code>FS1_AR_Carrier = 1</code> if it
+      <ul>
+        <li> belongs to rank 1 for secondary findings </li>
+        <li> has AR as one of its modes of inheritance based on <code>CGD_inheritance</code> </li>
+        <li> is not potential compound heterozygous, i.e. has <code>F_CmpHet_S1 = 0 </code> </li>
+        <li> has zygosity "heterozygous reference" (ref-alt) or "heterozygous alternate" (alt-alt) </li>
+      </ul>
+    </td>
   </tr>
   <tr>
     <td>8.1.9. X-linked, heterozygous, carrier</td>
-    <td></td>
-    <td></td>
+    <td> Add a tag <code>FS1_XL_Carrier</code> that indicates whether a variant is X-linked, heterozygous, and a carrier </td>
+    <td> A variant has <code>FS1_XL_Carrier = 1</code> if it
+      <ul>
+        <li> belongs to rank 1 for secondary findings </li>
+        <li> has XL as one of its modes of inheritance based on <code>CGD_inheritance</code> </li>
+        <li> is found in chromosome X </li>
+        <li> has zygosity "heterozygous reference" (ref-alt) or "heterozygous alternate" (alt-alt) </li>
+      </ul>
+    </td>
   </tr>
   <tr>
     <td>8.2. Rank 2</td>
-    <td></td>
-    <td></td>
+    <td> Add a tag <code>FS2_Select</code> that indicates whether a variant belongs to rank 2 for secondary findings </td>
+    <td> <code>FS2_Select = 1</code> if the variant
+      <ul>
+        <li> has CGD disease annotations </li>
+        <li> has a "PASS" FILTER and DP &ge; 2 </li>
+        <li> has a maximum allele frequency of 0.01 </li>
+        <li> satisfies one or more of the following: </li>
+          <ul>
+            <li> is of type Coding LOF, i.e. <code>F_DamageType = "LOF"</code></li>
+            <li> indicated as pathogenic or likely pathogenic by ClinVar, i.e. <code>F_Clinvar_Pathg = 1</code> </li>
+            <li> not indicated as no current value of pathogenic by ClinVar, i.e. <code>F_Clinvar_notPathg = 0</code> 
+          </ul>
+      </ul>
+    </td>
   </tr>
   <tr>
     <td>8.3. Rank 3</td>
-    <td></td>
-    <td></td>
+    <td> Add a tag <code>FS3_Select</code> that indicates whether a variant belongs to rank 3 for secondary findings </td>
+    <td> <code>FS3_Select = 1</code> if the variant
+      <ul>
+        <li> has CGD disease annotations </li>
+        <li> has a "PASS" FILTER and DP &ge; 2 </li>
+        <li> has a maximum allele frequency of 0.01 </li>
+        <li> is damaging </li>
+        <li> satisfies one or more of the following: </li>
+          <ul>
+            <li> is of type Coding LOF, i.e. <code>F_DamageType = "LOF"</code></li>
+            <li> indicated as pathogenic or likely pathogenic by ClinVar, i.e. <code>F_Clinvar_Pathg = 1</code> </li>
+            <li> not indicated as no current value of pathogenic by ClinVar, i.e. <code>F_Clinvar_notPathg = 0</code> 
+          </ul>
+      </ul>
+    </td>
   </tr>
   <tr>
     <td>8.4. ACMG disease</td>
-    <td></td>
-    <td></td>
+    <td> Add two tags:
+      <ul>
+        <li> <code>F_ACMG</code> indicates whether the variant has an ACMG disease annotation </li>
+        <li> <code>F_ACMG_Coding</code> indicates whether the variant is coding and has an ACMG disease annotation </li>
+      </ul> 
+    </td>
+  <td> <code>F_ACMG = 1</code> if the variant does not have NA in the <code>ACMG_disease</code> column <br><br>
+    <code>F_ACMG_Coding = 1</code> if the variant
+      <ul>
+        <li> does not have NA in the <code>ACMG_disease</code> column </li>
+        <li> whose type of sequence overlapped with respect to known genes/transcripts is one of "exonic", "splicing", or "exonic;splicing" </li>
+      </ul>
+    </td>
   </tr>
   <tr>
     <td rowspan="10">(9) Main</td>
