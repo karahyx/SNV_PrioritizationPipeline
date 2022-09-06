@@ -379,13 +379,22 @@ The main change from the old script is the utilization of functions that reduce 
   <tr>
     <td rowspan="14">(8) Secondary Findings<br></td>
     <td>8.0. Pathogenicity flag</td>
-    <td></td>
+    <td> </td>
     <td></td>
   </tr>
   <tr>
     <td>8.1. Rank 1</td>
-    <td></td>
-    <td></td>
+    <td> Add a tag <code>FS1_Select</code> that indicates whether a variant belongs to rank 1 in secondary findings </td>
+    <td> <code>FS1_Select = 1</code> if the variant
+      <ul>
+        <li> has CGD disease annotations </li>
+        <li> satisfies one or more of the following: </li>
+          <ul>
+            <li> is "Coding LOF" with <code>distance_spliceJunction</code> < 3, i.e. <code>F_S_DamageType = "LOF"</code> </li>
+            <li> indicated as pathogenic or likely pathogenic by ClinVar </li>
+          </ul>
+      </ul>
+    </td>
   </tr>
   <tr>
     <td>8.1.1. Dominant, pathogenic</td>
