@@ -132,7 +132,7 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td>(4) Coding Tag/td>
+    <td>(4) Coding Tag</td>
     <td>Add coding tags to the variant data</td>
     <td>Add a coding tag that indicates whether the variants' type of sequence overlapped with respect to known genes/transcripts is Coding, ncRNA, or Other</td>
     <td><code>F_Coding</code> = 
@@ -346,13 +346,19 @@ The main change from the old script is the utilization of functions that reduce 
   </tr>
   <tr>
     <td>7.3. Potential compound heterozygous</td>
-    <td> Add a tag <code>FM_PCHET</code> that indicates whether the variant is a potential compound heterozygote. <br>
-    <br> Note that the method used involves looking for multiple mutations on the same gene. </td>
+    <td> <code>add_potential_compound_heterozygous_tag()</code> adds a tag <code>FM_PCHET</code> that indicates whether the variant is a potential compound heterozygote. <br>
+    <br> <code>add_potential_dmg_compound_heterozygous_tag()</code> adds a tag <code>FM_PCHET_DMG</code> that indicates whether the variant is a damaging potential compound heterozygote. <br>
+    <br> Note that the method used involves looking for multiple mutations on the same gene.  </td>
     <td> <code>FM_PCHET</code> = 
       <ul>
         <li> 1, if the variant has a maximum allele frequency of 0.05 and is damaging </li>
         <li> 2, if the variant has a maximum allele frequency of 0.05, is damaging, and is high quality (i.e. has a "PASS" FILTER and DP &ge; 2) </li>
         <li> 0, otherwise </li>
+      </ul>
+      <br> A variant has <code>FM_PCHET_DMG = 1</code> if it
+      <ul>
+        <li> has <code>FM_PCHET</code> = 2 </li>
+        <li> has a damage rank of 2 </li>
       </ul>
     </td>
   </tr>
@@ -412,18 +418,35 @@ The main change from the old script is the utilization of functions that reduce 
   </tr>
   <tr>
     <td>8.1.1. Dominant, pathogenic</td>
-    <td></td>
-    <td></td>
+    <td> Add a tag <code>FS1_AD_Pathg_Any</code> that indicates whether a variant is dominant and pathogenic </td>
+    <td> A variant has <code>FS1_AD_Pathg_Any = 1</code> if
+      <ul>
+        <li> it belongs to rank 1 in secondary findings, i.e. <code>FS1_Select = 1</code> </li>
+        <li> it has autosomal dominant (AD) as one of its modes of inheritance based on <code>CGD_inheritance</code> </li>
+      </ul>
+    </td>
   </tr>
   <tr>
     <td>8.1.2. Recessive, homozygous, pathogenic</td>
-    <td></td>
-    <td></td>
+    <td> Add a tag <code>FS1_AR_Pathg_Hom</code> that indicates whether a variant is recessive, homozygous and pathogenic </td>
+    <td> A variant has <code>FS1_AR_Pathg_Hom</code> if it
+      <ul>
+        <li> belongs to rank 1 in secondary findings, i.e. <code>FS1_Select = 1</code> </li>
+        <li> has autosomal recessive (AR) as one of its modes of inheritance based on <code>CGD_inheritance</code> </li>
+        <li> has zygosity "homozygous alternative" (hom-alt) </li>
+      </ul>
+    </td>
   </tr>
   <tr>
-    <td>8.1.3. Recessive, potential compound heterozygous, <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pathogenic</td>
-    <td></td>
-    <td></td>
+    <td>8.1.3. Recessive, potential compound heterozygous, pathogenic</td>
+    <td> Add a tag <code>FS1_AR_Pathg_PotCompHet</code> that indicates whether a variant is recessive, potential compound heterozygous, and pathogenic </td>
+    <td> A variant has <code>FS1_AR_Pathg_PotCompHet</code> if it
+      <ul>
+        <li> belongs to rank 1 in secondary findings, i.e. <code>FS1_Select = 1</code> </li>
+        <li> has autosomal recessive (AR) as one of its modes of inheritance based on <code>CGD_inheritance</code> </li>
+        <li> is indicated as  </li>
+      </ul>
+    </td>
   </tr>
   <tr>
     <td>8.1.4. X-linked, homozygous/haploid, pathogenic</td>
@@ -436,7 +459,7 @@ The main change from the old script is the utilization of functions that reduce 
     <td></td>
   </tr>
   <tr>
-    <td>8.1.6. Complex, potential compound heterozygous,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pathogenic</td>
+    <td>8.1.6. Complex, potential compound heterozygous, pathogenic</td>
     <td></td>
     <td></td>
   </tr>
@@ -471,7 +494,7 @@ The main change from the old script is the utilization of functions that reduce 
     <td></td>
   </tr>
   <tr>
-    <td rowspan="10">(9) Main<br></td>
+    <td rowspan="10">(9) Main</td>
     <td>Step 1. File import</td>
     <td></td>
     <td></td>
