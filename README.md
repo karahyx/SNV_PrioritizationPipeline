@@ -158,13 +158,13 @@ The main change from the old script is the utilization of functions that reduce 
        <br><code>F_S_DamageType</code> = <br> a more stringent Coding LOF damage type tag with the distance from the nearest exon boundary as an additional condition
         <ul>
           <li>Note that F_S_DamageType is specific to the Coding LOF category, thus one of <code>LOF</code> or <code>NotDmg</code></li>
-          <li>May be used if more stringent Coding LOF variants are desired
+          <li>May be used if more stringent Coding LOF variants are desired</li>
         </ul>
     </td>
   </tr>
   <tr>
     <td>5.1. Coding LOF</td>
-    <td><code>add_coding_lof_tag()</code> identify variants of type Coding LOF and change their F_DamageRank tag to 2;<br><br><code>add_coding_lof_spliceJunction_tag()</code> identifies variants of type Coding LOF with distance_spliceJunction &lt; 3; note that no change is made to F_DamageRank here</td>
+    <td><code>add_coding_lof_tag()</code> identify variants of type <code>Coding LOF</code> and change their <code>F_DamageRank</code> tag to 2;<br><br><code>add_coding_lof_spliceJunction_tag()</code> identifies variants of type <code>Coding LOF</code> with <code>distance_spliceJunction</code> &lt; 3; note that no change is made to <code>F_DamageRank</code> here</td>
     <td>The variant is <code>Coding LOF</code> if it
       <ul>
         <li> is coding </li>
@@ -179,8 +179,30 @@ The main change from the old script is the utilization of functions that reduce 
   </tr>
   <tr>
     <td>5.2. Missense</td>
-    <td></td>
-    <td></td>
+    <td> Identify variants of type <code>Missense</code> and change its <code>F_DamageRank</code> to either 1 or 2 based on specific conditions. <br><br> The method first compares the variant's SIFT, Polyphen2, MA, phylopMam, phylopVert, and CADD_phred scores to their corresponding cutoffs and documents the results (0 or 1) in a matrix with individual variants on each row. Next, the sum of the scores for each variant are calculated (a variant has a max score of 6) and compared to rank 1 and 2 cutoffs to decide which damage rank it belongs to. 
+    </td>
+    <td> The variant is <code>Missense</code> and has <code>F_DamageRank</code> = 1 if it
+      <ul>
+        <li> is coding </li> 
+        <li> is a nonsynonymous SNV </li>
+        <li> has a sum score &ge; 2 </li>
+      </ul>
+      <br> The variant is <code>Missense</code> and has <code>F_DamageRank</code> = 2 if it
+      <ul>
+        <li> is coding </li> 
+        <li> is a nonsynonymous SNV </li>
+        <li> has a sum score &ge; 4 </li>
+      </ul>
+      <br> "1" is documented in the sum score matrix if the variant's
+      <ul>
+        <li> <code>sift_score</code> < 0.05 </li> 
+        <li> <code>polyphen_score</code> &ge; 0.90 </li>
+        <li> <code>ma_score</code> &ge; 1.90 </li>
+        <li> <code>phylopMam_avg</code> &ge; 1.30 </li>
+        <li> <code>phylopVert100_avg</code> &ge; 3.90 </li>
+        <li> <code>CADD_phred</code> &ge; 21.10 </li>
+      </ul>
+    </td>
   </tr>
   <tr>
     <td>5.3. Other coding</td>
@@ -189,7 +211,7 @@ The main change from the old script is the utilization of functions that reduce 
   </tr>
   <tr>
     <td>5.4. Splicing predictions</td>
-    <td></td>
+    <td>  </td>
     <td></td>
   </tr>
   <tr>
