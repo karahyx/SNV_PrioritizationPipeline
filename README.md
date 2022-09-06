@@ -273,8 +273,21 @@ The main change from the old script is the utilization of functions that reduce 
   </tr>
   <tr>
     <td>5.6. Non-coding</td>
-    <td></td>
-    <td></td>
+    <td> Identify variants of type <code>Non-coding (nc)</code> and change its <code>F_DamageRank</code> to either 1 or 2 based on specific cutoffs </td>
+      <td> The variant is <code>Non-coding (nc)</code> if 
+        <ul>
+          <li> it is identified as "ncRNA" in <code>F_Coding</code> </li>
+          <li> its full gene name is not "pseudogene" </li>
+          <li> its <code>F_DamageRank</code> = 0 (i.e. it's not damaging) </li>
+          <li> satisfies one or more of the following: </li>
+            <ul>
+              <li> has a PhastCons score for the Placental Mammal genome group AND, <code>phylopMam_avg</code> &ge; <code>phylopMam_cutoff</code> OR <code>phylopVert100_avg</code> &ge; <code>phylopVert_cutoff</code> </li>
+              <li> <code>CADD_phred</code> &ge; <code>CADD_phred_cutoff</code> </li>
+            </ul>
+        </ul> <br>
+        <code>F_DamageRank = 1</code> if <code>phylopMam_cutoff</code> = 1.1, <code>phylopVert_cutoff</code> = 1.6, <code>CADD_phred_cutoff</code> = 13.7 <br> <br>
+        <code>F_DamageRank = 2</code> if <code>phylopMam_cutoff</code> = 1.3, <code>phylopVert_cutoff</code> = 3.9, <code>CADD_phred_cutoff</code> = 21.1
+      </td>
   </tr>
   <tr>
     <td rowspan="3">(6) Phenotype Filter<br><br></td>
