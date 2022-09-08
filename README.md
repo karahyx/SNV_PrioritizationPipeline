@@ -583,27 +583,33 @@ The main change from the old script is the utilization of functions that reduce 
   <tr>
     <td rowspan="10">(9) Main</td>
     <td>Step 1. File import</td>
-    <td></td>
-    <td></td>
+    <td> Imports the original variant data </td>
+    <td> N/A </td>
   </tr>
   <tr>
     <td>Step 2. Re-format column names</td>
-    <td></td>
-    <td></td>
+    <td> Remove <code>{genome_name}:</code> from several columns for easier access </td>
+    <td> N/A </td>
   </tr>
   <tr>
     <td>Step 3. Process the original imported variant data</td>
-    <td></td>
-    <td></td>
+    <td> 
+      <ul>
+        <li> Remove variants with homozygous reference (hom-ref) or unknown zygosity from the data </li>
+        <li> Add a pass tag that indicates whether the variant has FILTER = "PASS" </li>
+        <li> Calculate the alternate allele frequency </li>
+      </ul>
+    </td>
+    <td> N/A </td>
   </tr>
   <tr>
     <td>Step 4. Free up memory</td>
-    <td></td>
-    <td></td>
+  <td> Remove <code>v_full.temp.df</code> from the current workspace </td>
+    <td> N/A </td>
   </tr>
   <tr>
     <td>Step 5. Annotate the data</td>
-    <td></td>
+    <td> Obtain variants with a maximum frequency of 0.05 and annotate the variants with filtering tags </td>
     <td></td>
   </tr>
   <tr>
