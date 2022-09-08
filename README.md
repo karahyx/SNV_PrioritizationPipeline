@@ -650,12 +650,12 @@ The main change from the old script is the utilization of functions that reduce 
     <td> N/A </td>
   </tr>
   <tr>
-    <td>Step 8. Convert the stats lists to readable data frames</td>
+    <td>Step 8. Convert the stats lists to readable tables</td>
     <td> See title </td>
     <td> N/A </td>
   </tr>
   <tr>
-    <td>Step 9. Get all the summary stats in one data frame</td>
+    <td>Step 9. Get all the summary stats in one table</td>
     <td> Combine the summary statistics for different data sets into one table for easier comparison </td>
     <td></td>
   </tr>
@@ -669,15 +669,19 @@ The main change from the old script is the utilization of functions that reduce 
 
 #### :arrow_forward: Running the Script
 Steps:
-1. Change the following parameters:
+1. Change the following parameters in Section (0)Variables & Cutoffs:
   * <code>input_var_genome.file</code> to the path of your input file
   * <code>input_var_genome.name</code> to the name of your sample
   * <code>output_path</code> to the path of your output directory
-3. 
+2. Then run the folling sections:
+  * Settings
+  * (0) Variables and Cutoffs
+  * (1) Functions
+  * (9) Main (runs sections 2-8)
 
 ### :brain: Working with PrioritizationPipeline Version 2 (HPF Version)
 
-#### :mag_right: Script Structure Overview
+#### :mag_right: Script Structure Overview (same as Version 1, see above)
 
 #### :arrow_forward: Running the Script
 
