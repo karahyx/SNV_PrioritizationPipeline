@@ -657,7 +657,7 @@ The main change from the old script is the utilization of functions that reduce 
   <tr>
     <td>Step 9. Get all the summary stats in one table</td>
     <td> Combine the summary statistics for different data sets into one table for easier comparison </td>
-    <td></td>
+    <td> N/A </td>
   </tr>
   <tr>
     <td>Step 10. Output desired results as .txt files</td>
