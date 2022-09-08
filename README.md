@@ -146,7 +146,7 @@ The main change from the old script is the utilization of functions that reduce 
   <tr>
     <td rowspan="7">(5) Define Damage</td>
     <td>5.0. Variable initialization</td>
-    <td>Initialize the following columns:<br><code>F_DamageType = "NotDmg"</code><br><code>F_DamageRank = 0</code><br><code>F_S_DamageType = "NotDmg"</code></td>
+    <td>Initialize the following columns:<br><code>F_DamageType = "NotDmg"</code><br><code>F_DamageRank = 0</code><br><code>F_S_DamageType = "NotLOF"</code></td>
     <td><code>F_DamageType</code> = a variant's damage type
       <ul>
         <li> one of <code>LOF</code>, <code>Missense</code>, <code>OtherC</code>, <code>Splc</code>, <code>UTR</code>, <code>DmgNcRNA</code>, or <code>NotDmg</code></li>
@@ -157,7 +157,7 @@ The main change from the old script is the utilization of functions that reduce 
         </ul>
        <br><code>F_S_DamageType</code> = <br> a more stringent Coding LOF damage type tag with the distance from the nearest exon boundary as an additional condition
         <ul>
-          <li>Note that F_S_DamageType is specific to the Coding LOF category, thus one of <code>LOF</code> or <code>NotDmg</code></li>
+          <li>Note that F_S_DamageType is specific to the Coding LOF category, thus one of <code>LOF</code> or <code>NotLOF</code></li>
           <li>May be used if more stringent Coding LOF variants are desired</li>
         </ul>
     </td>
@@ -170,7 +170,7 @@ The main change from the old script is the utilization of functions that reduce 
         <li> is coding </li>
         <li> causes frameshift or point mutations in the coding sequence; or its type of sequence overlapped is splicing or exonic splicing </li>
       </ul>
-      <br>The <code>F_S_DamageType</code> is changed to "LOF" from "NotDmg" when
+      <br>The <code>F_S_DamageType</code> is changed to "LOF" from "NotLOF" when
       <ul>
         <li> the variant is Coding LOF (i.e. satisfies the two conditions above) </li>
         <li> the variant's <code>distance_spliceJunction</code> < 3 </li>
@@ -609,33 +609,43 @@ The main change from the old script is the utilization of functions that reduce 
   </tr>
   <tr>
     <td>Step 5. Annotate the data</td>
-    <td> Obtain variants with a maximum frequency of 0.05 and annotate the variants with filtering tags </td>
-    <td></td>
+    <td> 
+      <ul>
+        <li> Obtain variants with a maximum frequency of 0.05 and annotate them with filtering tags </li>
+        <li> Obtain high-quality variants with a maximum frequency of 0.05, a "PASS" FILTER and DP &ge; 2 and annotate them with filtering tags </li>
+      </ul>
+    </td>
+    <td> N/A </td>
   </tr>
   <tr>
-    <td>Step 6. Get chromosome counts and chromosome-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;wise zygosity counts</td>
-    <td></td>
-    <td></td>
+    <td>Step 6. Get chromosome counts and chromosome-wise zygosity counts</td>
+    <td> 
+      <ul>
+        <li> Obtain the number of variants in each chromosome </li> 
+        <li> Obtain the number of alt-alt, hom-alt, ref-alt and the percentage of hom-alt in each chromosome </li>
+      </ul>
+    </td>
+    <td> N/A </td>
   </tr>
   <tr>
     <td>Step 7. Get a summary stats list for each data set</td>
-    <td></td>
-    <td></td>
+    <td> Obtain a list of pre-defined summary statistics for the data (see how each summary statistic is defined below) </td>
+    <td> N/A </td>
   </tr>
   <tr>
     <td>Step 8. Convert the stats lists to readable data frames</td>
-    <td></td>
-    <td></td>
+    <td> See title </td>
+    <td> N/A </td>
   </tr>
   <tr>
     <td>Step 9. Get all the summary stats in one data frame</td>
-    <td></td>
+    <td> Combine the summary statistics for different data sets into one table for easier comparison </td>
     <td></td>
   </tr>
   <tr>
     <td>Step 10. Output desired results as .txt files</td>
-    <td></td>
-    <td></td>
+    <td> Output the annotated data sets, chromosome zygosity counts tables, and summary statistics tables to user-defined output directory </td>
+    <td> N/A </td>
   </tr>
 </tbody>
 </table>
