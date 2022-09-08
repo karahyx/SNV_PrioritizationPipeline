@@ -1,10 +1,15 @@
 # ---
 # Title: Variant Prioritization
-# Purpose: An adaption of the original variant prioritization pipeline to DRAGEN
+# Purpose: An adaption of the original small variant prioritization pipeline
+#          applicable to Broad Institute's GATK pipelines to the Illumina DRAGEN 
+#          Bio-IT platform
 # Author: Kara Han <kara.han@sickkids.ca>
+# Adapted from: Prioritizaiton pipeline developed by Daniele, Bhooma, Thomas,
+#               and Bank at TCAG
 # Date script created: 2022-07-20 14:32:21 EDT
 # Date last modified: 2022-08-31 16:13:05 EDT
 # Version: 0.1.0
+# TCAG annotation pipeline version: rev27.7 hg38
 # Depends: 
 #     R (>= 3.4.0)
 # Imports:
@@ -83,10 +88,8 @@ missense_rank1_cutoff <- 2
 missense_rank2_cutoff <- 4
 
 # Other coding - in order: phylopMam_avg, phylopVert100_avg, CADD_phred
-otherc_rk1_cr1_cutoffs <- c(1.2, 2.5, 13.5)
-otherc_rk1_cr2_cutoffs <- c(1.5, 2.0, 13.0)
-otherc_rk2_cr1_cutoffs <- c(2.0, 3.5, 14)
-otherc_rk2_cr2_cutoffs <- c(1.5, 2.5, 13.5)
+otherc_rk1_cutoffs <- c(1.1, 1.6, 13.7)
+otherc_rk2_cutoffs <- c(1.3, 3.9, 21.1)
 
 # Splicing predictions
 spliceAI_DS_AG_r1_cutoff <- 0.5
@@ -241,13 +244,12 @@ add_missense_tag <- function(data, sift_cutoff, polyphen_cutoff, ma_cutoff,
 
 
 # Other coding
-add_otherc_tag <- function(data, cutoffs1, cutoffs2, rank) {
+add_otherc_tag <- function(data, cutoffs, rank) {
   
-  otherc_dmg_var <- with(data, which(F_Coding == "Coding" & (
-    (effect_priority %in% eff_other_sub.chv & 
-       ((phylopMam_avg >= cutoffs1[1] | phylopVert100_avg >= cutoffs1[2] | CADD_phred >= cutoffs1[3]) & is.na (dbsnp_common) )) | 
-      (effect_priority %in% eff_other_sub.chv & 
-         ((phylopMam_avg >= cutoffs2[1] | phylopVert100_avg >= cutoffs2[2] | CADD_phred >= cutoffs2[3]) & is.na (dbsnp) & is.na (dbsnp_region))) ) ))
+  otherc_dmg_var <- with(data, which(F_Coding == "Coding" & 
+                                       effect_priority %in% eff_other_sub.chv & 
+                                       (phylopMam_avg >= cutoffs[1] | phylopVert100_avg >= cutoffs[2] | CADD_phred >= cutoffs[3]) & 
+                                       is.na (dbsnp_common)   ))
   
   data$F_DamageType[otherc_dmg_var] <- "OtherC"
   data$F_DamageRank[otherc_dmg_var] <- rank
@@ -316,7 +318,7 @@ add_nc_dmg_tag <- function(data, cutoffs, rank) {
 }
 
 
-# 1.4. Phenotype filter 
+# 1.5. Phenotype filter 
 
 add_HPO_CGD_dominant_tag <- function(data, database, pattern) {
   
@@ -358,7 +360,7 @@ add_phenotype_rank_tag <- function(data) {
 }
 
 
-# 1.5. Main Findings
+# 1.6. Main Findings
 
 # RECESSIVE -- HOMOZYGOUS
 add_recessive_homozygous_tag <- function(data) {
@@ -459,7 +461,7 @@ add_het_hotzone_tag <- function(data, gnomAD_oe_lof_upper_cutoff) {
 }
 
 
-# 1.6. Secondary Findings
+# 1.7. Secondary Findings
 
 # Pathogenicity flag
 add_pathogenic_tag <- function(data) {
@@ -478,7 +480,7 @@ add_pathogenic_tag <- function(data) {
 # Rank 1
 add_secondary_findings_rank1_tag <- function(data) {
   
-  sf1_var <- with(data, which(CGD_disease != "" & (F_S_DamageType == "LOF") | (F_Clinvar_Pathg == 1)))
+  sf1_var <- with(data, which(CGD_disease != "" & ((F_S_DamageType == "LOF") | (F_Clinvar_Pathg == 1))))
   
   data$FS1_Select <- 0
   data$FS1_Select[sf1_var] <- 1
@@ -646,9 +648,9 @@ add_ACMG_coding_tag <- function(data, typeseq_coding.chv) {
   return(data)
 }
 
-# 1.7. Get final results
+# 1.8. Get final results
 
-# 1.7.1. Rare Variants
+# 1.8.1. Rare Variants
 
 # input: data = v_full.df
 get_rare05_variants <- function(data) {
@@ -663,7 +665,7 @@ get_rare05_variants <- function(data) {
   data <- add_coding_tag(data)
   
   data$F_DamageType <- "NotDmg" 
-  data$F_S_DamageType <- "NotDmg"
+  data$F_S_DamageType <- "NotLOF"
   data$F_DamageRank <- 0
   
   data <- add_coding_lof_tag(data, eff_lof.chv)
@@ -675,7 +677,7 @@ get_rare05_variants <- function(data) {
   return(data)
 }
 
-# 1.7.2. HQ Variants (FILTER == "PASS")
+# 1.8.2. HQ Variants (FILTER == "PASS")
 get_hq_variants <- function(data) {
   
   data <- subset(data, subset = (FILTER == "PASS"))
@@ -684,7 +686,7 @@ get_hq_variants <- function(data) {
   return(data)
 }
 
-# 1.7.3. HQ Rare Variants
+# 1.8.3. HQ Rare Variants
 
 # input: data = v_full_r05.df
 get_hq_rare05_variants <- function(data) {
@@ -694,7 +696,7 @@ get_hq_rare05_variants <- function(data) {
   data <- add_coding_tag(data)
   
   data$F_DamageType <- "NotDmg"
-  data$F_S_DamageType <- "NotDmg"
+  data$F_S_DamageType <- "NotLOF"
   data$F_DamageRank <- 0
   
   data <- add_coding_lof_tag(data, eff_lof.chv)
@@ -703,8 +705,8 @@ get_hq_rare05_variants <- function(data) {
   data <- add_missense_tag(data, sift_cutoff, polyphen_cutoff, ma_cutoff, phylopMam_missense_cutoff, phylopVert_missense_cutoff, 
                            CADD_phred_missense_cutoff, missense_rank1_cutoff, missense_rank2_cutoff)
   
-  data <- add_otherc_tag(data, otherc_rk1_cr1_cutoffs, otherc_rk1_cr2_cutoffs, rank = 1)
-  data <- add_otherc_tag(data, otherc_rk2_cr1_cutoffs, otherc_rk2_cr2_cutoffs, rank = 2)
+  data <- add_otherc_tag(data, otherc_rk1_cutoffs, rank = 1)
+  data <- add_otherc_tag(data, otherc_rk2_cutoffs, rank = 2)
   
   data <- add_splicing_tag(data, spliceAI_DS_AG_r1_cutoff, spliceAI_DP_AG_r1_cutoff, 
                            spliceAI_DS_AL_r1_cutoff, spliceAI_DP_AL_r1_cutoff,
@@ -759,7 +761,7 @@ get_hq_rare05_variants <- function(data) {
   return(data)
 }
 
-# 1.8. Stats
+# 1.9. Stats
 
 get_chr_zygosity_stats <- function(data) {
   
@@ -1233,7 +1235,7 @@ chr_zygosity_stats_full <- get_chr_zygosity_stats(v_full.df[, c("CHROM", "Zygosi
 chr_zygosity_stats_full_hq <- get_chr_zygosity_stats(v_full_hq.df[, c("CHROM", "Zygosity")])
 chr_zygosity_stats_full_hq_r05 <- get_chr_zygosity_stats(v_full_hq_r05.df[, c("CHROM", "Zygosity")])
 
-# Get stats list for each data frame
+# Get stats list for each data set
 stats.ls.full <- add_stats_full_df(v_full.df)
 stats.ls.hq <- add_stats_full_hq_df(v_full_hq.df)
 stats.ls.hq.r05 <- add_stats_full_hq_r05_df(v_full_hq_r05.df)
