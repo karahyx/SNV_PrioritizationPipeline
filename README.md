@@ -669,8 +669,10 @@ The main change from the old script is the utilization of functions that reduce 
 
 #### :arrow_forward: Running the Script
 Steps:
-1. Modify the following parameters:
-  * 
+1. Change the following parameters:
+  * <code>input_var_genome.file</code> to the path of your input file
+  * <code>input_var_genome.name</code> to the name of your sample
+  * <code>output_path</code> to the path of your output directory
 3. 
 
 ### :brain: Working with PrioritizationPipeline Version 2 (HPF Version)
