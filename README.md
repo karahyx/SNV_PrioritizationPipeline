@@ -14,9 +14,9 @@ The main change from the old script is the utilization of functions that reduce 
 
 ## :desktop_computer: Instructions
 
-### Working with PrioritizationPipeline Version 1 (General Version)
+### :brain: Working with PrioritizationPipeline Version 1 (General Version)
 
-#### Script Structure Overview
+#### :mag_right: Script Structure Overview
 
 <table>
 <thead>
@@ -211,21 +211,19 @@ The main change from the old script is the utilization of functions that reduce 
       <ul>
         <li> is coding </li> 
         <li> causes nonframeshift mutations in the coding sequence </li>
-        <li> satisfies one of the two conditions: </li>
-          <ul>
-            <li> is not an exact match to common dbSNP track UCSC, and <code>phylopMam_avg</code> &ge; <code>phylopMam_cutoff_cond1</code> or <code>phylopVert100_avg</code> &ge; <code>phylopVert_cutoff_cond1</code> or <code>CADD_phred</code> &ge; <code>CADD_phred_cutoff_cond1</code> </li>
-            <li> is not an exact match to dbSNP or overlap-based match for dbSNP, and <code>phylopMam_avg</code> &ge; <code>phylopMam_cutoff_cond2</code> or <code>phylopVert100_avg</code> &ge; <code>phylopVert_cutoff_cond2</code> or <code>CADD_phred</code> &ge; <code>CADD_phred_cutoff_cond2</code> </li>
-          </ul>
+        <li> is not an exact match to common dbSNP track UCSC, and <code>phylopMam_avg</code> &ge; <code>phylopMam_cutoff</code> or <code>phylopVert100_avg</code> &ge; <code>phylopVert_cutoff</code> or <code>CADD_phred</code> &ge; <code>CADD_phred_cutoff</code> </li>
       </ul><br>
       <code>F_DamageRank</code> = 1 if 
       <ul>
-        <li><code>phylopMam_cutoff_cond1</code> = 1.2, <code>phylopVert_cutoff_cond1</code> = 2.5, <code>CADD_phred_cutoff_cond1</code> = 13.5 </li>
-        <li><code>phylopMam_cutoff_cond2</code> = 1.5, <code>phylopVert_cutoff_cond2</code> = 2.0, <code>CADD_phred_cutoff_cond2</code> = 13.0 </li>
+        <li> <code>phylopMam_cutoff</code> = 1.1 </li>
+        <li> <code>phylopVert_cutoff</code> = 1.6 </li>
+        <li> <code>CADD_phred_cutoff</code> = 13.7 </li>
       </ul><br>
       <code>F_DamageRank</code> = 2 if 
       <ul>
-        <li><code>phylopMam_cutoff_cond1</code> = 2.0, <code>phylopVert_cutoff_cond1</code> = 3.5, <code>CADD_phred_cutoff_cond1</code> = 14.0 </li>
-        <li><code>phylopMam_cutoff_cond2</code> = 1.5, <code>phylopVert_cutoff_cond2</code> = 2.5, <code>CADD_phred_cutoff_cond2</code> = 13.5 </li>
+        <li> <code>phylopMam_cutoff</code> = 1.3 </li>
+        <li> <code>phylopVert_cutoff</code> = 3.9 </li>
+        <li> <code>CADD_phred_cutoff</code> = 21.1 </li>
       </ul>
     </td>
   </tr>
@@ -267,8 +265,16 @@ The main change from the old script is the utilization of functions that reduce 
         <li> has a PhastCons score for the Placental Mammal genome group </li>
         <li> satisfies <code>phylopMam_avg</code> &ge; <code>phylopMam_cutoff</code> or <code>CADD_phred</code> &ge; <code>CADD_phred_cutoff</code> </li>
       </ul> <br>
-      <code>F_DamageRank = 1</code> if <code>phylopMam_cutoff</code> = 1.1 and <code>CADD_phred_cutoff</code> = 13.7 <br><br>
-      <code>F_DamageRank = 2</code> if <code>phylopMam_cutoff</code> = 1.3 and <code>CADD_phred_cutoff</code> = 21.1
+      <code>F_DamageRank = 1</code> if 
+        <ul>
+          <li> <code>phylopMam_cutoff</code> = 1.1 </li>
+          <li> <code>CADD_phred_cutoff</code> = 13.7 </li>
+        </ul> <br>
+      <code>F_DamageRank = 2</code> if 
+        <ul>
+          <li> <code>phylopMam_cutoff</code> = 1.3 </li>
+          <li> <code>CADD_phred_cutoff</code> = 21.1 </li>
+        </ul>
     </td>
   </tr>
   <tr>
@@ -285,8 +291,18 @@ The main change from the old script is the utilization of functions that reduce 
               <li> <code>CADD_phred</code> &ge; <code>CADD_phred_cutoff</code> </li>
             </ul>
         </ul> <br>
-        <code>F_DamageRank = 1</code> if <code>phylopMam_cutoff</code> = 1.1, <code>phylopVert_cutoff</code> = 1.6, <code>CADD_phred_cutoff</code> = 13.7 <br> <br>
-        <code>F_DamageRank = 2</code> if <code>phylopMam_cutoff</code> = 1.3, <code>phylopVert_cutoff</code> = 3.9, <code>CADD_phred_cutoff</code> = 21.1
+        <code>F_DamageRank = 1</code> if 
+          <ul>
+            <li> <code>phylopMam_cutoff</code> = 1.1 </li>
+            <li> <code>phylopVert_cutoff</code> = 1.6 </li>
+            <li> <code>CADD_phred_cutoff</code> = 13.7 </li>
+          </ul> <br>
+        <code>F_DamageRank = 2</code> if 
+        <ul>
+            <li> <code>phylopMam_cutoff</code> = 1.3 </li>
+            <li> <code>phylopVert_cutoff</code> = 3.9 </li>
+            <li> <code>CADD_phred_cutoff</code> = 21.1 </li>
+          </ul>
       </td>
   </tr>
   <tr>
@@ -307,7 +323,8 @@ The main change from the old script is the utilization of functions that reduce 
       <ul>
         <li> 1, if the pattern "AD" is found in column <code>CGD_inheritance</code> </li>
         <li> 0, otherwise </li>
-      </ul></td>
+      </ul>
+    </td>
   </tr>
   <tr>
     <td>6.3. Phenotype ranks</td>
@@ -650,17 +667,17 @@ The main change from the old script is the utilization of functions that reduce 
 </tbody>
 </table>
 
-#### Running the Script
+#### :arrow_forward: Running the Script
 Steps:
 1. Modify the following parameters:
   * 
 3. 
 
-### Working with PrioritizationPipeline Version 2 (HPF Version)
+### :brain: Working with PrioritizationPipeline Version 2 (HPF Version)
 
-#### Script Structure Overview
+#### :mag_right: Script Structure Overview
 
-#### Running the Script
+#### :arrow_forward: Running the Script
 
 ### Stats Summary
 
