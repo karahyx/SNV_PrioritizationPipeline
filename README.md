@@ -651,6 +651,10 @@ The main change from the old script is the utilization of functions that reduce 
 </table>
 
 #### Running the Script
+Steps:
+1. Modify the following parameters:
+  * 
+3. 
 
 ### Working with PrioritizationPipeline Version 2 (HPF Version)
 
