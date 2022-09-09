@@ -686,7 +686,9 @@ Steps:
 
 ### :brain: Working with PrioritizationPipeline v17 Version 2 (HPF Version)
 
-#### :mag_right: Script Structure Overview (same as Version 1, see above)
+#### :mag_right: Script Structure Overview
+
+
 
 #### :arrow_forward: Running the Script
 If your variant data files are in the same folder:
