@@ -673,7 +673,7 @@ Steps:
   * <code>input_var_genome.file</code> to the path of your input file
   * <code>input_var_genome.name</code> to the name of your sample
   * <code>output_path</code> to the path of your output directory
-2. Then run the folling sections:
+2. Then run the following sections:
   * Settings
   * (0) Variables and Cutoffs
   * (1) Functions
