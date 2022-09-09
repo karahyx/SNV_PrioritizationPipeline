@@ -714,7 +714,8 @@ If your variant data files are in their own folders and the folders are named af
 * Changed the default type for <code>F_DamageType</code> and <code>F_S_DamageType</code> to "NotDmg" and "NotLOF" for a more intuitive understanding
 * Used <code>data.table::fread</code> to achieve a faster speed when importing the original variant data
 
-
-## Credits
+## Contributors
+* Daniele Merico - Original creator of the pipeline
+* 
 
 ## License
