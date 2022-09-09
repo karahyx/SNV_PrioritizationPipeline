@@ -716,6 +716,7 @@ If your variant data files are in their own folders and the folders are named af
 
 ## Contributors
 * Daniele Merico - Original creator of the pipeline
-* 
+* [Bhooma Thiruvahindrapuram](https://github.com/bthiruv)
+* [Dr. Worrawat Engchuan](https://github.com/naibank)
+* [Thomas Nalpathamkalam](https://github.com/TNalpat)
 
-## License
