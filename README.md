@@ -700,7 +700,20 @@ If your variant data files are in their own folders and the folders are named af
 
 ### Stats Summary
 
-## Changes From the Old Script
+## :bulb: Changes From the Old Script
+* Added <code>frameshift block substitution</code> and <code>nonframeshift block subsitution</code> to <code>eff_lof.chv</code> and <code>eff_other_sub.chv</code> upon [updates from ANNOVAR](https://annovar.openbioinformatics.org/en/latest/user-guide/gene/)
+* Replaced tag <code>F_Qual</code> with <code>F_Pass</code> for a more intuitive understanding of the column
+* Changed the following criteria:
+  * High-quality variants are now defined as variants with a "PASS" FILTER and <code>DP &ge; 2</code> 
+  * Removed the <code> (effect_priority %in% eff_other_sub.chv & (phylopMam_avg >= 1.5 | phylopVert100_avg >= 2.0 | CADD_phred >= 13.0) & is.na (dbsnp) & is.na (dbsnp_region))</code> condition from the criteria for defining damaging variants with type Other Coding
+* Changed the <code>phylopMam</code>, <code>phylopVert100</code>, <code>CADD_phred</code> cutoffs for the following sections:
+  * 5.2. Missense
+  * 5.3. Other coding
+  * 5.5. UTR
+  * 5.6. Non-coding
+* Changed the default type for <code>F_DamageType</code> and <code>F_S_DamageType</code> to "NotDmg" and "NotLOF" for a more intuitive understanding
+* Used <code>data.table::fread</code> to achieve a faster speed when importing the original variant data
+
 
 ## Credits
 
