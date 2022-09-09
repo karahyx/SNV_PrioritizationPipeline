@@ -687,7 +687,7 @@ Steps:
 ### :brain: Working with PrioritizationPipeline v17 Version 2 (HPF Version)
 
 #### :mag_right: Script Structure Overview
-
+Version 2 only contains sections <code>(0) Variables & Cutoffs</code>, <code>(1) Functions</code>, and <code>(9) Main</code>, where <code>(9) Main</code> runs Sections (2)-(8).
 
 
 #### :arrow_forward: Running the Script
