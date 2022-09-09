@@ -121,8 +121,8 @@ The main change from the old script is the utilization of functions that reduce 
     <td>Add a pass tag that indicates whether the variant has FILTER = "PASS"</td>
     <td><code>F_Pass</code> = 
       <ul>
-        <li> 1 if the variant has a "PASS" FILTER </li>
-        <li> 0 otherwise </li>
+        <li> 1, if the variant has a "PASS" FILTER </li>
+        <li> 0, otherwise </li>
       </ul>
     </td>
   </tr>
@@ -169,7 +169,7 @@ The main change from the old script is the utilization of functions that reduce 
   </tr>
   <tr>
     <td>5.1. Coding LOF</td>
-    <td><code>add_coding_lof_tag()</code> identify variants of type <code>Coding LOF</code> and change their <code>F_DamageRank</code> tag to 2;<br><br><code>add_coding_lof_spliceJunction_tag()</code> identifies variants of type <code>Coding LOF</code> with <code>distance_spliceJunction</code> &lt; 3; note that no change is made to <code>F_DamageRank</code> here</td>
+    <td><code>add_coding_lof_tag()</code> identify variants of type <code>Coding LOF</code> and change their <code>F_DamageRank</code> to 2;<br><br><code>add_coding_lof_spliceJunction_tag()</code> identifies variants of type <code>Coding LOF</code> with <code>distance_spliceJunction &lt; 3</code>; note that no change is made to <code>F_DamageRank</code> here</td>
     <td>The variant is <code>Coding LOF</code> if it
       <ul>
         <li> is coding </li>
@@ -178,21 +178,21 @@ The main change from the old script is the utilization of functions that reduce 
       <br>The <code>F_S_DamageType</code> is changed to "LOF" from "NotLOF" when
       <ul>
         <li> the variant is Coding LOF (i.e. satisfies the two conditions above) </li>
-        <li> the variant's <code>distance_spliceJunction</code> < 3 </li>
+        <li> the variant's <code>distance_spliceJunction < 3</code></li>
       </ul>
     </td>
   </tr>
   <tr>
     <td>5.2. Missense</td>
-    <td> Identify variants of type <code>Missense</code> and change its <code>F_DamageRank</code> to either 1 or 2 based on specific conditions. <br><br> The method first compares the variant's SIFT, Polyphen2, MA, phylopMam, phylopVert, and CADD_phred scores to their corresponding cutoffs and documents the results (0 or 1) in a matrix with individual variants on each row. Next, the sum of the scores for each variant are calculated (a variant has a max score of 6) and compared to rank 1 and 2 cutoffs to decide which damage rank it belongs to. 
+    <td> Identify variants of type <code>Missense</code> and change its <code>F_DamageRank</code> to either 1 or 2 based on specific conditions. <br><br> The method first compares the variant's SIFT, Polyphen2, MA, phylopMam, phylopVert, and CADD_phred scores to their corresponding cutoffs and documents the results (0 or 1) in a matrix with individual variants on each row. Next, the sum of the scores for each variant are calculated (each variant has a max score of 6) and compared to rank 1 and 2 cutoffs to decide which damage rank it belongs to. 
     </td>
-    <td> The variant is <code>Missense</code> and has <code>F_DamageRank</code> = 1 if it
+    <td> The variant is <code>Missense</code> and has <code>F_DamageRank = 1</code> if it
       <ul>
         <li> is coding </li> 
         <li> is a nonsynonymous SNV </li>
         <li> has a sum score &ge; 2 </li>
       </ul>
-      <br> The variant is <code>Missense</code> and has <code>F_DamageRank</code> = 2 if it
+      <br> The variant is <code>Missense</code> and has <code>F_DamageRank = 2</code> if it
       <ul>
         <li> is coding </li> 
         <li> is a nonsynonymous SNV </li>
@@ -200,12 +200,12 @@ The main change from the old script is the utilization of functions that reduce 
       </ul>
       <br> "1" is documented in the sum score matrix if the variant's
       <ul>
-        <li> <code>sift_score</code> < 0.05 </li> 
-        <li> <code>polyphen_score</code> &ge; 0.90 </li>
-        <li> <code>ma_score</code> &ge; 1.90 </li>
-        <li> <code>phylopMam_avg</code> &ge; 1.30 </li>
-        <li> <code>phylopVert100_avg</code> &ge; 3.90 </li>
-        <li> <code>CADD_phred</code> &ge; 21.10 </li>
+        <li> <code>sift_score < 0.05</code> </li> 
+        <li> <code>polyphen_score &ge; 0.90</code> </li>
+        <li> <code>ma_score &ge; 1.90</code> </li>
+        <li> <code>phylopMam_avg &ge; 1.30</code> </li>
+        <li> <code>phylopVert100_avg &ge; 3.90</code> </li>
+        <li> <code>CADD_phred &ge; 21.10</code> </li>
       </ul>
     </td>
   </tr>
@@ -216,19 +216,19 @@ The main change from the old script is the utilization of functions that reduce 
       <ul>
         <li> is coding </li> 
         <li> causes nonframeshift mutations in the coding sequence </li>
-        <li> is not an exact match to common dbSNP track UCSC, and <code>phylopMam_avg</code> &ge; <code>phylopMam_cutoff</code> or <code>phylopVert100_avg</code> &ge; <code>phylopVert_cutoff</code> or <code>CADD_phred</code> &ge; <code>CADD_phred_cutoff</code> </li>
+        <li> is not an exact match to common dbSNP track UCSC, and <code>phylopMam_avg &ge; phylopMam_cutoff</code> or <code>phylopVert100_avg &ge; phylopVert_cutoff</code> or <code>CADD_phred &ge; CADD_phred_cutoff</code> </li>
       </ul><br>
-      <code>F_DamageRank</code> = 1 if 
+      <code>F_DamageRank = 1</code> if 
       <ul>
-        <li> <code>phylopMam_cutoff</code> = 1.1 </li>
-        <li> <code>phylopVert_cutoff</code> = 1.6 </li>
-        <li> <code>CADD_phred_cutoff</code> = 13.7 </li>
+        <li> <code>phylopMam_cutoff = 1.1</code> </li>
+        <li> <code>phylopVert_cutoff = 1.6</code> </li>
+        <li> <code>CADD_phred_cutoff = 13.7</code> </li>
       </ul><br>
       <code>F_DamageRank</code> = 2 if 
       <ul>
-        <li> <code>phylopMam_cutoff</code> = 1.3 </li>
-        <li> <code>phylopVert_cutoff</code> = 3.9 </li>
-        <li> <code>CADD_phred_cutoff</code> = 21.1 </li>
+        <li> <code>phylopMam_cutoff = 1.3</code> </li>
+        <li> <code>phylopVert_cutoff = 3.9</code> </li>
+        <li> <code>CADD_phred_cutoff = 21.1</code> </li>
       </ul>
     </td>
   </tr>
@@ -238,13 +238,13 @@ The main change from the old script is the utilization of functions that reduce 
     <td> The variant is predicted to be "Splicing" and has <code>F_DamageRank = 1</code> if
       <ul>
         <li> its <code>F_DamageType</code> is not "LOF", "Splc" or "Missense" </li>
-        <li> its <code>F_DamageRank</code> &ne; 2 </li>
+        <li> its <code>F_DamageRank &ne; 2</code></li>
         <li> satisfies one or more of the following: </li>
           <ul>
-            <li> <code>spliceAI_DS_AG</code> > 0.2 & <code>|spliceAI_DP_AG|</code> &le; 50 </li>
-            <li> <code>spliceAI_DS_AL</code> > 0.2 & <code>|spliceAI_DP_AL|</code> &le; 50 </li>
-            <li> <code>spliceAI_DS_DG</code> > 0.2 & <code>|spliceAI_DP_DG|</code> &le; 50 </li>
-            <li> <code>spliceAI_DS_DL</code> > 0.2 & <code>|spliceAI_DP_DL|</code> &le; 50 </li>
+            <li> <code>spliceAI_DS_AG > 0.2</code> & <code>|spliceAI_DP_AG| &le; 50</code> </li>
+            <li> <code>spliceAI_DS_AL > 0.2</code> & <code>|spliceAI_DP_AL| &le; 50</code> </li>
+            <li> <code>spliceAI_DS_DG > 0.2</code> & <code>|spliceAI_DP_DG| &le; 50</code> </li>
+            <li> <code>spliceAI_DS_DL > 0.2</code> & <code>|spliceAI_DP_DL| &le; 50</code> </li>
           </ul>
       </ul> <br>
       The variant is predicted to be "Splicing" and has <code>F_DamageRank = 2</code> if
@@ -252,11 +252,11 @@ The main change from the old script is the utilization of functions that reduce 
         <li> its <code>F_DamageType</code> is not "LOF" </li>
         <li> satisfies one or more of the following: </li>
           <ul>
-            <li> <code>spliceAI_DS_AG</code> > 0.2 & <code>|spliceAI_DP_AG|</code> &le; 50 </li>
-            <li> <code>spliceAI_DS_AL</code> > 0.2 & <code>|spliceAI_DP_AL|</code> &le; 50 </li>
-            <li> <code>spliceAI_DS_DG</code> > 0.2 & <code>|spliceAI_DP_DG|</code> &le; 50 </li>
-            <li> <code>spliceAI_DS_DL</code> > 0.2 & <code>|spliceAI_DP_DL|</code> &le; 50 </li>
-            <li> <code>dbscSNV_ADA_SCORE</code> > 0.6 & <code>dbscSNV_RF_SCORE</code> > 0.6 </li>
+            <li> <code>spliceAI_DS_AG > 0.2</code> & <code>|spliceAI_DP_AG| &le; 50</code> </li>
+            <li> <code>spliceAI_DS_AL > 0.2</code> & <code>|spliceAI_DP_AL| &le; 50</code> </li>
+            <li> <code>spliceAI_DS_DG > 0.2</code> & <code>|spliceAI_DP_DG| &le; 50</code> </li>
+            <li> <code>spliceAI_DS_DL > 0.2</code> & <code>|spliceAI_DP_DL| &le; 50</code> </li>
+            <li> <code>dbscSNV_ADA_SCORE > 0.6</code> & <code>dbscSNV_RF_SCORE > 0.6</code> </li>
           </ul>
       </ul>
     </td>
@@ -268,17 +268,17 @@ The main change from the old script is the utilization of functions that reduce 
       <ul>
         <li> the type of sequence overlapped with respect to known genes/transcripts is "UTR3", "UTR5", or both </li>
         <li> has a PhastCons score for the Placental Mammal genome group </li>
-        <li> satisfies <code>phylopMam_avg</code> &ge; <code>phylopMam_cutoff</code> or <code>CADD_phred</code> &ge; <code>CADD_phred_cutoff</code> </li>
+        <li> satisfies <code>phylopMam_avg &ge; phylopMam_cutoff</code> or <code>CADD_phred &ge; CADD_phred_cutoff</code> </li>
       </ul> <br>
       <code>F_DamageRank = 1</code> if 
         <ul>
-          <li> <code>phylopMam_cutoff</code> = 1.1 </li>
-          <li> <code>CADD_phred_cutoff</code> = 13.7 </li>
+          <li> <code>phylopMam_cutoff = 1.1</code> </li>
+          <li> <code>CADD_phred_cutoff = 13.7</code> </li>
         </ul> <br>
       <code>F_DamageRank = 2</code> if 
         <ul>
-          <li> <code>phylopMam_cutoff</code> = 1.3 </li>
-          <li> <code>CADD_phred_cutoff</code> = 21.1 </li>
+          <li> <code>phylopMam_cutoff = 1.3</code> </li>
+          <li> <code>CADD_phred_cutoff = 21.1</code> </li>
         </ul>
     </td>
   </tr>
@@ -289,29 +289,29 @@ The main change from the old script is the utilization of functions that reduce 
         <ul>
           <li> it is identified as "ncRNA" in <code>F_Coding</code> </li>
           <li> its full gene name is not "pseudogene" </li>
-          <li> its <code>F_DamageRank</code> = 0 (i.e. it's not damaging) </li>
+          <li> its <code>F_DamageRank = 0</code> (i.e. it's not damaging) </li>
           <li> satisfies one or more of the following: </li>
             <ul>
-              <li> has a PhastCons score for the Placental Mammal genome group AND, <code>phylopMam_avg</code> &ge; <code>phylopMam_cutoff</code> OR <code>phylopVert100_avg</code> &ge; <code>phylopVert_cutoff</code> </li>
-              <li> <code>CADD_phred</code> &ge; <code>CADD_phred_cutoff</code> </li>
+              <li> has a PhastCons score for the Placental Mammal genome group AND, <code>phylopMam_avg &ge; phylopMam_cutoff</code> OR <code>phylopVert100_avg &ge; phylopVert_cutoff</code> </li>
+              <li> <code>CADD_phred &ge; CADD_phred_cutoff</code> </li>
             </ul>
         </ul> <br>
         <code>F_DamageRank = 1</code> if 
           <ul>
-            <li> <code>phylopMam_cutoff</code> = 1.1 </li>
-            <li> <code>phylopVert_cutoff</code> = 1.6 </li>
-            <li> <code>CADD_phred_cutoff</code> = 13.7 </li>
+            <li> <code>phylopMam_cutoff = 1.1</code> </li>
+            <li> <code>phylopVert_cutoff = 1.6</code> </li>
+            <li> <code>CADD_phred_cutoff = 13.7</code> </li>
           </ul> <br>
         <code>F_DamageRank = 2</code> if 
         <ul>
-            <li> <code>phylopMam_cutoff</code> = 1.3 </li>
-            <li> <code>phylopVert_cutoff</code> = 3.9 </li>
-            <li> <code>CADD_phred_cutoff</code> = 21.1 </li>
+            <li> <code>phylopMam_cutoff = 1.3</code> </li>
+            <li> <code>phylopVert_cutoff = 3.9</code> </li>
+            <li> <code>CADD_phred_cutoff = 21.1</code> </li>
           </ul>
       </td>
   </tr>
   <tr>
-    <td rowspan="3">(6) Phenotype Filter<br><br></td>
+    <td rowspan="3">(6) Phenotype Filter</td>
     <td>6.1. HPO dominant</td>
     <td> Add a tag <code>G_AXD_HPO</code> that indicates whether the variant has autosomal dominant (AD) as their mode of inheritance based on the HPO annotations </td>
     <td> <code>G_AXD_HPO</code> = 
@@ -333,7 +333,7 @@ The main change from the old script is the utilization of functions that reduce 
   </tr>
   <tr>
     <td>6.3. Phenotype ranks</td>
-    <td> Add a tag <code>F_PhenoRank</code> that indicates the phenotype rank of a variant. Here, rank 1 and 2 are based on mouse and human phenotype annotations, respectively </td>
+    <td> Add a tag <code>F_PhenoRank</code> that indicates the phenotype rank of a variant. Here, rank 1 and 2 are used to differentiate mouse and human phenotype annotations, respectively. Human phenotype annotations take priority. </td>
     <td> <code>F_PhenoRank</code> =
       <ul>
         <li> 1, if the variant has an MPO annotation imported from MGI (Mouse Genome Informatics) and mapped from an orthologous mouse gene </li>
@@ -343,14 +343,14 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td rowspan="5">(7) Main Findings<br></td>
+    <td rowspan="5">(7) Main Findings</td>
     <td>7.1. Recessive homozygous</td>
     <td> Add a tag <code>FM_HOM</code> that indicates whether the variant is recessive homozygous </td>
     <td> <code>FM_HOM = 1</code> if the variant
       <ul>
         <li> is a rare variant with a maximum allele frequency of 0.05 </li>
         <li> is damaging, i.e. <code>F_DamageType</code> != "NotDmg" </li>
-        <li> has zygosity "homozygous alternative" (hom-alt) </li>
+        <li> has zygosity <code>hom-alt</code> (homozygous alternative) </li>
       </ul>
     </td>
   </tr>
@@ -361,7 +361,7 @@ The main change from the old script is the utilization of functions that reduce 
       <ul>
         <li> is a rare variant with a maximum allele frequency of 0.05 </li>
         <li> is damaging, i.e. <code>F_DamageType</code> != "NotDmg" </li>
-        <li> has zygosity "homozygous alternative" (hom-alt) </li>
+        <li> has zygosity <code>hom-alt</code> (homozygous alternative) </li>
         <li> is found in chromosome X </li>
       </ul>
     </td>
@@ -379,14 +379,14 @@ The main change from the old script is the utilization of functions that reduce 
       </ul>
       <br> A variant has <code>FM_PCHET_DMG = 1</code> if it
       <ul>
-        <li> has <code>FM_PCHET</code> = 2 </li>
-        <li> has a damage rank of 2 </li>
+        <li> is labelled as potential compound heterozygous, i.e. <code>FM_PCHET = 2</code> </li>
+        <li> has <code>F_DamageRank = 2</code> </li>
       </ul>
     </td>
   </tr>
   <tr>
     <td>7.4. Dominant</td>
-    <td> Add a tag <code>FM_AXDOM</code> that indicates whether the variant is autosomal dominant </td>
+    <td> Add a tag <code>FM_AXDOM</code> that indicates whether the variant is autosomal dominant (AD) </td>
     <td> <code>FM_AXDOM = 1</code> if the variant
       <ul>
         <li> is a rare variant with a maximum allele frequency of 0.005 </li>
@@ -401,8 +401,8 @@ The main change from the old script is the utilization of functions that reduce 
     <td> <code>FM_HZ = 1</code> if the variant
       <ul>
         <li> is a rare variant with a maximum allele frequency of 0.0015 </li>
-        <li> has zygosity "ref-alt" </li>
-        <li> has <code>gnomAD_oe_lof_upper</code> < 0.35 </li>
+        <li> has zygosity <code>ref-alt</code> (heterozygous reference) </li>
+        <li> has <code>gnomAD_oe_lof_upper < 0.35</code> </li>
         <li> satisfies one of the following: </li>
           <ul>
             <li> <code>F_DamageType</code> is one of "LOF", "Splc", or "OtherC" </li>
@@ -412,7 +412,7 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td rowspan="14">(8) Secondary Findings<br></td>
+    <td rowspan="14">(8) Secondary Findings</td>
     <td>8.0. Pathogenicity flag</td>
     <td> Add two pathogenicity related flags:
       <ul> 
@@ -420,8 +420,8 @@ The main change from the old script is the utilization of functions that reduce 
         <li> flag <code>F_Clinvar_notPathg</code> indicates whether the variant has no current value of pathogenic based on ClinVar </li>
       </ul>
     </td>
-    <td> <code>F_Clinvar_Pathg = 1</code> if <code>Clinvar_SIG_Simple</code> = 1
-    <br><br> <code>F_Clinvar_notPathg = 1</code> if <code>Clinvar_SIG_Simple</code> = 0 
+    <td> <code>F_Clinvar_Pathg = 1</code> if <code>Clinvar_SIG_Simple = 1</code>
+    <br><br> <code>F_Clinvar_notPathg = 1</code> if <code>Clinvar_SIG_Simple = 0</code>
     </td>
   </tr>
   <tr>
@@ -432,7 +432,7 @@ The main change from the old script is the utilization of functions that reduce 
         <li> has CGD disease annotations </li>
         <li> satisfies one or more of the following: </li>
           <ul>
-            <li> is "Coding LOF" with <code>distance_spliceJunction</code> < 3, i.e. <code>F_S_DamageType = "LOF"</code> </li>
+            <li> is "Coding LOF" with <code>distance_spliceJunction < 3</code>, i.e. <code>F_S_DamageType = "LOF"</code> </li>
             <li> indicated as pathogenic or likely pathogenic by ClinVar </li>
           </ul>
       </ul>
@@ -478,7 +478,7 @@ The main change from the old script is the utilization of functions that reduce 
       <ul>
         <li> belongs to rank 1 for secondary findings </li>
         <li> has autosomal recessive (AR) as one of its modes of inheritance based on <code>CGD_inheritance</code> </li>
-        <li> has <code>F_CmpHet_S1</code> &ge; 1 </li>
+        <li> has <code>F_CmpHet_S1 &ge; 1</code> </li>
       </ul>
     </td>
   </tr>
@@ -500,7 +500,7 @@ The main change from the old script is the utilization of functions that reduce 
       <ul>
         <li> belongs to rank 1 for secondary findings </li>
         <li> does not have AD, AR, or XL as one of its modes of inheritance based on <code>CGD_inheritance</code> </li>
-        <li> has zygosity "hom-alt" </li>
+        <li> has zygosity <code>hom-alt</code> (homozygous alternative) </li>
       </ul>
     </td>
   </tr>
@@ -511,7 +511,7 @@ The main change from the old script is the utilization of functions that reduce 
       <ul>
         <li> belongs to rank 1 for secondary findings </li>
         <li> does not have AD, AR, or XL as one of its modes of inheritance based on <code>CGD_inheritance</code> </li>
-        <li> has <code>F_CmpHet_S1</code> &ge; 1 </li>
+        <li> has <code>F_CmpHet_S1 &ge; 1</code> </li>
       </ul>
     </td>
   </tr>
@@ -522,8 +522,8 @@ The main change from the old script is the utilization of functions that reduce 
       <ul>
         <li> belongs to rank 1 for secondary findings </li>
         <li> does not have AD, AR, or XL as one of its modes of inheritance based on <code>CGD_inheritance</code> </li>
-        <li> is not potential compound heterozygous, i.e. has <code>F_CmpHet_S1 = 0 </code> </li>
-        <li> has zygosity "heterozygous reference" (ref-alt) or "heterozygous alternate" (alt-alt) </li>
+        <li> is not potential compound heterozygous, i.e. has <code>F_CmpHet_S1 = 0</code> </li>
+        <li> has zygosity <code>ref-alt</code> (heterozygous reference) or <code>alt-alt</code> (heterozygous alternate) </li>
       </ul>
     </td>
   </tr>
@@ -534,8 +534,8 @@ The main change from the old script is the utilization of functions that reduce 
       <ul>
         <li> belongs to rank 1 for secondary findings </li>
         <li> has AR as one of its modes of inheritance based on <code>CGD_inheritance</code> </li>
-        <li> is not potential compound heterozygous, i.e. has <code>F_CmpHet_S1 = 0 </code> </li>
-        <li> has zygosity "heterozygous reference" (ref-alt) or "heterozygous alternate" (alt-alt) </li>
+        <li> is not potential compound heterozygous, i.e. has <code>F_CmpHet_S1 = 0</code> </li>
+        <li> has zygosity <code>ref-alt</code> (heterozygous reference) or <code>alt-alt</code> (heterozygous alternate) </li>
       </ul>
     </td>
   </tr>
@@ -547,7 +547,7 @@ The main change from the old script is the utilization of functions that reduce 
         <li> belongs to rank 1 for secondary findings </li>
         <li> has XL as one of its modes of inheritance based on <code>CGD_inheritance</code> </li>
         <li> is found in chromosome X </li>
-        <li> has zygosity "heterozygous reference" (ref-alt) or "heterozygous alternate" (alt-alt) </li>
+        <li> has zygosity <code>ref-alt</code> (heterozygous reference) or <code>alt-alt</code> (heterozygous alternate) </li>
       </ul>
     </td>
   </tr>
@@ -557,7 +557,7 @@ The main change from the old script is the utilization of functions that reduce 
     <td> <code>FS2_Select = 1</code> if the variant
       <ul>
         <li> has CGD disease annotations </li>
-        <li> has a "PASS" FILTER and DP &ge; 2 </li>
+        <li> is high quality, i.e. has a "PASS" FILTER and DP &ge; 2 </li>
         <li> has a maximum allele frequency of 0.01 </li>
         <li> satisfies one or more of the following: </li>
           <ul>
