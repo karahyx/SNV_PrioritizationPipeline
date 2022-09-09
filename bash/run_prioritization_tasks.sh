@@ -27,9 +27,8 @@ do
     qsub -v tool=$tool,infile=$infile,genome=$genome,outpath=$outpath /hpf/largeprojects/tcagstor/scratch/kara.han/PrioritizationPipeline/new_script/get_prioritization_results.sh
 done
 
-
+# If files are in their separate folder and the folders are named after their sample name:
 : <<'END'
-# mis-c folder:
 infile_dir=/hpf/largeprojects/tcagstor/projects/wgs_rae_yeung/dragen_analysis/mis-c/ # path to folder
 output_dir=/hpf/largeprojects/tcagstor/scratch/kara.han/PrioritizationPipeline/new_script/results/mis-c/
 
