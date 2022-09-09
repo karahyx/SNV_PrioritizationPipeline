@@ -8,13 +8,13 @@ The PrioritizationPipeline script is used to annotate small variants called by D
 
 PrioritizationPipeline relies on the TCAG Small Variant Annotate Pipeline rev27.7 developed and maintained by Thomas Nalpathamkalam. The documentation can be found here [TCAG_SMALL VARIANT_ANNOTATION_PIPELINE_rev27.7_hg38_JUN2022.pdf](./TCAG_SMALL_VARIANT_ANNOTATION_PIPELINE_rev27.7_hg38_JUN2022.pdf). In comparison, [Pipeline_v16](./R/pipeline_old.R) relies on [TCAG_SMALL VARIANT_ANNOTATION_PIPELINE_rev27.4_hg18_AUG2022.pdf](./TCAG_SMALL_VARIANT_ANNOTATION_PIPELINE_rev27.4_hg18_AUG2022.pdf).
 
-Two versions of PrioritizationPipeline are provided. [Version 1](./R/pipeline_new.R) is a general and more detailed version for users who wish to run the script on one file at a time and on their local machine. The individual sections that add different types of annotations and make up the Main Section are provided. As the file name suggests, [Version 2](./R/pipeline_new_hpf.R) is designed to be called by a shell script that receives user input and usually used to process multiple files in one go on HPF platforms. The shell scripts in the [bash](./bash) folder are used to perform such tasks. Detailed instructions for how to run the file on HPF can be found in the Instructions section below.
+Two versions of PrioritizationPipeline are provided. [Version 1: Pipeline_v17_ILMN_DRAGEN_rev27.7](./R/Pipeline_v17_ILMN_DRAGEN_rev27.7_20220909.R) is a general and more detailed version for users who wish to run the script on one file at a time and on their local machine. The individual sections that add different types of annotations and make up the Main Section are provided. As the file name suggests, [Version 2: Pipeline_v17_ILMN_DRAGEN_rev27.7_HPF](./R/Pipeline_v17_ILMN_DRAGEN_rev27.7_HPF_20220909.R) is designed to be called by a shell script that receives user input and usually used to process multiple files at once on HPF platforms. The shell scripts in the [bash](./bash) folder are used to perform such tasks. Detailed instructions for how to run the file on HPF can be found in the Running the Script sections below.
 
 The main change from the old script is the utilization of functions that reduce the program to smaller, more manageable chunks and allow for reusability and extension. Detailed changes can be found in the Changes From the Old Script section below.
 
 ## :desktop_computer: Instructions
 
-### :brain: Working with PrioritizationPipeline Version 1 (General Version)
+### :brain: Working with PrioritizationPipeline v17 Version 1 (General Version)
 
 #### :mag_right: Script Structure Overview
 
@@ -119,7 +119,12 @@ The main change from the old script is the utilization of functions that reduce 
     <td rowspan="2">(3) Quality Filter</td>
     <td>3.1. Pass tag</td>
     <td>Add a pass tag that indicates whether the variant has FILTER = "PASS"</td>
-    <td><code>F_Pass</code> = <br> whether the variant has a "PASS" FILTER</td>
+    <td><code>F_Pass</code> = 
+      <ul>
+        <li> 1 if the variant has a "PASS" FILTER </li>
+        <li> 0 otherwise </li>
+      </ul>
+    </td>
   </tr>
   <tr>
     <td>3.2. Quality tag</td>
@@ -679,7 +684,7 @@ Steps:
   * (1) Functions
   * (9) Main (runs sections 2-8)
 
-### :brain: Working with PrioritizationPipeline Version 2 (HPF Version)
+### :brain: Working with PrioritizationPipeline v17 Version 2 (HPF Version)
 
 #### :mag_right: Script Structure Overview (same as Version 1, see above)
 
