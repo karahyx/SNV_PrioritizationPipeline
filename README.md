@@ -720,6 +720,7 @@ If your variant data files are in their own folders and the folders are named af
   * 5.6. Non-coding
 * Changed the default type for <code>F_DamageType</code> and <code>F_S_DamageType</code> to "NotDmg" and "NotLOF" for a more intuitive understanding
 * Used <code>data.table::fread</code> to achieve a faster speed when importing the original variant data
+* Added a line to remove column DP immediately after reading in the original variant data - this is because at one point the script removes the <code>{genome_name}.</code> part in columns that start with it, which includes <code>{genome_name}.DP</code>. After removal, there would be two DP columns and the first DP column would be used by default, which is not desired.
 
 ## Contributors
 * Daniele Merico - Original creator of the pipeline
