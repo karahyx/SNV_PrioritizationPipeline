@@ -139,10 +139,10 @@ The main change from the old script is the utilization of functions that reduce 
   <tr>
     <td>4.2. Quality tag</td>
     <td>Add a quality tag that indicates whether variants with a "PASS" FILTER pass the DP cutoff</td>
-    <td><code>F_Qual_tag</code> = 
+    <td><code>F_Qual</code> = 
       <ul>
-        <li>"OK" if the variant has DP &ge; 2</li>
-        <li>"LowQuality" if the variant has DP < 2 </li>
+        <li>1, if the variant has a "PASS" FILTER and DP &ge; 2</li>
+        <li>0, otherwise </li>
       </ul>
     </td>
   </tr>
