@@ -262,10 +262,10 @@ The main change from the old script is the utilization of functions that reduce 
         <li> its <code>F_DamageType</code> is not "LOF" </li>
         <li> satisfies one or more of the following: </li>
           <ul>
-            <li> <code>spliceAI_DS_AG > 0.2</code> & <code>|spliceAI_DP_AG| &le; 50</code> </li>
-            <li> <code>spliceAI_DS_AL > 0.2</code> & <code>|spliceAI_DP_AL| &le; 50</code> </li>
-            <li> <code>spliceAI_DS_DG > 0.2</code> & <code>|spliceAI_DP_DG| &le; 50</code> </li>
-            <li> <code>spliceAI_DS_DL > 0.2</code> & <code>|spliceAI_DP_DL| &le; 50</code> </li>
+            <li> <code>spliceAI_DS_AG > 0.5</code> & <code>|spliceAI_DP_AG| &le; 50</code> </li>
+            <li> <code>spliceAI_DS_AL > 0.5</code> & <code>|spliceAI_DP_AL| &le; 50</code> </li>
+            <li> <code>spliceAI_DS_DG > 0.5</code> & <code>|spliceAI_DP_DG| &le; 50</code> </li>
+            <li> <code>spliceAI_DS_DL > 0.5</code> & <code>|spliceAI_DP_DL| &le; 50</code> </li>
             <li> <code>dbscSNV_ADA_SCORE > 0.6</code> & <code>dbscSNV_RF_SCORE > 0.6</code> </li>
           </ul>
       </ul>
