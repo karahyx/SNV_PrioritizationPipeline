@@ -101,7 +101,7 @@ The main change from the old script is the utilization of functions that reduce 
     <td>N/A</td>
   </tr>
   <tr>
-    <td rowspan="5">(2) Frequency Filter</td>
+    <td rowspan="5">(3) Frequency Filter</td>
     <td>allele frequency cutoff = 0.05</td>
     <td rowspan="5">Add a frequency filter that filters for variants that pass a specific allele frequency cutoff</td>
     <td rowspan="5"><code>F_Rare</code> = <br> the smallest allele frequency cutoff that the variant passes</td>
@@ -119,7 +119,7 @@ The main change from the old script is the utilization of functions that reduce 
     <td>allele frequency cutoff = 0</td>
   </tr>
   <tr>
-    <td rowspan="2">(3) Quality Filter</td>
+    <td rowspan="2">(4) Quality Filter</td>
     <td>3.1. Pass tag</td>
     <td>Add a pass tag that indicates whether the variant has FILTER = "PASS"</td>
     <td><code>F_Pass</code> = 
@@ -140,7 +140,7 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td>(4) Coding Tag</td>
+    <td>(5) Coding Tag</td>
     <td>Add coding tags to the variant data</td>
     <td>Add a coding tag that indicates whether the variants' type of sequence overlapped with respect to known genes/transcripts is Coding, ncRNA, or Other</td>
     <td><code>F_Coding</code> = 
@@ -152,8 +152,8 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td rowspan="7">(5) Define Damage</td>
-    <td>5.0. Variable initialization</td>
+    <td rowspan="7">(6) Define Damage</td>
+    <td>6.0. Variable initialization</td>
     <td>Initialize the following columns:<br><code>F_DamageType = "NotDmg"</code><br><code>F_DamageRank = 0</code><br><code>F_S_DamageType = "NotLOF"</code></td>
     <td><code>F_DamageType</code> = a variant's damage type
       <ul>
@@ -171,7 +171,7 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td>5.1. Coding LOF</td>
+    <td>6.1. Coding LOF</td>
     <td><code>add_coding_lof_tag()</code> identify variants of type <code>Coding LOF</code> and change their <code>F_DamageRank</code> to 2;<br><br><code>add_coding_lof_spliceJunction_tag()</code> identifies variants of type <code>Coding LOF</code> with <code>distance_spliceJunction &lt; 3</code>; note that no change is made to <code>F_DamageRank</code> here</td>
     <td>The variant is <code>Coding LOF</code> if it
       <ul>
@@ -186,7 +186,7 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td>5.2. Missense</td>
+    <td>6.2. Missense</td>
     <td> Identify variants of type <code>Missense</code> and change its <code>F_DamageRank</code> to either 1 or 2 based on specific conditions. <br><br> The method first compares the variant's SIFT, Polyphen2, MA, phylopMam, phylopVert, and CADD_phred scores to their corresponding cutoffs and documents the results (0 or 1) in a matrix with individual variants on each row. Next, the sum of the scores for each variant are calculated (each variant has a max score of 6) and compared to rank 1 and 2 cutoffs to decide which damage rank it belongs to. 
     </td>
     <td> The variant is <code>Missense</code> and has <code>F_DamageRank = 1</code> if it
@@ -213,7 +213,7 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td>5.3. Other coding</td>
+    <td>6.3. Other coding</td>
     <td> Identify variants of type <code>Other coding</code> and change its <code>F_DamageRank</code> to either 1 or 2 based on specific cutoffs </td>
     <td> The variant is <code>Other coding</code> if it
       <ul>
@@ -236,7 +236,7 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td>5.4. Splicing predictions</td>
+    <td>6.4. Splicing predictions</td>
     <td> Predict whether the variant is of type <code>Splicing</code> and change its <code>F_DamageRank</code> to either 1 or 2 based on specific conditions </td>
     <td> The variant is predicted to be "Splicing" and has <code>F_DamageRank = 1</code> if
       <ul>
@@ -265,7 +265,7 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td>5.5. UTR</td>
+    <td>6.5. UTR</td>
     <td> Identify variants of type <code>UTR</code> and change its <code>F_DamageRank</code> to 1 or 2 based on specific cutoffs </td>
     <td> The variant is <code>UTR</code> if 
       <ul>
@@ -286,7 +286,7 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td>5.6. Non-coding</td>
+    <td>6.6. Non-coding</td>
     <td> Identify variants of type <code>Non-coding</code> and change its <code>F_DamageRank</code> to either 1 or 2 based on specific cutoffs </td>
       <td> The variant is <code>Non-coding</code> if 
         <ul>
@@ -314,8 +314,8 @@ The main change from the old script is the utilization of functions that reduce 
       </td>
   </tr>
   <tr>
-    <td rowspan="3">(6) Phenotype Filter</td>
-    <td>6.1. HPO dominant</td>
+    <td rowspan="3">(7) Phenotype Filter</td>
+    <td>7.1. HPO dominant</td>
     <td> Add a tag <code>G_AXD_HPO</code> that indicates whether the variant has autosomal dominant (AD) as their mode of inheritance based on the HPO annotations </td>
     <td> <code>G_AXD_HPO</code> = 
       <ul>
@@ -325,7 +325,7 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td>6.2. CGD dominant</td>
+    <td>7.2. CGD dominant</td>
     <td> Add a tag <code>G_AXD_CGD</code> that indicates whether the variant has autosomal dominant (AD) as their mode of inheritance based on the CGD inheritance annotations </td>
     <td> <code>G_AXD_CGD</code> = 
       <ul>
@@ -335,7 +335,7 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td>6.3. Phenotype ranks</td>
+    <td>7.3. Phenotype ranks</td>
     <td> Add a tag <code>F_PhenoRank</code> that indicates the phenotype rank of a variant. Here, rank 1 and 2 are used to differentiate mouse and human phenotype annotations, respectively. Human phenotype annotations take priority. </td>
     <td> <code>F_PhenoRank</code> =
       <ul>
@@ -346,8 +346,8 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td rowspan="5">(7) Main Findings</td>
-    <td>7.1. Recessive homozygous</td>
+    <td rowspan="5">(8) Main Findings</td>
+    <td>8.1. Recessive homozygous</td>
     <td> Add a tag <code>FM_HOM</code> that indicates whether the variant is recessive homozygous </td>
     <td> <code>FM_HOM = 1</code> if the variant
       <ul>
@@ -358,7 +358,7 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td>7.2. X-linked haploid</td>
+    <td>8.2. X-linked haploid</td>
     <td> Add a tag <code>FM_XHAP</code> that indicates whether the variant is an X-linked haploid </td>
     <td> <code>FM_XHAP = 1</code> if the variant
       <ul>
@@ -370,7 +370,7 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td>7.3. Potential compound heterozygous</td>
+    <td>8.3. Potential compound heterozygous</td>
     <td> <code>add_potential_compound_heterozygous_tag()</code> adds a tag <code>FM_PCHET</code> that indicates whether the variant is a potential compound heterozygote. <br>
     <br> <code>add_potential_dmg_compound_heterozygous_tag()</code> adds a tag <code>FM_PCHET_DMG</code> that indicates whether the variant is a damaging potential compound heterozygote. <br>
     <br> Note that the method used involves looking for multiple mutations on the same gene.  </td>
@@ -388,7 +388,7 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td>7.4. Dominant</td>
+    <td>8.4. Dominant</td>
     <td> Add a tag <code>FM_AXDOM</code> that indicates whether the variant is autosomal dominant (AD) </td>
     <td> <code>FM_AXDOM = 1</code> if the variant
       <ul>
@@ -399,7 +399,7 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td>7.5. Heterozygous hotzone</td>
+    <td>8.5. Heterozygous hotzone</td>
     <td> Add a tag <code>FM_HZ</code> that indicates whether the variant is part of a heterozygous hotzone </td>
     <td> <code>FM_HZ = 1</code> if the variant
       <ul>
@@ -415,8 +415,8 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td rowspan="14">(8) Secondary Findings</td>
-    <td>8.0. Pathogenicity flag</td>
+    <td rowspan="14">(9) Secondary Findings</td>
+    <td>9.0. Pathogenicity flag</td>
     <td> Add two pathogenicity related flags:
       <ul> 
         <li> flag <code>F_Clinvar_Pathg</code> indicates whether the variant has at least one record submitted with pathogenic or likely pathogenic based on ClinVar </li>
@@ -428,7 +428,7 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td>8.1. Rank 1</td>
+    <td>9.1. Rank 1</td>
     <td> Add a tag <code>FS1_Select</code> that indicates whether a variant belongs to rank 1 for secondary findings </td>
     <td> <code>FS1_Select = 1</code> if the variant
       <ul>
@@ -442,7 +442,7 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td>8.1.1. Dominant, pathogenic</td>
+    <td>9.1.1. Dominant, pathogenic</td>
     <td> Add a tag <code>FS1_AD_Pathg_Any</code> that indicates whether a variant is dominant and pathogenic </td>
     <td> A variant has <code>FS1_AD_Pathg_Any = 1</code> if
       <ul>
@@ -452,7 +452,7 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td>8.1.2. Recessive, homozygous, pathogenic</td>
+    <td>9.1.2. Recessive, homozygous, pathogenic</td>
     <td> Add a tag <code>FS1_AR_Pathg_Hom</code> that indicates whether a variant is recessive, homozygous and pathogenic </td>
     <td> A variant has <code>FS1_AR_Pathg_Hom</code> if it
       <ul>
@@ -463,7 +463,7 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td>8.1.3. Recessive, potential compound heterozygous, pathogenic</td>
+    <td>9.1.3. Recessive, potential compound heterozygous, pathogenic</td>
     <td> Two tags are being added here:
       <ul>
         <li> Add a tag <code>F_CmpHet_S1</code> that indicates whether a variant is a potential compound heterozygote </li>
@@ -486,7 +486,7 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td>8.1.4. X-linked, homozygous/haploid, pathogenic</td>
+    <td>9.1.4. X-linked, homozygous/haploid, pathogenic</td>
     <td> Add a tag <code>FS1_XL_Pathg_Hom</code> that indicates whether a variant is X-linked homozygous and pathogenic <br><br>
     Add a tag <code>FS1_XL_Pathg_Hap</code> that indicates whether a variant is X-linked haploid and pathogenic </td>
     <td> <code>FS1_XL_Pathg_Hom = 1</code> or <code>FS1_XL_Pathg_Hap = 1</code> if a variant
@@ -497,7 +497,7 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td>8.1.5. Complex, homozygous/haploid, pathogenic</td>
+    <td>9.1.5. Complex, homozygous/haploid, pathogenic</td>
     <td> Add a tag <code>FS1_CX_Pathg_HomHap</code> that indicates whether a variant is complex, homozygous/haploid, and pathogenic </td>
     <td> A variant has <code>FS1_CX_Pathg_HomHap = 1</code> if it
       <ul>
@@ -508,7 +508,7 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td>8.1.6. Complex, potential compound heterozygous, pathogenic</td>
+    <td>9.1.6. Complex, potential compound heterozygous, pathogenic</td>
     <td> Add a tag <code>FS1_CX_Pathg_PotCompHet</code> that indicates whether a variant is complex, potential compound heterozygous, and pathogenic </td>
     <td> A variant has <code>FS1_CX_Pathg_HomHap = 1</code> if it
       <ul>
@@ -519,7 +519,7 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td>8.1.7. Complex, single heterozygous, uncertain</td>
+    <td>9.1.7. Complex, single heterozygous, uncertain</td>
     <td> Add a tag <code>FS1_CX_Uncertain</code> that indicates whether a variant is complex, single heterozygous, and pathogenicity uncertain </td>
     <td> A variant has <code>FS1_CX_Uncertain = 1</code> if it
       <ul>
@@ -531,7 +531,7 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td>8.1.8. Recessive, single heterozygous, carrier</td>
+    <td>9.1.8. Recessive, single heterozygous, carrier</td>
     <td> Add a tag <code>FS1_AR_Carrier</code> that indicates whether a variant is recessive, single heterozygous, and a carrier </td>
     <td> A variant has <code>FS1_AR_Carrier = 1</code> if it
       <ul>
@@ -543,7 +543,7 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td>8.1.9. X-linked, heterozygous, carrier</td>
+    <td>9.1.9. X-linked, heterozygous, carrier</td>
     <td> Add a tag <code>FS1_XL_Carrier</code> that indicates whether a variant is X-linked, heterozygous, and a carrier </td>
     <td> A variant has <code>FS1_XL_Carrier = 1</code> if it
       <ul>
@@ -555,7 +555,7 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td>8.2. Rank 2</td>
+    <td>9.2. Rank 2</td>
     <td> Add a tag <code>FS2_Select</code> that indicates whether a variant belongs to rank 2 for secondary findings </td>
     <td> <code>FS2_Select = 1</code> if the variant
       <ul>
@@ -572,7 +572,7 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td>8.3. Rank 3</td>
+    <td>9.3. Rank 3</td>
     <td> Add a tag <code>FS3_Select</code> that indicates whether a variant belongs to rank 3 for secondary findings </td>
     <td> <code>FS3_Select = 1</code> if the variant
       <ul>
@@ -590,7 +590,7 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td>8.4. ACMG disease</td>
+    <td>9.4. ACMG disease</td>
     <td> Add two tags:
       <ul>
         <li> <code>F_ACMG</code> indicates whether the variant has an ACMG disease annotation </li>
@@ -606,7 +606,7 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td rowspan="10">(9) Main</td>
+    <td rowspan="10">(10) Main</td>
     <td>Step 1. File import</td>
     <td> Imports the original variant data </td>
     <td> N/A </td>
@@ -685,12 +685,12 @@ Steps:
   * Settings
   * (0) Variables and Cutoffs
   * (1) Functions
-  * (9) Main (runs sections 2-8)
+  * (10) Main (runs sections 2-9)
 
 ### :brain: Working with PrioritizationPipeline v17 Version 2 (HPF Version)
 
 #### :mag_right: Script Structure Overview
-Version 2 only contains sections <code>(0) Variables & Cutoffs</code>, <code>(1) Functions</code>, and <code>(9) Main</code>, where <code>(9) Main</code> runs Sections (2)-(8).
+Version 2 only contains sections <code>(0) Variables & Cutoffs</code>, <code>(1) Functions</code>, and <code>(10) Main</code>, where <code>(10) Main</code> runs Sections (2)-(9).
 
 
 #### :arrow_forward: Running the Script
@@ -717,10 +717,10 @@ If your variant data files are in their own folders and the folders are named af
   * High-quality variants are now defined as variants with a "PASS" FILTER and <code>DP &ge; 2</code> 
   * Removed the <code> (effect_priority %in% eff_other_sub.chv & (phylopMam_avg >= 1.5 | phylopVert100_avg >= 2.0 | CADD_phred >= 13.0) & is.na (dbsnp) & is.na (dbsnp_region))</code> condition from the criteria for defining damaging variants with type Other Coding
 * Changed the <code>phylopMam</code>, <code>phylopVert100</code>, <code>CADD_phred</code> cutoffs for the following sections:
-  * 5.2. Missense
-  * 5.3. Other coding
-  * 5.5. UTR
-  * 5.6. Non-coding
+  * 6.2. Missense
+  * 6.3. Other coding
+  * 6.5. UTR
+  * 6.6. Non-coding
 * Changed the default type for <code>F_DamageType</code> and <code>F_S_DamageType</code> to "NotDmg" and "NotLOF" for a more intuitive understanding
 * Used <code>data.table::fread</code> to achieve a faster speed when importing the original variant data
 * Added a line to remove column DP immediately after reading in the original variant data - this is because at one point the script removes the <code>{genome_name}.</code> part in columns that start with it, which includes <code>{genome_name}.DP</code>. After removal, there would be two DP columns and the first DP column would be used by default, which is not desired.
