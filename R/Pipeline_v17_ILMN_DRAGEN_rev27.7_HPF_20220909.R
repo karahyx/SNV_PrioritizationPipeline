@@ -516,13 +516,13 @@ add_secondary_findings_rank2_tag <- function(data) {
 add_secondary_findings_rank3_tag <- function(data) {
   
   # genes with 1) CGD annotations; 2) hq; 3) rare 1%; 4) not non-pathogenic; 5) damaging
-  sf2_var <- with(data, which(CGD_disease != "" & F_Qual == 1 & F_Rare <= 0.01 
+  sf3_var <- with(data, which(CGD_disease != "" & F_Qual == 1 & F_Rare <= 0.01 
                               & F_DamageType != "NotDmg" & 
                                 ((F_DamageType == "LOF") | 
                                    (F_Clinvar_Pathg == 1) | 
                                    (F_Clinvar_notPathg == 0)) )) 
   data$FS3_Select <- 0
-  data$FS3_Select[sf2_var] <- 1
+  data$FS3_Select[sf3_var] <- 1
   
   return(data)
 }
