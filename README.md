@@ -643,8 +643,9 @@ The main change from the old script is the utilization of functions that reduce 
     <td>Step 5. Annotate the data</td>
     <td> 
       <ul>
+        <li> Remove alternate contigs and unlocalized/unplaced sequence from the data </li>
         <li> Obtain variants with a maximum frequency of 0.05 and annotate them with filtering tags </li>
-        <li> Obtain high-quality variants with a maximum frequency of 0.05, a "PASS" FILTER and DP &ge; 2 and annotate them with filtering tags </li>
+        <li> Obtain high-quality variants that have a "PASS" FILTER and DP &ge; 2 and annotate them with filtering tags </li>
       </ul>
     </td>
     <td> N/A </td>
@@ -731,6 +732,7 @@ If your variant data files are in their own folders and the folders are named af
 * Changed the default type for <code>F_DamageType</code> and <code>F_S_DamageType</code> to "NotDmg" and "NotLOF" for a more intuitive understanding
 * Used <code>data.table::fread</code> to achieve a faster speed when importing the original variant data
 * Added a line to remove column DP immediately after reading in the original variant data - this is because at one point the script removes the <code>{genome_name}.</code> part in columns that start with it, which includes <code>{genome_name}.DP</code>. After removal, there would be two DP columns and the first DP column would be used by default, which is not desired.
+* The new script annotates all variants with a maximum allele frequency of 0.05 throughout and only outputs one annotated data set containing rare 0.05 variants. On contrary, the old script annotated the high-quality, rare 0.05 variants throughout and output rare 0.05 and high-quality, rare 0.05 variants separately. This change was made because only ~4% of variants called by DRAGEN are low-quality (i.e. they do not have a "PASS" filter).
 
 ## :handshake: Contributors
 * Daniele Merico - Original creator of the pipeline
