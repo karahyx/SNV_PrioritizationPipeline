@@ -120,7 +120,7 @@ The main change from the old script is the utilization of functions that reduce 
   </tr>
   <tr>
     <td rowspan="2">(4) Quality Filter</td>
-    <td>3.1. Pass tag</td>
+    <td>4.1. Pass tag</td>
     <td>Add a pass tag that indicates whether the variant has FILTER = "PASS"</td>
     <td><code>F_Pass</code> = 
       <ul>
@@ -130,7 +130,7 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td>3.2. Quality tag</td>
+    <td>4.2. Quality tag</td>
     <td>Add a quality tag that indicates whether variants with a "PASS" FILTER pass the DP cutoff</td>
     <td><code>F_Qual_tag</code> = 
       <ul>
