@@ -101,6 +101,13 @@ The main change from the old script is the utilization of functions that reduce 
     <td>N/A</td>
   </tr>
   <tr>
+    <td>(2) Alternate Contigs and Unlocalized/Unplaced Sequence Filter</td>
+    <td> N/A </td>
+    <td> Remove <a href="https://gatk.broadinstitute.org/hc/en-us/articles/360041155232-Reference-Genome-Components"> alternate contigs and unlocalized/unplaced sequence</a> from the variant data </td>
+    <td> N/A
+    </td>
+  </tr>
+  <tr>
     <td rowspan="5">(3) Frequency Filter</td>
     <td>allele frequency cutoff = 0.05</td>
     <td rowspan="5">Add a frequency filter that filters for variants that pass a specific allele frequency cutoff</td>
