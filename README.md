@@ -53,10 +53,13 @@ The main change from the old script is the utilization of functions that reduce 
     <td>0.4.3. Main findings</td>
   </tr>
   <tr>
-    <td rowspan="12">(1) Functions<br></td>
+    <td rowspan="13">(1) Functions<br></td>
+    <td>1.0. Alternate contigs and unlocalized/unplaced sequence filter</td>
+    <td rowspan="13">All functions used in the script can be found here</td>
+    <td rowspan="13">N/A</td>
+  </tr>
+  <tr>
     <td>1.1. Frequency filter</td>
-    <td rowspan="12">All functions used in the script can be found here</td>
-    <td rowspan="12">N/A</td>
   </tr>
   <tr>
     <td>1.2. Quality filter</td>
