@@ -8,6 +8,7 @@
 #               Thomas N., and Dr. Worrawat E. at TCAG
 # Date script created: 2022-07-20 14:32:21 EDT
 # Date last modified: 2022-09-21 11:13:50 EDT
+# Version: v17
 # TCAG annotation pipeline version: rev27.7 hg38
 # Depends: 
 #     R (>= 3.4.0)
