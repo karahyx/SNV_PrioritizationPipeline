@@ -14,7 +14,7 @@ The main change from the old script is the utilization of functions that reduce 
 
 ## :desktop_computer: Instructions
 
-### :brain: Working with PrioritizationPipeline v17 Version 1 (General Version)
+### :brain: Working with PrioritizationPipeline v17 Version 1 (Single Samples)
 
 #### :mag_right: Script Structure Overview
 
@@ -695,7 +695,7 @@ Steps:
   * (1) Functions
   * (10) Main (runs sections 2-9)
 
-### :brain: Working with PrioritizationPipeline v17 Version 2 (HPF Version)
+### :brain: Working with PrioritizationPipeline v17 Version 2 (Family Samples)
 
 #### :mag_right: Script Structure Overview
 Version 2 only contains sections <code>(0) Variables & Cutoffs</code>, <code>(1) Functions</code>, and <code>(10) Main</code>, where <code>(10) Main</code> runs Sections (2)-(9).
