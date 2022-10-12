@@ -16,6 +16,30 @@ The main change from the old script is the utilization of functions that reduce 
 
 ### :brain: Working with PrioritizationPipeline v17 Version 1 (Single Samples)
 
+#### :arrow_forward: Running the Script
+If your variant data files are in the same folder:
+1. In <code>run_prioritization_tasks.sh</code>, make sure that lines 13-31 are uncommented and lines 34-53 are commented
+2. Change the values assigned to the following variables:
+    1. <code>tool</code> on line 9 to the path of your folder that stores pipeline_new.R
+    2. <code>funcs</code> on line 10 to the path of your folder that stores pipeline_new_funcs.R
+    3. <code>infile_dir</code> on line 14 to the path of your folder that contains the variant data
+    4. <code>output_dir</code> on line 15 to your desired output directory
+3. If your files do not end with .tsv, change the <code>'\*.tsv.gz'</code> on line 18 to <code>'\*.{your_file_format}'</code>
+4. Run <code>qsub ~/run_prioritization_tasks.sh</code> on HPF
+<br>
+
+If your variant data files are in their own folders and the folders are named after their sample name:
+1. In <code>run_prioritization_tasks.sh</code>, make sure that lines 34-53 are uncommented and lines 13-31 are commented
+2. Change the values assigned to the following variables:
+    1. <code>tool</code> on line 9 to the path of your folder that stores pipeline_new.R
+    2. <code>funcs</code> on line 10 to the path of your folder that stores pipeline_new_funcs.R
+    3. <code>infile_dir</code> on line 35 to the path of your folder that contains the variant data
+    4. <code>output_dir</code> on line 36 to your desired output directory
+3. Change the <code>'\*SUBSET\*'</code> part on line 44 to a part of the file name that's found in all the variant data file names 
+    1. For instance, the file names all have the format <code>{sample_name}.hard-filtered.vcf.gz.annovar.out_SUBSET_rev27.7_hg38.tsv</code> in the example
+    2. Thus, <code>SUBSET</code> was used as the common element in all file names
+5. Run <code>qsub ~/run_prioritization_tasks.sh</code> on HPF
+
 #### :mag_right: Script Structure Overview
 
 <table>
