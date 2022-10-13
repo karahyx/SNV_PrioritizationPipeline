@@ -42,6 +42,20 @@ If your variant data files are in their own folders and the folders are named af
 
 #### :mag_right: Script Structure Overview
 
+##### main script
+
+<table>
+<thead>
+  <tr>
+    <th>Section</th>
+    <th>Content</th>
+    <th>Purpose</th>
+  </tr>
+</thead>
+
+
+##### filters
+
 <table>
 <thead>
   <tr>
@@ -707,18 +721,6 @@ If your variant data files are in their own folders and the folders are named af
 </tbody>
 </table>
 
-#### :arrow_forward: Running the Script
-Steps:
-1. Change the following parameters in Section (0)Variables & Cutoffs:
-  * <code>input_var_genome.file</code> to the path of your input file
-  * <code>input_var_genome.name</code> to the name of your sample
-  * <code>output_path</code> to the path of your output directory
-2. Then run the following sections:
-  * Settings
-  * (0) Variables and Cutoffs
-  * (1) Functions
-  * (10) Main (runs sections 2-9)
-
 ### :brain: Working with PrioritizationPipeline v17 Version 2 (Family Samples)
 
 #### :mag_right: Script Structure Overview
@@ -739,8 +741,6 @@ If your variant data files are in their own folders and the folders are named af
 3. Change the <code>'\*SUBSET\*'</code> part on line 41 to a part of the file name that's found in all the variant data file names. 
   * For instance, the file names all have the format <code>{sample_name}.hard-filtered.vcf.gz.annovar.out_SUBSET_rev27.7_hg38.tsv</code> in the example.
 5. Run <code>qsub ~/run_prioritization_tasks.sh</code> on HPF.
-
-### Stats Summary
 
 ## :bulb: Changes From the Old Script
 * Added <code>frameshift block substitution</code> and <code>nonframeshift block subsitution</code> to <code>eff_lof.chv</code> and <code>eff_other_sub.chv</code> upon [updates from ANNOVAR](https://annovar.openbioinformatics.org/en/latest/user-guide/gene/)
