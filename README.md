@@ -143,62 +143,56 @@ The main change from the old script is the utilization of functions that reduce 
 </thead>
 <tbody>
   <tr>
-    <td rowspan="13">(1) Functions<br></td>
-    <td>1.0. Alternate contigs and unlocalized/unplaced sequence filter</td>
+    <td rowspan="13"> (3) Overview <br></td>
+    <td>3.0. Alternate contigs and unlocalized/unplaced sequence filter</td>
     <td rowspan="13">All functions used in the script can be found here</td>
     <td rowspan="13">N/A</td>
   </tr>
   <tr>
-    <td>1.1. Frequency filter</td>
+    <td>3.1. Frequency filter</td>
   </tr>
   <tr>
-    <td>1.2. Quality filter</td>
+    <td>3.2. Quality filter</td>
   </tr>
   <tr>
-    <td>1.3. Coding tag</td>
+    <td>3.3. Coding tag</td>
   </tr>
   <tr>
-    <td>1.4. Define damage</td>
+    <td>3.4. Define damage</td>
   </tr>
   <tr>
-    <td>1.5. Phenotype filter</td>
+    <td>3.5. Phenotype filter</td>
   </tr>
   <tr>
-    <td>1.6. Main findings</td>
+    <td>3.6. Main findings</td>
   </tr>
   <tr>
-    <td>1.7. Secondary findings</td>
+    <td>3.7. Secondary findings</td>
   </tr>
   <tr>
-    <td>1.8. Get final results</td>
+    <td>3.8. Get final results</td>
   </tr>
   <tr>
-    <td>1.8.1. Get rare variants</td>
+    <td>3.8.1. Get rare05 variants</td>
   </tr>
   <tr>
-    <td>1.8.2. Get HQ variants (FILTER = "PASS")</td>
+    <td>3.8.2. Get HQ variants (FILTER = "PASS")</td>
   </tr>
   <tr>
-    <td>1.8.3. Get HQ rare variants</td>
+    <td>3.8.3. Get HQ rare variants</td>
   </tr>
   <tr>
-    <td>1.9. Stats</td>
+    <td>3.9. Stats</td>
   </tr>
   <tr>
-    <td>(1.5) File Import &amp; Pre-processing</td>
-    <td>N/A</td>
-    <td>Imports the original variant data and removes those variants with homozygous reference or unknown zygosity</td>
-    <td>N/A</td>
-  </tr>
-  <tr>
-    <td>(2) Alternate Contigs and Unlocalized/Unplaced Sequence Filter</td>
+    <td> 3.0. Alternate Contigs and Unlocalized/Unplaced Sequence Filter</td>
     <td> N/A </td>
     <td> Remove <a href="https://gatk.broadinstitute.org/hc/en-us/articles/360041155232-Reference-Genome-Components"> alternate contigs and unlocalized/unplaced sequence</a> from the variant data </td>
     <td> N/A
     </td>
   </tr>
   <tr>
-    <td rowspan="5">(3) Frequency Filter</td>
+    <td rowspan="5"> 3.1. Frequency Filter</td>
     <td>allele frequency cutoff = 0.05</td>
     <td rowspan="5">Add a frequency filter that filters for variants that pass a specific allele frequency cutoff</td>
     <td rowspan="5"><code>F_Rare</code> = <br> the smallest allele frequency cutoff that the variant passes</td>
@@ -216,8 +210,8 @@ The main change from the old script is the utilization of functions that reduce 
     <td>allele frequency cutoff = 0</td>
   </tr>
   <tr>
-    <td rowspan="2">(4) Quality Filter</td>
-    <td>4.1. Pass tag</td>
+    <td rowspan="2">3.2. Quality Filter</td>
+    <td>3.2.1. Pass tag</td>
     <td>Add a pass tag that indicates whether the variant has FILTER = "PASS"</td>
     <td><code>F_Pass</code> = 
       <ul>
@@ -227,7 +221,7 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td>4.2. Quality tag</td>
+    <td>3.2.2. Quality tag</td>
     <td>Add a quality tag that indicates whether variants with a "PASS" FILTER pass the DP cutoff</td>
     <td><code>F_Qual</code> = 
       <ul>
@@ -237,9 +231,9 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td>(5) Coding Tag</td>
+    <td>3.3. Coding Tag</td>
     <td>Add coding tags to the variant data</td>
-    <td>Add a coding tag that indicates whether the variants' type of sequence overlapped with respect to known genes/transcripts is Coding, ncRNA, or Other</td>
+    <td>Add a coding tag that indicates whether a variant's type of sequence overlapped with respect to known genes/transcripts is Coding, ncRNA, or Other</td>
     <td><code>F_Coding</code> = 
       <ul>
         <li>"Coding" if the variant's <code>typeseq_priority</code> is one of <code>exonic</code>, <code>exonic;splicing</code>, or <code>splicing</code></li>
@@ -249,8 +243,8 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td rowspan="7">(6) Define Damage</td>
-    <td>6.0. Variable initialization</td>
+    <td rowspan="7">3.4. Define Damage</td>
+    <td>3.4.0. Variable initialization <br><br> :point_up:can be found in the <code>get_rare05_variants()</code> function</td>
     <td>Initialize the following columns:<br><code>F_DamageType = "NotDmg"</code><br><code>F_DamageRank = 0</code><br><code>F_S_DamageType = "NotLOF"</code></td>
     <td><code>F_DamageType</code> = a variant's damage type
       <ul>
@@ -268,7 +262,7 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td>6.1. Coding LOF</td>
+    <td>3.4.1. Coding LOF</td>
     <td><code>add_coding_lof_tag()</code> identify variants of type <code>Coding LOF</code> and change their <code>F_DamageRank</code> to 2;<br><br><code>add_coding_lof_spliceJunction_tag()</code> identifies variants of type <code>Coding LOF</code> with <code>distance_spliceJunction &lt; 3</code>; note that no change is made to <code>F_DamageRank</code> here</td>
     <td>The variant is <code>Coding LOF</code> if it
       <ul>
