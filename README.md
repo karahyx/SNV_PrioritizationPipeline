@@ -277,8 +277,8 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td>6.2. Missense</td>
-    <td> Identify variants of type <code>Missense</code> and change its <code>F_DamageRank</code> to either 1 or 2 based on specific conditions. <br><br> The method first compares the variant's SIFT, Polyphen2, MA, phylopMam, phylopVert, and CADD_phred scores to their corresponding cutoffs and documents the results (0 or 1) in a matrix with individual variants on each row. Next, the sum of the scores for each variant are calculated (each variant has a max score of 6) and compared to rank 1 and 2 cutoffs to decide which damage rank it belongs to. 
+    <td>3.4.2. Missense</td>
+    <td> Identify variants of type <code>Missense</code> and change its <code>F_DamageRank</code> to either 1 or 2 based on specific conditions. <br><br> The method first compares the variant's SIFT, Polyphen2, MA, phylopMam, phylopVert, CADD_phred, REVEL, and MPC scores to their corresponding cutoffs and documents the results (0 or 1) in a matrix with individual variants on each row. Next, the sum of the scores for each variant are calculated (each variant has a max score of 7) and compared to rank 1 and 2 cutoffs to decide which damage rank it belongs to. 
     </td>
     <td> The variant is <code>Missense</code> and has <code>F_DamageRank = 1</code> if it
       <ul>
@@ -295,16 +295,17 @@ The main change from the old script is the utilization of functions that reduce 
       <br> "1" is documented in the sum score matrix if the variant's
       <ul>
         <li> <code>sift_score < 0.05</code> </li> 
-        <li> <code>polyphen_score &ge; 0.90</code> </li>
-        <li> <code>ma_score &ge; 1.90</code> </li>
-        <li> <code>phylopMam_avg &ge; 1.30</code> </li>
-        <li> <code>phylopVert100_avg &ge; 3.90</code> </li>
-        <li> <code>CADD_phred &ge; 21.10</code> </li>
+        <li> <code>polyphen_score &ge; 0.9</code> </li>
+        <li> <code>ma_score &ge; 1.9</code> </li>
+        <li> <code>phylopMam_avg &ge; 1.3 OR phylopVert100_avg &ge; 3.9</code> </li>
+        <li> <code>CADD_phred &ge; 21.1</code> </li>
+        <li> <code>REVEL_score &ge; 0.75</code> </li>
+        <li> <code>MPC_score &ge; 2</code> </li>
       </ul>
     </td>
   </tr>
   <tr>
-    <td>6.3. Other coding</td>
+    <td>3.4.3. Other coding</td>
     <td> Identify variants of type <code>Other coding</code> and change its <code>F_DamageRank</code> to either 1 or 2 based on specific cutoffs </td>
     <td> The variant is <code>Other coding</code> if it
       <ul>
@@ -327,7 +328,7 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td>6.4. Splicing predictions</td>
+    <td>3.4.4. Splicing predictions</td>
     <td> Predict whether the variant is of type <code>Splicing</code> and change its <code>F_DamageRank</code> to either 1 or 2 based on specific conditions </td>
     <td> The variant is predicted to be "Splicing" and has <code>F_DamageRank = 1</code> if
       <ul>
@@ -356,7 +357,7 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td>6.5. UTR</td>
+    <td>3.4.5. UTR</td>
     <td> Identify variants of type <code>UTR</code> and change its <code>F_DamageRank</code> to 1 or 2 based on specific cutoffs </td>
     <td> The variant is <code>UTR</code> if 
       <ul>
@@ -377,7 +378,7 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td>6.6. Non-coding</td>
+    <td>3.4.6. Non-coding</td>
     <td> Identify variants of type <code>Non-coding</code> and change its <code>F_DamageRank</code> to either 1 or 2 based on specific cutoffs </td>
       <td> The variant is <code>Non-coding</code> if 
         <ul>
@@ -405,8 +406,8 @@ The main change from the old script is the utilization of functions that reduce 
       </td>
   </tr>
   <tr>
-    <td rowspan="3">(7) Phenotype Filter</td>
-    <td>7.1. HPO dominant</td>
+    <td rowspan="3">3.5. Phenotype Filter</td>
+    <td>3.5.1. HPO dominant</td>
     <td> Add a tag <code>G_AXD_HPO</code> that indicates whether the variant has autosomal dominant (AD) as their mode of inheritance based on the HPO annotations </td>
     <td> <code>G_AXD_HPO</code> = 
       <ul>
@@ -416,7 +417,7 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td>7.2. CGD dominant</td>
+    <td>3.5.2. CGD dominant</td>
     <td> Add a tag <code>G_AXD_CGD</code> that indicates whether the variant has autosomal dominant (AD) as their mode of inheritance based on the CGD inheritance annotations </td>
     <td> <code>G_AXD_CGD</code> = 
       <ul>
@@ -426,7 +427,7 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td>7.3. Phenotype ranks</td>
+    <td>3.5.3. Phenotype ranks</td>
     <td> Add a tag <code>F_PhenoRank</code> that indicates the phenotype rank of a variant. Here, rank 1 and 2 are used to differentiate mouse and human phenotype annotations, respectively. Human phenotype annotations take priority. </td>
     <td> <code>F_PhenoRank</code> =
       <ul>
@@ -437,8 +438,8 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td rowspan="5">(8) Main Findings</td>
-    <td>8.1. Recessive homozygous</td>
+    <td rowspan="5">3.6. Main Findings</td>
+    <td>3.6.1. Recessive homozygous</td>
     <td> Add a tag <code>FM_HOM</code> that indicates whether the variant is recessive homozygous </td>
     <td> <code>FM_HOM = 1</code> if the variant
       <ul>
@@ -449,7 +450,7 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td>8.2. X-linked haploid</td>
+    <td>3.6.2. X-linked haploid</td>
     <td> Add a tag <code>FM_XHAP</code> that indicates whether the variant is an X-linked haploid </td>
     <td> <code>FM_XHAP = 1</code> if the variant
       <ul>
@@ -461,7 +462,7 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td>8.3. Potential compound heterozygous</td>
+    <td>3.6.3. Potential compound heterozygous</td>
     <td> <code>add_potential_compound_heterozygous_tag()</code> adds a tag <code>FM_PCHET</code> that indicates whether the variant is a potential compound heterozygote. <br>
     <br> <code>add_potential_dmg_compound_heterozygous_tag()</code> adds a tag <code>FM_PCHET_DMG</code> that indicates whether the variant is a damaging potential compound heterozygote. <br>
     <br> Note that the method used involves looking for multiple mutations on the same gene.  </td>
@@ -479,7 +480,7 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td>8.4. Dominant</td>
+    <td>3.6.4. Dominant</td>
     <td> Add a tag <code>FM_AXDOM</code> that indicates whether the variant is autosomal dominant (AD) </td>
     <td> <code>FM_AXDOM = 1</code> if the variant
       <ul>
@@ -490,7 +491,7 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td>8.5. Heterozygous hotzone</td>
+    <td>3.6.5. Heterozygous hotzone</td>
     <td> Add a tag <code>FM_HZ</code> that indicates whether the variant is part of a heterozygous hotzone </td>
     <td> <code>FM_HZ = 1</code> if the variant
       <ul>
@@ -506,8 +507,8 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td rowspan="14">(9) Secondary Findings</td>
-    <td>9.0. Pathogenicity flag</td>
+    <td rowspan="14">3.7. Secondary Findings</td>
+    <td>3.7.0. Pathogenicity flag</td>
     <td> Add two pathogenicity related flags:
       <ul> 
         <li> flag <code>F_Clinvar_Pathg</code> indicates whether the variant has at least one record submitted with pathogenic or likely pathogenic based on ClinVar </li>
@@ -519,7 +520,7 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td>9.1. Rank 1</td>
+    <td>3.7.1. Rank 1</td>
     <td> Add a tag <code>FS1_Select</code> that indicates whether a variant belongs to rank 1 for secondary findings </td>
     <td> <code>FS1_Select = 1</code> if the variant
       <ul>
