@@ -17,7 +17,8 @@ The main change from the old script is the utilization of functions that reduce 
 ### :brain: Working with PrioritizationPipeline v17 Version 1 (Single Samples)
 
 #### :arrow_forward: Running the Script
-If your variant data files are in the same folder:
+
+**If your variant data files are in the same folder:**
 1. In <code>run_prioritization_tasks.sh</code>, make sure that lines 13-31 are uncommented and lines 34-53 are commented
 2. Change the values assigned to the following variables:
     1. <code>tool</code> on line 9 to the path of your folder that stores pipeline_new.R
@@ -26,9 +27,8 @@ If your variant data files are in the same folder:
     4. <code>output_dir</code> on line 15 to your desired output directory
 3. If your files do not end with .tsv, change the <code>'\*.tsv.gz'</code> on line 18 to <code>'\*.{your_file_format}'</code>
 4. Run <code>qsub ~/run_prioritization_tasks.sh</code> on HPF
-<br>
 
-If your variant data files are in their own folders and the folders are named after their sample name:
+**If your variant data files are in their own folders and the folders are named after their sample name:**
 1. In <code>run_prioritization_tasks.sh</code>, make sure that lines 34-53 are uncommented and lines 13-31 are commented
 2. Change the values assigned to the following variables:
     1. <code>tool</code> on line 9 to the path of your folder that stores pipeline_new.R
@@ -40,9 +40,11 @@ If your variant data files are in their own folders and the folders are named af
     2. Thus, <code>SUBSET</code> was used as the common element in all file names
 5. Run <code>qsub ~/run_prioritization_tasks.sh</code> on HPF
 
+<br>
+
 #### :mag_right: Script Structure Overview
 
-##### main script
+##### :seedling: Main Script
 
 <table>
 <thead>
@@ -52,9 +54,83 @@ If your variant data files are in their own folders and the folders are named af
     <th>Purpose</th>
   </tr>
 </thead>
+<tbody>
+  <tr>
+    <td rowspan="7">(1) Variables &amp; Cutoffs</td>
+    <td>1.1. Input variables</td>
+    <td rowspan="7">Modify file locations and cutoffs here</td>
+  </tr>
+  <tr>
+    <td>1.2. Output variables</td>
+  </tr>
+  <tr>
+    <td>1.3. Internal variables</td>
+  </tr>
+  <tr>
+    <td>1.4. Cutoffs</td>
+  </tr>
+  <tr>
+    <td>1.4.1. High-quality filter</td>
+  </tr>
+  <tr>
+    <td>1.4.2. Define damage</td>
+  </tr>
+  <tr>
+    <td>1.4.3. Main findings</td>
+  </tr>
+  <tr>
+    <td rowspan="10">(2) Main</td>
+    <td> 2.1. File import</td>
+    <td> Imports the original variant data </td>
+  </tr>
+  <tr>
+    <td> 2.2. Re-format column names</td>
+    <td> Remove <code>{genome_name}:</code> from several columns for easier access </td>
+  </tr>
+  <tr>
+    <td> 2.3. Process the original imported variant data </td>
+    <td> 
+      <ul>
+        <li> Remove variants with homozygous reference (hom-ref) or unknown zygosity from the data </li>
+        <li> Calculate the alternate allele frequency </li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td> 2.4. Free up memory</td>
+    <td> Remove <code>v_full.temp.df</code> from the current workspace </td>
+  </tr>
+  <tr>
+    <td> 2.5. Add filters </td>
+    <td> 
+      <ul>
+        <li> Remove alternate contigs and unlocalized/unplaced sequence from the data </li>
+        <li> Obtain variants with a maximum frequency of 0.05 and annotate them with filtering tags </li>
+        <li> Obtain high-quality variants that have a "PASS" FILTER and annotate them with filtering tags </li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td> 2.6. Get chromosome counts and chromosome-wise zygosity counts </td>
+    <td> 
+      <ul>
+        <li> Obtain the number of variants in each chromosome </li> 
+        <li> Obtain the number of alt-alt, hom-alt, ref-alt and the percentage of hom-alt in each chromosome </li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td> 2.7. Get all variant stats </td>
+    <td> Obtain the summary statistics for all data sets in one table </td>
+  </tr>
+  <tr>
+    <td> 2.8. Output desired results as .txt files</td>
+    <td> Output all rare 0.05 variants, rare damaging variants, secondary findings, chromosome zygosity counts, and summary statistics tables to user-defined output directory </td>
+  </tr>
+</tbody>
+</table>
 
-
-##### filters
+##### :seedling: Filter Functions
 
 <table>
 <thead>
@@ -66,30 +142,6 @@ If your variant data files are in their own folders and the folders are named af
   </tr>
 </thead>
 <tbody>
-  <tr>
-    <td rowspan="7">(0) Variables &amp; Cutoffs</td>
-    <td>0.1. Input variables</td>
-    <td rowspan="7">Modify file locations and cutoffs here</td>
-    <td rowspan="7">N/A</td>
-  </tr>
-  <tr>
-    <td>0.2. Output variables</td>
-  </tr>
-  <tr>
-    <td>0.3. Internal variables</td>
-  </tr>
-  <tr>
-    <td>0.4. Cutoffs</td>
-  </tr>
-  <tr>
-    <td>0.4.1. High-quality filter</td>
-  </tr>
-  <tr>
-    <td>0.4.2. Define damage</td>
-  </tr>
-  <tr>
-    <td>0.4.3. Main findings</td>
-  </tr>
   <tr>
     <td rowspan="13">(1) Functions<br></td>
     <td>1.0. Alternate contigs and unlocalized/unplaced sequence filter</td>
@@ -649,74 +701,6 @@ If your variant data files are in their own folders and the folders are named af
         <li> whose type of sequence overlapped with respect to known genes/transcripts is one of "exonic", "splicing", or "exonic;splicing" </li>
       </ul>
     </td>
-  </tr>
-  <tr>
-    <td rowspan="10">(10) Main</td>
-    <td>Step 1. File import</td>
-    <td> Imports the original variant data </td>
-    <td> N/A </td>
-  </tr>
-  <tr>
-    <td>Step 2. Re-format column names</td>
-    <td> Remove <code>{genome_name}:</code> from several columns for easier access </td>
-    <td> N/A </td>
-  </tr>
-  <tr>
-    <td>Step 3. Process the original imported variant data</td>
-    <td> 
-      <ul>
-        <li> Remove variants with homozygous reference (hom-ref) or unknown zygosity from the data </li>
-        <li> Add a pass tag that indicates whether the variant has FILTER = "PASS" </li>
-        <li> Calculate the alternate allele frequency </li>
-      </ul>
-    </td>
-    <td> N/A </td>
-  </tr>
-  <tr>
-    <td>Step 4. Free up memory</td>
-  <td> Remove <code>v_full.temp.df</code> from the current workspace </td>
-    <td> N/A </td>
-  </tr>
-  <tr>
-    <td>Step 5. Annotate the data</td>
-    <td> 
-      <ul>
-        <li> Remove alternate contigs and unlocalized/unplaced sequence from the data </li>
-        <li> Obtain variants with a maximum frequency of 0.05 and annotate them with filtering tags </li>
-        <li> Obtain high-quality variants that have a "PASS" FILTER and DP &ge; 2 and annotate them with filtering tags </li>
-      </ul>
-    </td>
-    <td> N/A </td>
-  </tr>
-  <tr>
-    <td>Step 6. Get chromosome counts and chromosome-wise zygosity counts</td>
-    <td> 
-      <ul>
-        <li> Obtain the number of variants in each chromosome </li> 
-        <li> Obtain the number of alt-alt, hom-alt, ref-alt and the percentage of hom-alt in each chromosome </li>
-      </ul>
-    </td>
-    <td> N/A </td>
-  </tr>
-  <tr>
-    <td>Step 7. Get a summary stats list for each data set</td>
-    <td> Obtain a list of pre-defined summary statistics for the data (see how each summary statistic is defined below) </td>
-    <td> N/A </td>
-  </tr>
-  <tr>
-    <td>Step 8. Convert the stats lists to readable tables</td>
-    <td> See title </td>
-    <td> N/A </td>
-  </tr>
-  <tr>
-    <td>Step 9. Get all the summary stats in one table</td>
-    <td> Combine the summary statistics for different data sets into one table for easier comparison </td>
-    <td> N/A </td>
-  </tr>
-  <tr>
-    <td>Step 10. Output desired results as .txt files</td>
-    <td> Output the annotated data sets, chromosome zygosity counts tables, and summary statistics tables to user-defined output directory </td>
-    <td> N/A </td>
   </tr>
 </tbody>
 </table>
