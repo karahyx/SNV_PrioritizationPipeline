@@ -534,7 +534,42 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td>9.1.1. Dominant, pathogenic</td>
+    <td>3.7.2. Rank 2</td>
+    <td> Add a tag <code>FS2_Select</code> that indicates whether a variant belongs to rank 2 for secondary findings </td>
+    <td> <code>FS2_Select = 1</code> if the variant
+      <ul>
+        <li> has CGD disease annotations </li>
+        <li> is high quality, i.e. has a "PASS" FILTER and DP &ge; 2 </li>
+        <li> has a maximum allele frequency of 0.01 </li>
+        <li> satisfies one or more of the following: </li>
+          <ul>
+            <li> is of type Coding LOF, i.e. <code>F_DamageType = "LOF"</code></li>
+            <li> indicated as pathogenic or likely pathogenic by ClinVar, i.e. <code>F_Clinvar_Pathg = 1</code> </li>
+            <li> not indicated as no current value of pathogenic by ClinVar, i.e. <code>F_Clinvar_notPathg = 0</code> 
+          </ul>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td>3.7.3. Rank 3</td>
+    <td> Add a tag <code>FS3_Select</code> that indicates whether a variant belongs to rank 3 for secondary findings </td>
+    <td> <code>FS3_Select = 1</code> if the variant
+      <ul>
+        <li> has CGD disease annotations </li>
+        <li> has a "PASS" FILTER and DP &ge; 2 </li>
+        <li> has a maximum allele frequency of 0.01 </li>
+        <li> is damaging </li>
+        <li> satisfies one or more of the following: </li>
+          <ul>
+            <li> is of type Coding LOF, i.e. <code>F_DamageType = "LOF"</code></li>
+            <li> indicated as pathogenic or likely pathogenic by ClinVar, i.e. <code>F_Clinvar_Pathg = 1</code> </li>
+            <li> not indicated as no current value of pathogenic by ClinVar, i.e. <code>F_Clinvar_notPathg = 0</code> 
+          </ul>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td>3.7.4. Dominant, pathogenic</td>
     <td> Add a tag <code>FS1_AD_Pathg_Any</code> that indicates whether a variant is dominant and pathogenic </td>
     <td> A variant has <code>FS1_AD_Pathg_Any = 1</code> if
       <ul>
@@ -544,7 +579,7 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td>9.1.2. Recessive, homozygous, pathogenic</td>
+    <td>3.7.5. Recessive, homozygous, pathogenic</td>
     <td> Add a tag <code>FS1_AR_Pathg_Hom</code> that indicates whether a variant is recessive, homozygous and pathogenic </td>
     <td> A variant has <code>FS1_AR_Pathg_Hom</code> if it
       <ul>
@@ -555,7 +590,7 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td>9.1.3. Recessive, potential compound heterozygous, pathogenic</td>
+    <td>3.7.6. Recessive, potential compound heterozygous, pathogenic</td>
     <td> Two tags are being added here:
       <ul>
         <li> Add a tag <code>F_CmpHet_S1</code> that indicates whether a variant is a potential compound heterozygote </li>
@@ -578,7 +613,7 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td>9.1.4. X-linked, homozygous/haploid, pathogenic</td>
+    <td>3.7.7. X-linked, homozygous/haploid, pathogenic</td>
     <td> Add a tag <code>FS1_XL_Pathg_Hom</code> that indicates whether a variant is X-linked homozygous and pathogenic <br><br>
     Add a tag <code>FS1_XL_Pathg_Hap</code> that indicates whether a variant is X-linked haploid and pathogenic </td>
     <td> <code>FS1_XL_Pathg_Hom = 1</code> or <code>FS1_XL_Pathg_Hap = 1</code> if a variant
@@ -589,7 +624,7 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td>9.1.5. Complex, homozygous/haploid, pathogenic</td>
+    <td>3.7.8. Complex, homozygous/haploid, pathogenic</td>
     <td> Add a tag <code>FS1_CX_Pathg_HomHap</code> that indicates whether a variant is complex, homozygous/haploid, and pathogenic </td>
     <td> A variant has <code>FS1_CX_Pathg_HomHap = 1</code> if it
       <ul>
@@ -600,7 +635,7 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td>9.1.6. Complex, potential compound heterozygous, pathogenic</td>
+    <td>3.7.9. Complex, potential compound heterozygous, pathogenic</td>
     <td> Add a tag <code>FS1_CX_Pathg_PotCompHet</code> that indicates whether a variant is complex, potential compound heterozygous, and pathogenic </td>
     <td> A variant has <code>FS1_CX_Pathg_HomHap = 1</code> if it
       <ul>
@@ -611,7 +646,7 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td>9.1.7. Complex, single heterozygous, uncertain</td>
+    <td>3.7.10. Complex, single heterozygous, uncertain</td>
     <td> Add a tag <code>FS1_CX_Uncertain</code> that indicates whether a variant is complex, single heterozygous, and pathogenicity uncertain </td>
     <td> A variant has <code>FS1_CX_Uncertain = 1</code> if it
       <ul>
@@ -623,7 +658,7 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td>9.1.8. Recessive, single heterozygous, carrier</td>
+    <td>3.7.11. Recessive, single heterozygous, carrier</td>
     <td> Add a tag <code>FS1_AR_Carrier</code> that indicates whether a variant is recessive, single heterozygous, and a carrier </td>
     <td> A variant has <code>FS1_AR_Carrier = 1</code> if it
       <ul>
@@ -635,7 +670,7 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td>9.1.9. X-linked, heterozygous, carrier</td>
+    <td>3.7.12. X-linked, heterozygous, carrier</td>
     <td> Add a tag <code>FS1_XL_Carrier</code> that indicates whether a variant is X-linked, heterozygous, and a carrier </td>
     <td> A variant has <code>FS1_XL_Carrier = 1</code> if it
       <ul>
@@ -647,42 +682,7 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td>9.2. Rank 2</td>
-    <td> Add a tag <code>FS2_Select</code> that indicates whether a variant belongs to rank 2 for secondary findings </td>
-    <td> <code>FS2_Select = 1</code> if the variant
-      <ul>
-        <li> has CGD disease annotations </li>
-        <li> is high quality, i.e. has a "PASS" FILTER and DP &ge; 2 </li>
-        <li> has a maximum allele frequency of 0.01 </li>
-        <li> satisfies one or more of the following: </li>
-          <ul>
-            <li> is of type Coding LOF, i.e. <code>F_DamageType = "LOF"</code></li>
-            <li> indicated as pathogenic or likely pathogenic by ClinVar, i.e. <code>F_Clinvar_Pathg = 1</code> </li>
-            <li> not indicated as no current value of pathogenic by ClinVar, i.e. <code>F_Clinvar_notPathg = 0</code> 
-          </ul>
-      </ul>
-    </td>
-  </tr>
-  <tr>
-    <td>9.3. Rank 3</td>
-    <td> Add a tag <code>FS3_Select</code> that indicates whether a variant belongs to rank 3 for secondary findings </td>
-    <td> <code>FS3_Select = 1</code> if the variant
-      <ul>
-        <li> has CGD disease annotations </li>
-        <li> has a "PASS" FILTER and DP &ge; 2 </li>
-        <li> has a maximum allele frequency of 0.01 </li>
-        <li> is damaging </li>
-        <li> satisfies one or more of the following: </li>
-          <ul>
-            <li> is of type Coding LOF, i.e. <code>F_DamageType = "LOF"</code></li>
-            <li> indicated as pathogenic or likely pathogenic by ClinVar, i.e. <code>F_Clinvar_Pathg = 1</code> </li>
-            <li> not indicated as no current value of pathogenic by ClinVar, i.e. <code>F_Clinvar_notPathg = 0</code> 
-          </ul>
-      </ul>
-    </td>
-  </tr>
-  <tr>
-    <td>9.4. ACMG disease</td>
+    <td>3.7.13. ACMG disease</td>
     <td> Add two tags:
       <ul>
         <li> <code>F_ACMG</code> indicates whether the variant has an ACMG disease annotation </li>
