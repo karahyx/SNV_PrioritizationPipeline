@@ -270,10 +270,11 @@ The main change from the old script is the utilization of functions that reduce 
         <li> causes frameshift or point mutations in the coding sequence; or its type of sequence overlapped is splicing or exonic splicing </li>
         <li> has more than one overlap-based match for dbSNP </li>
       </ul>
-      <br>The variant is <code>Coding LOF</code> if it
+      <br>The variant is <code>Coding LOF</code> and has <code>F_DamageRank = 2</code> if it
       <ul>
         <li> is coding </li>
         <li> causes frameshift or point mutations in the coding sequence; or its type of sequence overlapped is splicing or exonic splicing </li>
+        <li> has zero or one overlap-based match for dbSNP </li> 
       </ul>
       <br>The <code>F_S_DamageType</code> is changed to "LOF" from "NotLOF" when
       <ul>
