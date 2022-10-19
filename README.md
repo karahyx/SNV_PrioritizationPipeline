@@ -263,8 +263,14 @@ The main change from the old script is the utilization of functions that reduce 
   </tr>
   <tr>
     <td>3.4.1. Coding LOF</td>
-    <td><code>add_coding_lof_tag()</code> identify variants of type <code>Coding LOF</code> and change their <code>F_DamageRank</code> to 2;<br><br><code>add_coding_lof_spliceJunction_tag()</code> identifies variants of type <code>Coding LOF</code> with <code>distance_spliceJunction &lt; 3</code>; note that no change is made to <code>F_DamageRank</code> here</td>
-    <td>The variant is <code>Coding LOF</code> if it
+    <td><code>add_coding_lof_tag()</code> identify variants of type <code>Coding LOF</code> and change their <code>F_DamageRank</code> to either 1 or 2 based on specific conditions;<br><br><code>add_coding_lof_spliceJunction_tag()</code> identifies variants of type <code>Coding LOF</code> with <code>distance_spliceJunction &lt; 3</code>; note that no change is made to <code>F_DamageRank</code> here</td>
+    <td>The variant is <code>Coding LOF</code> and has <code>F_DamageRank = 1</code> if it
+      <ul>
+        <li> is coding </li>
+        <li> causes frameshift or point mutations in the coding sequence; or its type of sequence overlapped is splicing or exonic splicing </li>
+        <li> has more than one overlap-based match for dbSNP </li>
+      </ul>
+      <br>The variant is <code>Coding LOF</code> if it
       <ul>
         <li> is coding </li>
         <li> causes frameshift or point mutations in the coding sequence; or its type of sequence overlapped is splicing or exonic splicing </li>
@@ -278,7 +284,7 @@ The main change from the old script is the utilization of functions that reduce 
   </tr>
   <tr>
     <td>3.4.2. Missense</td>
-    <td> Identify variants of type <code>Missense</code> and change its <code>F_DamageRank</code> to either 1 or 2 based on specific conditions. <br><br> The method first compares the variant's SIFT, Polyphen2, MA, phylopMam, phylopVert, CADD_phred, REVEL, and MPC scores to their corresponding cutoffs and documents the results (0 or 1) in a matrix with individual variants on each row. Next, the sum of the scores for each variant are calculated (each variant has a max score of 7) and compared to rank 1 and 2 cutoffs to decide which damage rank it belongs to. 
+    <td> Identify variants of type <code>Missense</code> and change their <code>F_DamageRank</code> to either 1 or 2 based on specific conditions. <br><br> The method first compares the variant's SIFT, Polyphen2, MA, phylopMam, phylopVert, CADD_phred, REVEL, and MPC scores to their corresponding cutoffs and documents the results (0 or 1) in a matrix with individual variants on each row. Next, the sum of the scores for each variant are calculated (each variant has a max score of 7) and compared to rank 1 and 2 cutoffs to decide which damage rank it belongs to. 
     </td>
     <td> The variant is <code>Missense</code> and has <code>F_DamageRank = 1</code> if it
       <ul>
@@ -306,7 +312,7 @@ The main change from the old script is the utilization of functions that reduce 
   </tr>
   <tr>
     <td>3.4.3. Other coding</td>
-    <td> Identify variants of type <code>Other coding</code> and change its <code>F_DamageRank</code> to either 1 or 2 based on specific cutoffs </td>
+    <td> Identify variants of type <code>Other coding</code> and change their <code>F_DamageRank</code> to either 1 or 2 based on specific cutoffs </td>
     <td> The variant is <code>Other coding</code> if it
       <ul>
         <li> is coding </li> 
@@ -329,8 +335,8 @@ The main change from the old script is the utilization of functions that reduce 
   </tr>
   <tr>
     <td>3.4.4. Splicing predictions</td>
-    <td> Predict whether the variant is of type <code>Splicing</code> and change its <code>F_DamageRank</code> to either 1 or 2 based on specific conditions </td>
-    <td> The variant is predicted to be "Splicing" and has <code>F_DamageRank = 1</code> if
+    <td> Predict whether the variant is of type <code>Splicing</code> and change their <code>F_DamageRank</code> to either 1 or 2 based on specific conditions </td>
+    <td> The variant is predicted to be <code>Splicing</code> and has <code>F_DamageRank = 1</code> if
       <ul>
         <li> its <code>F_DamageType</code> is not "LOF", "Splc" or "Missense" </li>
         <li> its <code>F_DamageRank &ne; 2</code></li>
@@ -342,7 +348,7 @@ The main change from the old script is the utilization of functions that reduce 
             <li> <code>spliceAI_DS_DL > 0.2</code> & <code>|spliceAI_DP_DL| &le; 50</code> </li>
           </ul>
       </ul> <br>
-      The variant is predicted to be "Splicing" and has <code>F_DamageRank = 2</code> if
+      The variant is predicted to be <code>Splicing</code> and has <code>F_DamageRank = 2</code> if
       <ul>
         <li> its <code>F_DamageType</code> is not "LOF" </li>
         <li> satisfies one or more of the following: </li>
@@ -358,7 +364,7 @@ The main change from the old script is the utilization of functions that reduce 
   </tr>
   <tr>
     <td>3.4.5. UTR</td>
-    <td> Identify variants of type <code>UTR</code> and change its <code>F_DamageRank</code> to 1 or 2 based on specific cutoffs </td>
+    <td> Identify variants of type <code>UTR</code> and change their <code>F_DamageRank</code> to 1 or 2 based on specific cutoffs </td>
     <td> The variant is <code>UTR</code> if 
       <ul>
         <li> the type of sequence overlapped with respect to known genes/transcripts is "UTR3", "UTR5", or both </li>
@@ -379,7 +385,7 @@ The main change from the old script is the utilization of functions that reduce 
   </tr>
   <tr>
     <td>3.4.6. Non-coding</td>
-    <td> Identify variants of type <code>Non-coding</code> and change its <code>F_DamageRank</code> to either 1 or 2 based on specific cutoffs </td>
+    <td> Identify variants of type <code>Non-coding</code> and change their <code>F_DamageRank</code> to either 1 or 2 based on specific cutoffs </td>
       <td> The variant is <code>Non-coding</code> if 
         <ul>
           <li> it is identified as "ncRNA" in <code>F_Coding</code> </li>
