@@ -79,7 +79,7 @@ The main change from the old script is the utilization of functions that reduce 
     <td>1.4.3. Main findings</td>
   </tr>
   <tr>
-    <td rowspan="10">(2) Main</td>
+    <td rowspan="9">(2) Main</td>
     <td> 2.1. File import</td>
     <td> Imports the original variant data </td>
   </tr>
@@ -123,8 +123,12 @@ The main change from the old script is the utilization of functions that reduce 
     <td> 2.7. Get all variant stats </td>
     <td> Obtain the summary statistics for all data sets in one table </td>
   </tr>
+    <tr>
+    <td> 2.8. Change tier levels from 1 and 2 to "Low" and "High" </td>
+    <td> Substitute 0, 1, and 2 with "-", "Low", and "High" in columns <code>F_DamageTier</code> and <code>F_PhenoTier</code> to improve readability </td>
+  </tr>
   <tr>
-    <td> 2.8. Output desired results as .txt files</td>
+    <td> 2.9. Output desired results as .txt files</td>
     <td> Output all rare 0.05 variants, rare damaging variants, secondary findings, chromosome zygosity counts, and summary statistics tables to user-defined output directory </td>
   </tr>
 </tbody>
@@ -710,8 +714,109 @@ The main change from the old script is the utilization of functions that reduce 
 ### :brain: Working with PrioritizationPipeline v17 Version 2 (Family Samples)
 
 #### :mag_right: Script Structure Overview
-Version 2 only contains sections <code>(0) Variables & Cutoffs</code>, <code>(1) Functions</code>, and <code>(10) Main</code>, where <code>(10) Main</code> runs Sections (2)-(9).
 
+The family-based pipeline adds filtering tags based on the child columns and identifies true compound heterozygotes in the child using information from the parents. The filter and statistics functions are the same as the ones used in Version 1. The steps in the main script are modified and family-specific functions were added.
+
+##### :seedling: Main Script
+
+<table>
+<thead>
+  <tr>
+    <th>Section</th>
+    <th>Content</th>
+    <th>Purpose</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td rowspan="7">(1) Variables &amp; Cutoffs</td>
+    <td>1.1. Input variables</td>
+    <td rowspan="7">Modify file locations and cutoffs here; <br> <br> Unlike Version 1, the inputs are variant data containing the family samples, the child's sample ID, and the pedigree file. </td>
+  </tr>
+  <tr>
+    <td>1.2. Output variables</td>
+  </tr>
+  <tr>
+    <td>1.3. Internal variables</td>
+  </tr>
+  <tr>
+    <td>1.4. Cutoffs</td>
+  </tr>
+  <tr>
+    <td>1.4.1. High-quality filter</td>
+  </tr>
+  <tr>
+    <td>1.4.2. Define damage</td>
+  </tr>
+  <tr>
+    <td>1.4.3. Main findings</td>
+  </tr>
+  <tr>
+    <td rowspan="11">(2) Main</td>
+    <td> 2.1. Import pedigree file </td>
+    <td> See title </td>
+  </tr>
+  <tr>
+    <td> 2.2. Find the parents </td>
+    <td> Identify the child and the parents from the pedigree file and extract the parents' sample IDs </td>
+  </tr>
+  <tr>
+    <td> 2.3. Import variant data </td>
+    <td> Imports the original variant data containing family samples </td>
+  </tr>
+  <tr>
+    <td> 2.4. Re-format column names</td>
+    <td> Remove <code>{sample}:</code> from several columns using the child's sample ID to identify which columns to use to add the filtering tags </td>
+  </tr>
+  <tr>
+    <td> 2.5. Process the original imported variant data </td>
+    <td> 
+      <ul>
+        <li> Remove variants with homozygous reference (hom-ref) or unknown zygosity from the data </li>
+        <li> Calculate the alternate allele frequency </li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td> 2.6. Free up memory</td>
+    <td> Remove <code>v_full.temp.df</code> from the current workspace </td>
+  </tr>
+  <tr>
+    <td> 2.7. Add filters </td>
+    <td> 
+      <ul>
+        <li> Remove alternate contigs and unlocalized/unplaced sequence from the data </li>
+        <li> Obtain variants with a maximum frequency of 0.05 and annotate them with filtering tags </li>
+          <ul> 
+              <li> Note that a new functionality that identifies true compound heterozygotes can be found here </li>
+          </ul>
+        <li> Obtain high-quality variants that have a "PASS" FILTER and annotate them with filtering tags </li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td> 2.8. Get chromosome counts and chromosome-wise zygosity counts </td>
+    <td> 
+      <ul>
+        <li> Obtain the number of variants in each chromosome </li> 
+        <li> Obtain the number of alt-alt, hom-alt, ref-alt and the percentage of hom-alt in each chromosome </li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td> 2.9. Get all variant stats </td>
+    <td> Obtain the summary statistics for all data sets in one table </td>
+  </tr>
+  <tr>
+    <td> 2.10. Change tier levels from 1 and 2 to "Low" and "High" </td>
+    <td> Substitute 0, 1, and 2 with "-", "Low", and "High" in columns <code>F_DamageTier</code> and <code>F_PhenoTier</code> to improve readability </td>
+  </tr>
+  <tr>
+    <td> 2.11. Output desired results as .txt files </td>
+    <td> Output all rare 0.05 variants, rare damaging variants, secondary findings, chromosome zygosity counts, and summary statistics tables to user-defined output directory </td>
+  </tr>
+</tbody>
+</table>
 
 #### :arrow_forward: Running the Script
 If your variant data files are in the same folder:
