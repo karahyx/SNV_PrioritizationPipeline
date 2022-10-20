@@ -762,7 +762,12 @@ The family-based pipeline adds filtering tags based on the child columns and ide
   </tr>
   <tr>
     <td> 2.3. Import variant data </td>
-    <td> Imports the original variant data containing family samples </td>
+    <td> 
+        <ul>
+            <li> Imports the original variant data containing family samples </li>
+            <li> Check if all samples exist in the data. An error is returned if at least one sample is not found </li>
+        </ul> 
+    </td>
   </tr>
   <tr>
     <td> 2.4. Re-format column names</td>
@@ -778,7 +783,7 @@ The family-based pipeline adds filtering tags based on the child columns and ide
     </td>
   </tr>
   <tr>
-    <td> 2.6. Free up memory</td>
+    <td> 2.6. Free up memory </td>
     <td> Remove <code>v_full.temp.df</code> from the current workspace </td>
   </tr>
   <tr>
@@ -818,20 +823,32 @@ The family-based pipeline adds filtering tags based on the child columns and ide
 </tbody>
 </table>
 
-#### :arrow_forward: Running the Script
-If your variant data files are in the same folder:
-1. In <code>run_prioritization_tasks.sh</code>, make sure that lines 12-28 are uncommented and lines 32-49 are commented.
-2. Change <code>infile_dir</code> on line 12 to the path of your folder that contains the variant data and <code>output_dir</code> on line 13 to your desired output directory.
-3. If your files do not end with .tsv, change the <code>'\*.tsv'</code> on line 16 to <code>'\*.{your_file_format}'</code>. 
-4. Run <code>qsub ~/run_prioritization_tasks.sh</code> on HPF.
-<br>
+##### :seedling: Family-based Columns
+The family-based script contains two new columns: <code>FM_Fam_CmpHet</code> and <code>FS_Fam_CmpHet</code>. Their definitions are shown below.
 
-If your variant data files are in their own folders and the folders are named after their sample name:
-1. In <code>run_prioritization_tasks.sh</code>, make sure that lines 32-49 are uncommented and lines 12-28 are commented.
-2. Change <code>infile_dir</code> on line 32 to the path of your folder that contains the variant data and <code>output_dir</code> on line 33 to your desired output directory.
-3. Change the <code>'\*SUBSET\*'</code> part on line 41 to a part of the file name that's found in all the variant data file names. 
-  * For instance, the file names all have the format <code>{sample_name}.hard-filtered.vcf.gz.annovar.out_SUBSET_rev27.7_hg38.tsv</code> in the example.
-5. Run <code>qsub ~/run_prioritization_tasks.sh</code> on HPF.
+<table>
+<thead>
+  <tr>
+    <th>Section</th>
+    <th>Purpose</th>
+    <th>Column Definitions</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td> (4) Family-based functions </td>
+    <td> Identifies true compound heterozygotes in the child based on the parents' genotypes </td>
+      <td> <code>FM_Fam_CmpHet = 1</code> if the variant 
+          <ul>
+              <li> was tagged as a potential compound heterozygote based on the criteria defind in Main Findings (i.e. <code>FM_PCHET = 1</code>) </li>
+          </ul>
+      </td>
+  </tr>
+</tbody>
+</table>
+
+
+#### :arrow_forward: Running the Script
 
 ## :bulb: Changes From the Old Script
 * Added <code>frameshift block substitution</code> and <code>nonframeshift block subsitution</code> to <code>eff_lof.chv</code> and <code>eff_other_sub.chv</code> upon [updates from ANNOVAR](https://annovar.openbioinformatics.org/en/latest/user-guide/gene/)
