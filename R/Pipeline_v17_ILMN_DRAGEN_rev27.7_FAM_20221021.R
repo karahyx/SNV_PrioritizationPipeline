@@ -1,4 +1,23 @@
-
+# ---
+# Title: Family-based Variant Prioritization 
+# Purpose: An adaption of the original small variant prioritization pipeline
+#          applicable to Broad Institute's GATK to the Illumina DRAGEN Bio-IT platform;
+#          this family-based pipeline reads in a pedigree file and identifies true
+#          compound heterozygote in the child.
+# Author: Kara Han <kara.han@sickkids.ca>
+# Adapted from: Prioritizaiton pipeline developed by Daniele M., Bhooma T., 
+#               Thomas N., and Dr. Worrawat E. at TCAG
+# Date script created: 2022-07-20 14:32:21 EDT
+# Date last modified: 2022-10-21 10:33:51 EDT
+# Version: v17
+# TCAG annotation pipeline version: rev27.7 hg38
+# Depends: 
+#     R (>= 3.4.0)
+# Imports:
+#     data.table_1.14.2
+#     dplyr_1.0.9
+#     tibble_3.1.8
+# ---
 
 # (0) SETTINGS ----------------------------------------------------------------
 
@@ -25,21 +44,21 @@ if (!require(stringr)) {
 options(echo = TRUE)
 args <- commandArgs(trailingOnly = TRUE)
 
-source("~/Desktop/PrioritizationPipeline/Rscript/pipeline/pipeline_fam_funcs.R")
-# source(args[1])
+# source("~/Desktop/PrioritizationPipeline/Rscript/pipeline/pipeline_fam_funcs.R")
+source(args[1])
 
 # (1) VARIABLES & CUTOFFS -----------------------------------------------------
 
 # 1.1. Input Variables
-input_var_fam.file <- "~/Desktop/PrioritizationPipeline/data/dragen/AZ/AZ.hard-filtered.vcf.gz.annovar.out_SUBSET_rev27.7_hg38.tsv"
-input_child.id <- "NA24385_b"
-
-# input_var_fam.file <- args[2]
-# input_child.id <- args[3]
+# input_var_fam.file <- "~/Desktop/PrioritizationPipeline/data/dragen/AZ/AZ.hard-filtered.vcf.gz.annovar.out_SUBSET_rev27.7_hg38.tsv"
+# input_child.id <- "NA24385_b"
+input_var_fam.file <- args[2]
+input_child.id <- args[3]
 child_column.name <- paste0(input_child.id, ":")
+input_pedigree.file <- arg[4]
 
 # 1.2. Output Variables
-output_path <- args[4]
+output_path <- args[5]
 output_prefix <- paste(output_path, input_child.id, sep = "/")
 
 # print input and output
