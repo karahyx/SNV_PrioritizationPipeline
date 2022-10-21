@@ -875,7 +875,7 @@ The family-based script contains two new columns: <code>FM_Fam_CmpHet</code> and
 * Used <code>data.table::fread</code> to achieve a faster speed when importing the original variant data
 * Added a line to remove column DP immediately after reading in the original variant data - this is because at one point the script removes the <code>{genome_name}.</code> part in columns that start with it, which includes <code>{genome_name}.DP</code>. After removal, there would be two DP columns and the first DP column would be used by default, which is not desired
 * The new script annotates all variants with a maximum allele frequency of 0.05 throughout and only outputs one annotated data set containing rare 0.05 variants. On contrary, the old script annotated the high-quality, rare 0.05 variants throughout and output rare 0.05 and high-quality, rare 0.05 variants separately. This change was made because only ~4% of variants called by DRAGEN are low-quality (i.e. they do not have a "PASS" filter)
-* Changed the name of statistic from <code>VarN_Q1/2_Coding_Rare010_LOF<code> to <code>VarN_Q1/2_Coding_Rare010_LOF_TierLow<code> and added <code><code>VarN_Q1/2_Coding_Rare010_LOF_TierHigh<code> which describes the total number of rare 0.01 Coding LOR variants with a high damage tier in the data
+* Changed the name of statistic from <code>VarN_Q1/2_Coding_Rare010_LOF</code> to <code>VarN_Q1/2_Coding_Rare010_LOF_TierLow</code> and added <code>VarN_Q1/2_Coding_Rare010_LOF_TierHigh</ode> which describes the total number of rare 0.01 Coding LOR variants with a high damage tier in the data
 
 ## :handshake: Contributors
 * Daniele Merico - Original creator of the pipeline
