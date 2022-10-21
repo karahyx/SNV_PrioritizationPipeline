@@ -40,8 +40,6 @@ The main change from the old script is the utilization of functions that reduce 
     2. Thus, <code>SUBSET</code> was used as the common element in all file names
 5. Run <code>qsub ~/run_prioritization_tasks.sh</code> on HPF
 
-<br>
-
 #### :mag_right: Script Structure Overview
 
 ##### :seedling: Main Script
@@ -85,7 +83,7 @@ The main change from the old script is the utilization of functions that reduce 
   </tr>
   <tr>
     <td> 2.2. Re-format column names</td>
-    <td> Remove <code>{genome_name}:</code> from several columns for easier access </td>
+    <td> Remove <code>{genome_name}:</code><sup><a href="#fn1" id="ref1">1</a></sup> from several columns for easier access </td>
   </tr>
   <tr>
     <td> 2.3. Process the original imported variant data </td>
@@ -711,7 +709,6 @@ The main change from the old script is the utilization of functions that reduce 
 </tbody>
 </table>
 
-<br>
 
 ### :brain: Working with PrioritizationPipeline v17 Version 2 (Family Samples)
 
@@ -858,8 +855,6 @@ The family-based script contains two new columns: <code>FM_Fam_CmpHet</code> and
 
 #### :arrow_forward: Running the Script
 
-<br>
-
 ## :bulb: Changes From the Old Script
 * Added <code>frameshift block substitution</code> and <code>nonframeshift block subsitution</code> to <code>eff_lof.chv</code> and <code>eff_other_sub.chv</code> upon [updates from ANNOVAR](https://annovar.openbioinformatics.org/en/latest/user-guide/gene/)
 * Replaced tag <code>F_Qual</code> with <code>F_Pass</code> for a more intuitive understanding of the column
@@ -880,11 +875,12 @@ The family-based script contains two new columns: <code>FM_Fam_CmpHet</code> and
 * The new script annotates all variants with a maximum allele frequency of 0.05 throughout and only outputs one annotated data set containing rare 0.05 variants. On contrary, the old script annotated the high-quality, rare 0.05 variants throughout and output rare 0.05 and high-quality, rare 0.05 variants separately. This change was made because only ~4% of variants called by DRAGEN are low-quality (i.e. they do not have a "PASS" filter)
 * Changed the name of statistic from <code>VarN_Q1/2_Coding_Rare010_LOF</code> to <code>VarN_Q1/2_Coding_Rare010_LOF_TierLow</code> and added <code>VarN_Q1/2_Coding_Rare010_LOF_TierHigh</code> which describes the total number of rare 0.01 Coding LOR variants with a high damage tier in the data
 
-<br>
-
 ## :handshake: Contributors
 * Daniele Merico - Original creator of the pipeline
 * [Bhooma Thiruvahindrapuram](https://github.com/bthiruv)
 * [Dr. Worrawat Engchuan](https://github.com/naibank)
 * [Thomas Nalpathamkalam](https://github.com/TNalpat)
 
+## :paw_prints: Footnotes
+
+<sup id="fn1">1. Note that genome_name is the same as sample_id below.</sup>
