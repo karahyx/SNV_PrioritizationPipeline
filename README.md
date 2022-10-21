@@ -839,9 +839,16 @@ The family-based script contains two new columns: <code>FM_Fam_CmpHet</code> and
     <td> (4) Family-based functions </td>
     <td> Identifies true compound heterozygotes in the child based on the parents' genotypes </td>
     <td> <code>FM_Fam_CmpHet = 1</code> if
-        <ul>
-            <li> the variant was tagged as a potential compound heterozygote based on the criteria defind in Main Findings (i.e. <code>FM_PCHET = 1</code>) </li>
-        </ul>
+         <ul>
+             <li> the variant was tagged as a potential compound heterozygote based on the criteria defind in Main Findings (i.e. <code>FM_PCHET &ge; 1</code>) </li>
+             <li> there are at least two variants that are located at different loci within the same gene </li>
+         </ul>
+         <br>
+         <code>FS_Fam_CmpHet = 1</code> if
+         <ul>
+             <li> the variant was tagged as a potential compound heterozygote based on the criteria defind in Secondary Findings (i.e. <code>F_CmpHet_S1 &ge; 1</code>) </li>
+             <li> there are at least two variants that are located at different loci within the same gene </li>
+         </ul>
     </td>
   </tr>
 </tbody>
