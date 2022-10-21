@@ -861,7 +861,7 @@ The family-based script contains two new columns: <code>FM_Fam_CmpHet</code> and
 * Changed the following criteria:
   * High-quality variants are now defined as variants with a "PASS" FILTER and <code>DP &ge; 2</code> 
   * Further divided the damage tier for type Coding LOF into 1 (Low) and 2 (High) based on the number of overlap-based match for dbSNP (i.e. the <code>dbsnp_region</code> column)
-  * Combined two criteria, <code>phylopMam_avg &ge; phylopMam_missense_cutoff</code> and <code>phylopVer100_avg &ge; phylopVert_missense_cutoff</code>, into one for defining Missense variants; also added two additional conditions <code>REVEL_score &ge; REVEL_cutoff</code> and <code>MPC_score &g; MPC_cutoff</code> 
+  * Combined two criteria, <code>phylopMam_avg &ge; phylopMam_missense_cutoff</code> and <code>phylopVer100_avg &ge; phylopVert_missense_cutoff</code>, into one for defining Missense variants; also added two additional criteria <code>REVEL_score &ge; REVEL_cutoff</code> and <code>MPC_score &ge; MPC_cutoff</code> 
   * Removed the <code> (effect_priority %in% eff_other_sub.chv & (phylopMam_avg >= 1.5 | phylopVert100_avg >= 2.0 | CADD_phred >= 13.0) & is.na (dbsnp) & is.na (dbsnp_region))</code> condition from the criteria for defining damaging variants with type Other Coding
   * Removed the SPIDEX-related criteria from Splicing predictions
 * Changed the <code>phylopMam</code>, <code>phylopVert100</code>, <code>CADD_phred</code> cutoffs for the following sections:
