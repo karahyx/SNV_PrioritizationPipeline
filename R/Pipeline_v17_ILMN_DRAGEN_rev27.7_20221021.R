@@ -6,7 +6,7 @@
 # Adapted from: Prioritizaiton pipeline developed by Daniele M., Bhooma T., 
 #               Thomas N., and Dr. Worrawat E. at TCAG
 # Date script created: 2022-07-20 14:32:21 EDT
-# Date last modified: 2022-10-12 11:34:31 EDT
+# Date last modified: 2022-10-21 10:33:51 EDT
 # Version: v17
 # TCAG annotation pipeline version: rev27.7 hg38
 # Depends: 
@@ -42,18 +42,18 @@ if (!require(stringr)) {
 options(echo = TRUE)
 args <- commandArgs(trailingOnly = TRUE)
 
-source("~/Desktop/PrioritizationPipeline/Rscript/pipeline/pipeline_new_funcs.R")
-# source(args[1])
+# source("~/Desktop/PrioritizationPipeline/Rscript/pipeline/pipeline_new_funcs.R")
+source(args[1])
 
 # (1) VARIABLES & CUTOFFS -----------------------------------------------------
 
 # 1.1. Input Variables
 
-input_var_genome.file <- "~/Desktop/PrioritizationPipeline/data/testing_data/dragen/NA12878.hard-filtered.vcf.gz.annovar.out_SUBSET_rev27.7_hg38.tsv"
-input_var_genome.name <- "NA12878"
-# 
-# input_var_genome.file <- args[2]
-# input_var_genome.name <- args[3]
+# input_var_genome.file <- "~/Desktop/PrioritizationPipeline/data/testing_data/dragen/NA12878.hard-filtered.vcf.gz.annovar.out_SUBSET_rev27.7_hg38.tsv"
+# input_var_genome.name <- "NA12878"
+
+input_var_genome.file <- args[2]
+input_var_genome.name <- args[3]
 alt_input_var_genome.name <- paste(input_var_genome.name, ":", sep = "")
 
 # 1.2. Output Variables
