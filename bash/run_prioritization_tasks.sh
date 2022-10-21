@@ -6,26 +6,29 @@
 #PBS -l mem=32g
 #PBS -l walltime=24:00:00
 
-tool=/hpf/largeprojects/tcagstor/scratch/kara.han/PrioritizationPipeline/new_script/pipeline_new_hpf.R
+tool=/hpf/largeprojects/tcagstor/scratch/kara.han/PrioritizationPipeline/new_script/script/pipeline_new.R
+funcs=/hpf/largeprojects/tcagstor/scratch/kara.han/PrioritizationPipeline/new_script/script/pipeline_new_funcs.R
 
 # If all files are in a single folder:
-infile_dir=/hpf/largeprojects/tcagstor/projects/wgs_rae_yeung/dragen_analysis/136s_on_ica_20220206/SNV_INDEL/SUBSET/ # path to folder
-output_dir=/hpf/largeprojects/tcagstor/scratch/kara.han/PrioritizationPipeline/new_script/results/136s_on_ica_20220206/SNV_INDEL/
+# : <<'END'
+infile_dir=/hpf/largeprojects/tcagstor/scratch/kara.han/PrioritizationPipeline/emedgene_final/
+output_dir=/hpf/largeprojects/tcagstor/scratch/kara.han/PrioritizationPipeline/new_script/tests/emedgene/
 
 mkdir "$output_dir"
-files=$(find $infile_dir -name '*.tsv' -exec basename {} \;)
+files=$(find $infile_dir -name '*.tsv.gz' -exec basename {} \;)
 
 for file in $files
 do  
     infile="$infile_dir$file"
-    genome=$(echo $file | awk -F '.' '{print $1}')
+    genome=$(echo $file | awk -F '_fx.' '{print $1}')
     outpath="$output_dir$genome"
     mkdir "$outpath"
     echo "The genome is $genome"
     echo "The infile is $infile"
     echo "The outpath is $outpath"
-    qsub -v tool=$tool,infile=$infile,genome=$genome,outpath=$outpath /hpf/largeprojects/tcagstor/scratch/kara.han/PrioritizationPipeline/new_script/get_prioritization_results.sh
+    qsub -v tool=$tool,funcs=$funcs,infile=$infile,genome=$genome,outpath=$outpath /hpf/largeprojects/tcagstor/scratch/kara.han/PrioritizationPipeline/new_script/script/get_prioritization_results.sh
 done
+# END
 
 # If files are in their separate folder and the folders are named after their sample name:
 : <<'END'
@@ -45,6 +48,6 @@ do
     echo "The cur_dir is $cur_dir"
     echo "The infile is $infile"
     echo "The outpath is $outpath"
-    qsub -v tool=$tool,infile=$infile,genome=$genome,outpath=$outpath /hpf/largeprojects/tcagstor/scratch/kara.han/PrioritizationPipeline/new_script/get_prioritization_results.sh
+    qsub -v tool=$tool,funcs=$funcs,infile=$infile,genome=$genome,outpath=$outpath /hpf/largeprojects/tcagstor/scratch/kara.han/PrioritizationPipeline/new_script/script/get_prioritization_results.sh
 done
 END
