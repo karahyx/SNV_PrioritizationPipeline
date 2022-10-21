@@ -770,7 +770,7 @@ The family-based pipeline adds filtering tags based on the child columns and ide
   </tr>
   <tr>
     <td> 2.4. Re-format column names</td>
-    <td> Remove <code>{sample}:</code> from several columns using the child's sample ID to identify which columns to use to add the filtering tags </td>
+    <td> Remove <code>{sample_id}:</code> from several columns using the child's sample ID to identify which columns to use to add the filtering tags </td>
   </tr>
   <tr>
     <td> 2.5. Process the original imported variant data </td>
