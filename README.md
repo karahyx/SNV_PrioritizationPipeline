@@ -26,7 +26,7 @@ The main change from the old script is the utilization of functions that reduce 
     3. <code>infile_dir</code> on line 14 to the path of your folder that contains the variant data
     4. <code>output_dir</code> on line 15 to your desired output directory
 3. If your files do not end with .tsv, change the <code>'\*.tsv.gz'</code> on line 18 to <code>'\*.{your_file_format}'</code>
-4. Change the <code>'.'</code> on line 23 to a field separator that allows you to obtain the genome name as field 1
+4. Change the <code>'.'</code> on line 23 to a field separator that allows you to obtain the genome name as field $1
 5. Run <code>run_prioritization_tasks.sh</code> on HPF
 
 **If your variant data files are in their own folders and the folders are named after their sample IDs:**
