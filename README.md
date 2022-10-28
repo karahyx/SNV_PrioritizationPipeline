@@ -39,7 +39,7 @@ The main change from the old script is the utilization of functions that reduce 
 3. Change the <code>'\*SUBSET\*'</code> part on line 44 to a part of the file name that's found in all the variant data file names 
     1. For instance, the file names all have the format <code>{sample_id}.hard-filtered.vcf.gz.annovar.out_SUBSET_rev27.7_hg38.tsv</code> in the examplee
     2. Thus, <code>SUBSET</code> was used as the common element in all file names
-5. Run <code>qsub ~/run_prioritization_tasks.sh</code> on HPF
+5. Run <code>run_prioritization_tasks.sh</code> on HPF
 
 #### :mag_right: Script Structure Overview
 
@@ -84,7 +84,7 @@ The main change from the old script is the utilization of functions that reduce 
   </tr>
   <tr>
     <td> 2.2. Re-format column names</td>
-    <td> Remove <code>{genome_name}:</code><sup><a href="#fn1" id="ref1">1</a></sup> from several columns for easier access </td>
+    <td> Remove <code>{genome_name}:</code><sup><a href="#fn1" id="ref1">1</a></sup> from several columns for easier access and processing </td>
   </tr>
   <tr>
     <td> 2.3. Process the original imported variant data </td>
@@ -123,8 +123,13 @@ The main change from the old script is the utilization of functions that reduce 
     <td> Obtain the summary statistics for all data sets in one table </td>
   </tr>
     <tr>
-    <td> 2.8. Change tier levels from 1 and 2 to "Low" and "High" </td>
-    <td> Substitute 0, 1, and 2 with "-", "Low", and "High" in columns <code>F_DamageTier</code> and <code>F_PhenoTier</code> to improve readability </td>
+    <td> 2.8. Process the results before outputting </td>
+    <td> 
+        <ul>
+            <li> Change tier levels from 0, 1 and 2 to "-", "Low" and "High" in columns <code>F_DamageTier</code> and <code>F_PhenoTier</code> </li>
+            <li> Add <code>{genome_name}:</code> back to the columns </li>
+        </ul>
+    </td>
   </tr>
   <tr>
     <td> 2.9. Output desired results as .txt files</td>
@@ -813,8 +818,13 @@ The family-based pipeline adds filtering tags based on the child columns and ide
     <td> Obtain the summary statistics for all data sets in one table </td>
   </tr>
   <tr>
-    <td> 2.10. Change tier levels from 1 and 2 to "Low" and "High" </td>
-    <td> Substitute 0, 1, and 2 with "-", "Low", and "High" in columns <code>F_DamageTier</code> and <code>F_PhenoTier</code> to improve readability </td>
+    <td> 2.10. Process the results before outputting </td>
+    <td> 
+        <ul>
+            <li> Change tier levels from 0, 1 and 2 to "-", "Low" and "High" in columns <code>F_DamageTier</code> and <code>F_PhenoTier</code> </li>
+            <li> Add <code>{sample_id}:</code> back to the columns </li>
+        </ul>
+    </td>
   </tr>
   <tr>
     <td> 2.11. Output desired results as .txt files </td>
@@ -884,4 +894,4 @@ The family-based script contains two new columns: <code>FM_Fam_CmpHet</code> and
 
 ## :paw_prints: Footnotes
 
-<sup id="fn1">1. Note that genome_name is the same as sample_id below.</sup>
+<sup id="fn1">1. Note that genome_name, sample_id, and sample_name are used interchangeably in this document.</sup>
