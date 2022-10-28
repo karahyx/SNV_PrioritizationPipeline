@@ -1,4 +1,4 @@
-# :dna: PriorizationPipeline
+# :dna: PrioritizationPipeline
 
 An adaptation of the TCAG Small Variant Prioritization Pipeline originally developed to be used for Broad Institute's [GATK (Genome Analysis Toolkit)](https://gatk.broadinstitute.org/hc/en-us) to the [Illumina DRAGEN (Dynamic Read Analysis for GENomics) Bio-IT Platform](https://support-docs.illumina.com/SW/DRAGEN_v38/Content/SW/DRAGEN/GPipelineIntro_fDG.htm). 
 
