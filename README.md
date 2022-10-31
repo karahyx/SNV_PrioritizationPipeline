@@ -114,7 +114,7 @@ The main change from the old script is the utilization of functions that reduce 
     <td> 
       <ul>
         <li> Obtain the number of variants in each chromosome </li> 
-        <li> Obtain the number of alt-alt, hom-alt, ref-alt and the percentage of hom-alt in each chromosome </li>
+        <li> Obtain the number of alt-alt, hom-alt, ref-alt, and the percentage of hom-alt in each chromosome </li>
       </ul>
     </td>
   </tr>
@@ -127,7 +127,7 @@ The main change from the old script is the utilization of functions that reduce 
     <td> 
         <ul>
             <li> Change tier levels from 0, 1 and 2 to "-", "Low" and "High" in columns <code>F_DamageTier</code> and <code>F_PhenoTier</code> </li>
-            <li> Add <code>{genome_name}:</code> back to the columns </li>
+            <li> Add <code>{genome_name}:</code> back to the sample columns </li>
         </ul>
     </td>
   </tr>
