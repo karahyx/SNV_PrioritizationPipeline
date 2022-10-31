@@ -5,14 +5,15 @@
 # Author: Kara Han <kara.han@sickkids.ca>
 # Adapted from: Prioritizaiton pipeline developed by Daniele M., Bhooma T., 
 #               Thomas N., and Dr. Worrawat E. at TCAG
-# Date script created: 2022-07-20 14:32:21 EDT
-# Date last modified: 2022-10-21 10:39:44 EDT
+# Date script created: 2022-09-22 14:32:21 EDT
+# Date last modified: 2022-10-28 14:26:40 EDT
 # Version: v17
 # TCAG annotation pipeline version: rev27.7 hg38
 # ---
 
 # Modify as needed
-source("~/Desktop/PrioritizationPipeline/Rscript/pipeline/pipeline_new_funcs.R")
+# source("~/Desktop/PrioritizationPipeline/script/R/pipeline/Pipeline_v17_funcs.R")
+source("/hpf/largeprojects/tcagstor/scratch/kara.han/PrioritizationPipeline/new_script/script/R/Pipeline_v17_funcs.R")
 
 # (4) FAMILY-BASED FUNCTIONS ----------------------------------------------
 
@@ -104,6 +105,182 @@ get_rare05_variants <- function(data) {
   return(data)
 }
 
+add_stats_full_r05_df <- function(data) {
+  
+  stats.ls <- list()
+  
+  stats.ls$VarN_Q1_AllSeq_Rare050 <- add_stats_freq(data, freq_cutoff = 0.05, high_quality = F)
+  stats.ls$VarN_Q2_AllSeq_Rare050 <- add_stats_freq(data, freq_cutoff = 0.05, high_quality = T)
+  stats.ls$VarN_Q1_AllSeq_Rare010 <- add_stats_freq(data, freq_cutoff = 0.01, high_quality = F)
+  stats.ls$VarN_Q2_AllSeq_Rare010 <- add_stats_freq(data, freq_cutoff = 0.01, high_quality = T)
+  stats.ls$VarN_Q1_AllSeq_Rare005 <- add_stats_freq(data, freq_cutoff = 0.005, high_quality = F)
+  stats.ls$VarN_Q2_AllSeq_Rare005 <- add_stats_freq(data, freq_cutoff = 0.005, high_quality = T)
+  stats.ls$VarN_Q1_AllSeq_Rare0015 <- add_stats_freq(data, freq_cutoff = 0.0015, high_quality = F)
+  stats.ls$VarN_Q2_AllSeq_Rare0015 <- add_stats_freq(data, freq_cutoff = 0.0015, high_quality = T)
+  stats.ls$VarN_Q1_AllSeq_Rare000 <- add_stats_freq(data, freq_cutoff = 0, high_quality = F)
+  stats.ls$VarN_Q2_AllSeq_Rare000 <- add_stats_freq(data, freq_cutoff = 0, high_quality = T)
+  
+  stats.ls$VarN_Q1_Coding_Rare050  <- add_stats_typeseq_tag(data, typeseq.chv = typeseq_coding.chv, freq_cutoff = 0.05, high_quality = F)
+  stats.ls$VarN_Q2_Coding_Rare050  <- add_stats_typeseq_tag(data, typeseq.chv = typeseq_coding.chv, freq_cutoff = 0.05, high_quality = T)
+  stats.ls$VarN_Q1_Coding_Rare010  <- add_stats_typeseq_tag(data, typeseq.chv = typeseq_coding.chv, freq_cutoff = 0.01, high_quality = F)
+  stats.ls$VarN_Q2_Coding_Rare010  <- add_stats_typeseq_tag(data, typeseq.chv = typeseq_coding.chv, freq_cutoff = 0.01, high_quality = T)
+  stats.ls$VarN_Q1_Coding_Rare005  <- add_stats_typeseq_tag(data, typeseq.chv = typeseq_coding.chv, freq_cutoff = 0.005, high_quality = F)
+  stats.ls$VarN_Q2_Coding_Rare005  <- add_stats_typeseq_tag(data, typeseq.chv = typeseq_coding.chv, freq_cutoff = 0.005, high_quality = T)
+  stats.ls$VarN_Q1_Coding_Rare0015 <- add_stats_typeseq_tag(data, typeseq.chv = typeseq_coding.chv, freq_cutoff = 0.0015, high_quality = F)
+  stats.ls$VarN_Q2_Coding_Rare0015 <- add_stats_typeseq_tag(data, typeseq.chv = typeseq_coding.chv, freq_cutoff = 0.0015, high_quality = T)
+  stats.ls$VarN_Q1_Coding_Rare000  <- add_stats_typeseq_tag(data, typeseq.chv = typeseq_coding.chv, freq_cutoff = 0, high_quality = F)
+  stats.ls$VarN_Q2_Coding_Rare000  <- add_stats_typeseq_tag(data, typeseq.chv = typeseq_coding.chv, freq_cutoff = 0, high_quality = T)
+  
+  stats.ls$VarN_Q1_ncRNA_Rare050  <- add_stats_typeseq_tag(data, typeseq.chv = typeseq_ncrna.chv, freq_cutoff = 0.05, high_quality = F)
+  stats.ls$VarN_Q2_ncRNA_Rare050  <- add_stats_typeseq_tag(data, typeseq.chv = typeseq_ncrna.chv, freq_cutoff = 0.05, high_quality = T)
+  stats.ls$VarN_Q1_ncRNA_Rare010  <- add_stats_typeseq_tag(data, typeseq.chv = typeseq_ncrna.chv, freq_cutoff = 0.01, high_quality = F)
+  stats.ls$VarN_Q2_ncRNA_Rare010  <- add_stats_typeseq_tag(data, typeseq.chv = typeseq_ncrna.chv, freq_cutoff = 0.01, high_quality = T)
+  stats.ls$VarN_Q1_ncRNA_Rare005  <- add_stats_typeseq_tag(data, typeseq.chv = typeseq_ncrna.chv, freq_cutoff = 0.005, high_quality = F)
+  stats.ls$VarN_Q2_ncRNA_Rare005  <- add_stats_typeseq_tag(data, typeseq.chv = typeseq_ncrna.chv, freq_cutoff = 0.005, high_quality = T)
+  stats.ls$VarN_Q1_ncRNA_Rare0015 <- add_stats_typeseq_tag(data, typeseq.chv = typeseq_ncrna.chv, freq_cutoff = 0.0015, high_quality = F)
+  stats.ls$VarN_Q2_ncRNA_Rare0015 <- add_stats_typeseq_tag(data, typeseq.chv = typeseq_ncrna.chv, freq_cutoff = 0.0015, high_quality = T)
+  stats.ls$VarN_Q1_ncRNA_Rare000  <- add_stats_typeseq_tag(data, typeseq.chv = typeseq_ncrna.chv, freq_cutoff = 0, high_quality = F)
+  stats.ls$VarN_Q2_ncRNA_Rare000  <- add_stats_typeseq_tag(data, typeseq.chv = typeseq_ncrna.chv, freq_cutoff = 0, high_quality = T)
+  
+  stats.ls$VarN_Q1_AllSeq_Rare050_Xhom <- add_stats_zygosity_tag(data, zygosity = "hom-alt", chrX = T, high_quality = F)
+  stats.ls$VarN_Q2_AllSeq_Rare050_Xhom <- add_stats_zygosity_tag(data, zygosity = "hom-alt", chrX = T, high_quality = T)
+  stats.ls$VarN_Q1_AllSeq_Rare050_Hom  <- add_stats_zygosity_tag(data, zygosity = "hom-alt", chrX = F, high_quality = F)
+  stats.ls$VarN_Q2_AllSeq_Rare050_Hom  <- add_stats_zygosity_tag(data, zygosity = "hom-alt", chrX = F, high_quality = T)
+  stats.ls$VarN_Q1_AllSeq_Rare050_HetR <- add_stats_zygosity_tag(data, zygosity = "ref-alt", chrX = F, high_quality = F)
+  stats.ls$VarN_Q2_AllSeq_Rare050_HetR <- add_stats_zygosity_tag(data, zygosity = "ref-alt", chrX = F, high_quality = T)
+  stats.ls$VarN_Q1_AllSeq_Rare050_HetA <- add_stats_zygosity_tag(data, zygosity = "alt-alt", chrX = F, high_quality = F)
+  stats.ls$VarN_Q2_AllSeq_Rare050_HetA <- add_stats_zygosity_tag(data, zygosity = "alt-alt", chrX = F, high_quality = T)
+  
+  stats.ls$GeneN_Pheno_rare050 <- length (unique (data[data$F_PhenoTier == 2, ]$entrez_id))
+  stats.ls$GeneN_Dominant_rare050 <- length (setdiff (c (data$entrez_id[grep ("@AD", data$HPO)], data$entrez_id[grep ("AD", data$CGD_inheritance)]), NA))
+  
+  stats.ls$VarN_Q1_Coding_Rare010_LOF_TierLow <- add_stats_dmg_tag(data, freq_cutoff = 0.01, dmg_type = "LOF", dmg_tier = 1, high_quality = F)
+  stats.ls$VarN_Q2_Coding_Rare010_LOF_TierLow <- add_stats_dmg_tag(data, freq_cutoff = 0.01, dmg_type = "LOF", dmg_tier = 1, high_quality = T)
+  
+  stats.ls$VarN_Q1_Coding_Rare010_LOF_TierHigh <- add_stats_dmg_tag(data, freq_cutoff = 0.01, dmg_type = "LOF", dmg_tier = 2, high_quality = F)
+  stats.ls$VarN_Q2_Coding_Rare010_LOF_TierHigh <- add_stats_dmg_tag(data, freq_cutoff = 0.01, dmg_type = "LOF", dmg_tier = 2, high_quality = T)
+  
+  stats.ls$VarN_Q1_Coding_Rare010_MissDmg_TierLow <- add_stats_dmg_tag(data, freq_cutoff = 0.01, dmg_type = "Missense", dmg_tier = 1, high_quality = F)
+  stats.ls$VarN_Q2_Coding_Rare010_MissDmg_TierLow <- add_stats_dmg_tag(data, freq_cutoff = 0.01, dmg_type = "Missense", dmg_tier = 1, high_quality = T)
+  
+  stats.ls$VarN_Q1_Coding_Rare010_MissDmg_TierHigh <- add_stats_dmg_tag(data, freq_cutoff = 0.01, dmg_type = "Missense", dmg_tier = 2, high_quality = F)
+  stats.ls$VarN_Q2_Coding_Rare010_MissDmg_TierHigh <- add_stats_dmg_tag(data, freq_cutoff = 0.01, dmg_type = "Missense", dmg_tier = 2, high_quality = T)
+  
+  stats.ls$VarN_Q1_Coding_Rare010_Splc_TierLow <- add_stats_dmg_tag(data, freq_cutoff = 0.01, dmg_type = "Splc", dmg_tier = 1, high_quality = F)
+  stats.ls$VarN_Q2_Coding_Rare010_Splc_TierLow <- add_stats_dmg_tag(data, freq_cutoff = 0.01, dmg_type = "Splc", dmg_tier = 1, high_quality = T)
+  
+  stats.ls$VarN_Q1_Coding_Rare010_Splc_TierHigh <- add_stats_dmg_tag(data, freq_cutoff = 0.01, dmg_type = "Splc", dmg_tier = 2, high_quality = F)
+  stats.ls$VarN_Q2_Coding_Rare010_Splc_TierHigh <- add_stats_dmg_tag(data, freq_cutoff = 0.01, dmg_type = "Splc", dmg_tier = 2, high_quality = T)
+  
+  stats.ls$Coding_HQ1_Rare010_OtherDmg <- add_stats_dmg_tag(data, freq_cutoff = 0.01, dmg_type = "OtherC", high_quality = F)
+  stats.ls$Coding_HQ2_Rare010_OtherDmg <- add_stats_dmg_tag(data, freq_cutoff = 0.01, dmg_type = "OtherC", high_quality = T)
+  
+  stats.ls$VarN_Q1_ncRNA_Rare010_Dmg_TierLow <- add_stats_dmg_tag(data, freq_cutoff = 0.01, dmg_type = "DmgNcRNA", dmg_tier = 1, high_quality = F)
+  stats.ls$VarN_Q2_ncRNA_Rare010_Dmg_TierLow <- add_stats_dmg_tag(data, freq_cutoff = 0.01, dmg_type = "DmgNcRNA", dmg_tier = 1, high_quality = T)
+  
+  stats.ls$VarN_Q1_ncRNA_Rare010_Dmg_TierHigh <- add_stats_dmg_tag(data, freq_cutoff = 0.01, dmg_type = "DmgNcRNA", dmg_tier = 2, high_quality = F)
+  stats.ls$VarN_Q2_ncRNA_Rare010_Dmg_TierHigh <- add_stats_dmg_tag(data, freq_cutoff = 0.01, dmg_type = "DmgNcRNA", dmg_tier = 2, high_quality = T)
+  
+  stats.ls$VarN_Q1_Coding_Rare010_Dmg_AXD_HPO <- add_stats_pheno_filter(data, freq_cutoff = 0.01, database = "HPO", high_quality = F)
+  stats.ls$VarN_Q2_Coding_Rare010_Dmg_AXD_HPO <- add_stats_pheno_filter(data, freq_cutoff = 0.01, database = "HPO", high_quality = T)
+  
+  stats.ls$VarN_Q1_Coding_Rare010_Dmg_AXD_CGD <- add_stats_pheno_filter(data, freq_cutoff = 0.01, database = "CGD", high_quality = F)
+  stats.ls$VarN_Q2_Coding_Rare010_Dmg_AXD_CGD <- add_stats_pheno_filter(data, freq_cutoff = 0.01, database = "CGD", high_quality = T)
+  
+  stats.ls$VarN_Q1_Coding_Rare010_Dmg_AXD_All <- add_stats_pheno_filter(data, freq_cutoff = 0.01, database = "all", high_quality = F)
+  stats.ls$VarN_Q2_Coding_Rare010_Dmg_AXD_All <- add_stats_pheno_filter(data, freq_cutoff = 0.01, database = "all", high_quality = T)
+  
+  stats.ls$VarN_Q1_Coding_Rare010_Dmg_PhenoTierLow <- add_stats_pheno_tier(data, freq_cutoff = 0.01, pheno_tier = 1, high_quality = F)
+  stats.ls$VarN_Q2_Coding_Rare010_Dmg_PhenoTierLow <- add_stats_pheno_tier(data, freq_cutoff = 0.01, pheno_tier = 1, high_quality = T)
+  
+  stats.ls$VarN_Q1_Coding_Rare010_Dmg_PhenoTierHigh <- add_stats_pheno_tier(data, freq_cutoff = 0.01, pheno_tier = 2, high_quality = F)
+  stats.ls$VarN_Q2_Coding_Rare010_Dmg_PhenoTierHigh <- add_stats_pheno_tier(data, freq_cutoff = 0.01, pheno_tier = 2, high_quality = T)
+  
+  stats.ls$VarN_Q1_Rare050_DmgT2_Hom_PhenoTierAll <- add_stats_main_findings(data, type = "hom", pheno_tier = 0, dmg_tier = 2, high_quality = F)
+  stats.ls$VarN_Q2_Rare050_DmgT2_Hom_PhenoTierAll <- add_stats_main_findings(data, type = "hom", pheno_tier = 0, dmg_tier = 2, high_quality = T)
+  
+  stats.ls$VarN_Q1_Rare050_DmgT2_Hom_PhenoTierLow <- add_stats_main_findings(data, type = "hom", pheno_tier = 1, dmg_tier = 2, high_quality = F)
+  stats.ls$VarN_Q2_Rare050_DmgT2_Hom_PhenoTierLow <- add_stats_main_findings(data, type = "hom", pheno_tier = 1, dmg_tier = 2, high_quality = T)
+  
+  stats.ls$VarN_Q1_Rare050_DmgT2_Hom_PhenoTierHigh <- add_stats_main_findings(data, type = "hom", pheno_tier = 2, dmg_tier = 2, high_quality = F)
+  stats.ls$VarN_Q2_Rare050_DmgT2_Hom_PhenoTierHigh <- add_stats_main_findings(data, type = "hom", pheno_tier = 2, dmg_tier = 2, high_quality = T)
+  
+  stats.ls$VarN_Q1_Rare050_DmgT2_Xhom_PhenoTierAll <- add_stats_main_findings(data, type = "Xhom", pheno_tier = 0, dmg_tier = 2, high_quality = F)
+  stats.ls$VarN_Q2_Rare050_DmgT2_Xhom_PhenoTierAll <- add_stats_main_findings(data, type = "Xhom", pheno_tier = 0, dmg_tier = 2, high_quality = T)
+  
+  stats.ls$VarN_Q1_Rare050_DmgT2_Xhom_PhenoTierLow <- add_stats_main_findings(data, type = "Xhom", pheno_tier = 1, dmg_tier = 2, high_quality = F)
+  stats.ls$VarN_Q2_Rare050_DmgT2_Xhom_PhenoTierLow <- add_stats_main_findings(data, type = "Xhom", pheno_tier = 1, dmg_tier = 2, high_quality = T)
+  
+  stats.ls$VarN_Q1_Rare050_DmgT2_Xhom_PhenoTierHigh <- add_stats_main_findings(data, type = "Xhom", pheno_tier = 2, dmg_tier = 2, high_quality = F)
+  stats.ls$VarN_Q2_Rare050_DmgT2_Xhom_PhenoTierHigh <- add_stats_main_findings(data, type = "Xhom", pheno_tier = 2, dmg_tier = 2, high_quality = T)
+  
+  stats.ls$VarN_Q1_Rare050_DmgT1_CmpHet_PhenoTierAll <- add_stats_main_findings(data, type = "cmp_het", pheno_tier = 0, dmg_tier = 1, high_quality = F)
+  stats.ls$VarN_Q2_Rare050_DmgT1_CmpHet_PhenoTierAll <- add_stats_main_findings(data, type = "cmp_het", pheno_tier = 0, dmg_tier = 1, high_quality = T)
+  
+  stats.ls$VarN_Q1_Rare050_DmgT1_CmpHet_PhenoTierLow <- add_stats_main_findings(data, type = "cmp_het", pheno_tier = 1, dmg_tier = 1, high_quality = F)
+  stats.ls$VarN_Q2_Rare050_DmgT1_CmpHet_PhenoTierLow <- add_stats_main_findings(data, type = "cmp_het", pheno_tier = 1, dmg_tier = 1, high_quality = T)
+  
+  stats.ls$VarN_Q1_Rare050_DmgT1_CmpHet_PhenoTierHigh <- add_stats_main_findings(data, type = "cmp_het", pheno_tier = 2, dmg_tier = 1, high_quality = F)
+  stats.ls$VarN_Q2_Rare050_DmgT1_CmpHet_PhenoTierHigh <- add_stats_main_findings(data, type = "cmp_het", pheno_tier = 2, dmg_tier = 1, high_quality = T)
+  
+  stats.ls$VarN_Q1_Rare005_DmgT2_AXDom_PhenoTierAll <- add_stats_main_findings(data, type = "dominant", pheno_tier = 0, dmg_tier = 2, high_quality = F)
+  stats.ls$VarN_Q2_Rare005_DmgT2_AXDom_PhenoTierAll <- add_stats_main_findings(data, type = "dominant", pheno_tier = 0, dmg_tier = 2, high_quality = T)
+  
+  stats.ls$VarN_Q1_Rare005_DmgT2_AXDom_PhenoTierLow <- add_stats_main_findings(data, type = "dominant", pheno_tier = 1, dmg_tier = 2, high_quality = F)
+  stats.ls$VarN_Q2_Rare005_DmgT2_AXDom_PhenoTierLow <- add_stats_main_findings(data, type = "dominant", pheno_tier = 1, dmg_tier = 2, high_quality = T)
+  
+  stats.ls$VarN_Q1_Rare005_DmgT2_AXDom_PhenoTierHigh <- add_stats_main_findings(data, type = "dominant", pheno_tier = 2, dmg_tier = 2, high_quality = F)
+  stats.ls$VarN_Q2_Rare005_DmgT2_AXDom_PhenoTierHigh <- add_stats_main_findings(data, type = "dominant", pheno_tier = 2, dmg_tier = 2, high_quality = T)
+  
+  stats.ls$VarN_Q1_Rare005_DmgT2_HI_PhenoTierAll <- add_stats_main_findings(data, type = "het_hotzone", pheno_tier = 0, high_quality = F)
+  stats.ls$VarN_Q2_Rare005_DmgT2_HI_PhenoTierAll <- add_stats_main_findings(data, type = "het_hotzone", pheno_tier = 0, high_quality = T)
+  
+  stats.ls$VarN_Q1_Rare005_DmgT2_HI_PhenoTierLow <- add_stats_main_findings(data, type = "het_hotzone", pheno_tier = 1, high_quality = F)
+  stats.ls$VarN_Q2_Rare005_DmgT2_HI_PhenoTierLow <- add_stats_main_findings(data, type = "het_hotzone", pheno_tier = 1, high_quality = T)
+  
+  stats.ls$VarN_FS1_Q1_Rare050_Tot     <- add_stats_secondary_findings(data, tier = 1)
+  stats.ls$VarN_FS2_Q2_Rare010_Tot     <- add_stats_secondary_findings(data, tier = 2)
+  stats.ls$VarN_FS3_Q2_Rare010_Dmg_Tot <- add_stats_secondary_findings(data, tier = 3)
+  
+  stats.ls$VarN_FS1_Q1_Rare050_AD_Pathg_Any        <- add_stats_secondary_findings(data, tier = 1, type = "dominant")
+  stats.ls$VarN_FS1_Q1_Rare050_AR_Pathg_Hom        <- add_stats_secondary_findings(data, tier = 1, type = "recessive_hom")
+  stats.ls$VarN_FS1_Q1_Rare050_AR_Pathg_PotCompHet <- add_stats_secondary_findings(data, tier = 1, type = "recessive_cmp_het")
+  stats.ls$VarN_FS1_Q1_Rare050_XL_Pathg_Hap        <- add_stats_secondary_findings(data, tier = 1, type = "Xhap")
+  stats.ls$VarN_FS1_Q1_Rare050_XL_Pathg_Hom        <- add_stats_secondary_findings(data, tier = 1, type = "Xhom")
+  stats.ls$VarN_FS1_Q1_Rare050_CX_Pathg_HomHap     <- add_stats_secondary_findings(data, tier = 1, type = "complex_hom_hap")
+  stats.ls$VarN_FS1_Q1_Rare050_CX_Pathg_PotCompHet <- add_stats_secondary_findings(data, tier = 1, type = "complex_cmp_het")
+  stats.ls$VarN_FS1_Q1_Rare050_CX_Uncertain        <- add_stats_secondary_findings(data, tier = 1, type = "complex_single_het")
+  stats.ls$VarN_FS1_Q1_Rare050_AR_Carrier          <- add_stats_secondary_findings(data, tier = 1, type = "recessive_single_het")
+  stats.ls$VarN_FS1_Q1_Rare050_XL_Carrier          <- add_stats_secondary_findings(data, tier = 1, type = "Xhet")
+  
+  stats.ls$VarN_FS2_Q2_Rare010_AD_Pathg_Any        <- add_stats_secondary_findings(data, tier = 2, type = "dominant")
+  stats.ls$VarN_FS2_Q2_Rare010_AR_Pathg_Hom        <- add_stats_secondary_findings(data, tier = 2, type = "recessive_hom")
+  stats.ls$VarN_FS2_Q2_Rare010_AR_Pathg_PotCompHet <- add_stats_secondary_findings(data, tier = 2, type = "recessive_cmp_het")
+  stats.ls$VarN_FS2_Q2_Rare010_XL_Pathg_Hap        <- add_stats_secondary_findings(data, tier = 2, type = "Xhap")
+  stats.ls$VarN_FS2_Q2_Rare010_XL_Pathg_Hom        <- add_stats_secondary_findings(data, tier = 2, type = "Xhom")
+  stats.ls$VarN_FS2_Q2_Rare010_CX_Pathg_HomHap     <- add_stats_secondary_findings(data, tier = 2, type = "complex_hom_hap")
+  stats.ls$VarN_FS2_Q2_Rare010_CX_Pathg_PotCompHet <- add_stats_secondary_findings(data, tier = 2, type = "complex_cmp_het")
+  stats.ls$VarN_FS2_Q2_Rare010_CX_Uncertain        <- add_stats_secondary_findings(data, tier = 2, type = "complex_single_het")
+  stats.ls$VarN_FS2_Q2_Rare010_AR_Carrier          <- add_stats_secondary_findings(data, tier = 2, type = "recessive_single_het")
+  stats.ls$VarN_FS2_Q2_Rare010_XL_Carrier          <- add_stats_secondary_findings(data, tier = 2, type = "Xhet")
+  
+  stats.ls$VarN_FS3_Q2_Rare010_Dmg_AD_Pathg_Any        <- add_stats_secondary_findings(data, tier = 3, type = "dominant")
+  stats.ls$VarN_FS3_Q2_Rare010_Dmg_AR_Pathg_Hom        <- add_stats_secondary_findings(data, tier = 3, type = "recessive_hom")
+  stats.ls$VarN_FS3_Q2_Rare010_Dmg_AR_Pathg_PotCompHet <- add_stats_secondary_findings(data, tier = 3, type = "recessive_cmp_het")
+  stats.ls$VarN_FS3_Q2_Rare010_Dmg_XL_Pathg_Hap        <- add_stats_secondary_findings(data, tier = 3, type = "Xhap")
+  stats.ls$VarN_FS3_Q2_Rare010_Dmg_XL_Pathg_Hom        <- add_stats_secondary_findings(data, tier = 3, type = "Xhom")
+  stats.ls$VarN_FS3_Q2_Rare010_Dmg_CX_Pathg_HomHap     <- add_stats_secondary_findings(data, tier = 3, type = "complex_hom_hap")
+  stats.ls$VarN_FS3_Q2_Rare010_Dmg_CX_Pathg_PotCompHet <- add_stats_secondary_findings(data, tier = 3, type = "complex_cmp_het")
+  stats.ls$VarN_FS3_Q2_Rare010_Dmg_CX_Uncertain        <- add_stats_secondary_findings(data, tier = 3, type = "complex_single_het")
+  stats.ls$VarN_FS3_Q2_Rare010_Dmg_AR_Carrier          <- add_stats_secondary_findings(data, tier = 3, type = "recessive_single_het")
+  stats.ls$VarN_FS3_Q2_Rare010_Dmg_XL_Carrier          <- add_stats_secondary_findings(data, tier = 3, type = "Xhet")
+  
+  stats.ls$VarN_FM_True_CmpHet <- add_stats_true_cmphet(data, secondary_findings = F)
+  stats.ls$VarN_FS_True_CmpHet <- add_stats_true_cmphet(data, secondary_findings = T)
+  
+  return(stats.ls)
+}
+
 check_samples_exist <- function(data, child_column.name, father_column.name, mother_column.name) {
   
   col_names <- colnames(data)
@@ -120,26 +297,6 @@ sep_gt <- function(gt) {
   gt_sep <- unlist(strsplit(gt, "/|\\Q|\\E"))
   
   return(gt_sep)
-}
-
-which_zygosity <- function(gt) {
-  
-  gt_sep <- sep_gt(gt)
-  
-  if (gt_sep[1] == gt_sep[2]) {
-    return("hom")
-  } else {
-    return("het")
-  }
-}
-
-get_zygosity <- function(child_gt, father_gt, mother_gt) {
-  
-  child_zg <- which_zygosity(child_gt)
-  father_zg <- which_zygosity(father_gt)
-  mother_zg <- which_zygosity(mother_gt)
-  
-  return(c(child_zg, father_zg, mother_zg))
 }
 
 get_var_origin <- function(child_gt_sep) {
@@ -167,34 +324,28 @@ get_each_var_origin <- function(i, origins, fam_dat, CHROM, child_gts, father_gt
   father_gt <- father_gts[i]
   mother_gt <- mother_gts[i]
   fam_dat$gt <- c(child_gt, father_gt, mother_gt)
-  fam_dat$zygosity <- get_zygosity(child_gt, father_gt, mother_gt)
   
   child_gt_sep <- sep_gt(child_gt)
   father_gt_sep <- sep_gt(father_gt)
   mother_gt_sep <- sep_gt(mother_gt)
   
-  if (fam_dat$zygosity[1] == "hom" ) {
-    
-    if (child_gt_sep[1] %in% father_gt_sep & child_gt_sep[1] %in% mother_gt_sep) { # if the copy can be found in both parents
-      origins[i] <- "both"
-      return(origins[i])
-    } 
-    
-  } else if (setequal(father_gt_sep, mother_gt_sep) & setequal(father_gt_sep, child_gt_sep) & setequal(mother_gt_sep, child_gt_sep)) {
+  if (setequal(father_gt_sep, mother_gt_sep) & setequal(father_gt_sep, child_gt_sep) & setequal(mother_gt_sep, child_gt_sep)) {
     
     return(origins[i]) # if all family members have the same gt (order doesn't matter), origin stays as "none"
     
-  } else if (fam_dat$zygosity[1] == "het") {
+  } else {
     
     cond1 <- child_gt_sep[1] %in% father_gt_sep & child_gt_sep[2] %in% mother_gt_sep
     cond2 <- child_gt_sep[1] %in% mother_gt_sep & child_gt_sep[2] %in% father_gt_sep
     
     if (cond1) { # if the first copy comes from the father and the second the mother
+      
       names(child_gt_sep) <- c("father", "mother")
       origins[i] <- get_var_origin(child_gt_sep)
       return(origins[i])
       
     } else if (cond2) { # if the first copy comes from the mother and the second the father
+      
       names(child_gt_sep) <- c("mother", "father")
       origins[i] <- get_var_origin(child_gt_sep)
       return(origins[i])
@@ -212,9 +363,9 @@ get_cmp_het_subset <- function(data, father_gt.col, mother_gt.col, secondary_fin
   cmp_het <- unique(cmp_het[, c("CHROM", "start", "Original_VCFKEY", "var_type", 
                                 father_gt.col, mother_gt.col, "GT_PreNorm", 
                                 "DN", "gene_symbol")])
-  cmp_het <- cmp_het %>% subset(!grepl("\\./\\.", cmp_het[, father_gt.col]) & 
+  cmp_het <- cmp_het %>% subset(!grepl("\\.(/\\.){0,}", cmp_het[, father_gt.col]) & 
                                   !grepl("\\./\\.", cmp_het[, mother_gt.col]) &
-                                  !grepl("\\./\\.", GT_PreNorm))
+                                  !grepl("\\.(/\\.){0,}", GT_PreNorm))
   cmp_het <- cmp_het %>% group_by(gene_symbol) %>% filter(n() > 1) # remove genes with less than 2 variants
   
   return(cmp_het)
@@ -267,12 +418,16 @@ add_compound_heterozygous_tag <- function(data, father_column.name, mother_colum
   
   father_gt.col <- paste0(father_column.name, "GT_PreNorm")
   mother_gt.col <- paste0(mother_column.name, "GT_PreNorm")
-  
+  ifelse(secondary_findings, col_name <- "FS_Fam_CmpHet", col_name <- "FM_Fam_CmpHet")
+
   cmp_het <- get_cmp_het_subset(data, father_gt.col, mother_gt.col, secondary_findings)
+  if (nrow(cmp_het) == 0) {
+    data[, col_name] <- "-"
+    return(data)
+  }
+
   cmp_het$origin <- get_var_origins(cmp_het, father_gt.col, mother_gt.col)
   true_cmp_het <- find_true_cmp_het(cmp_het)
-  
-  ifelse(secondary_findings, col_name <- "FS_Fam_CmpHet", col_name <- "FM_Fam_CmpHet")
   data[, col_name] <- initialize_cmp_het_col(data, col_name, secondary_findings)
   data <- merge(data, true_cmp_het[, c("Original_VCFKEY", "gene_symbol", "is_cmp_het")], 
                 by = c("Original_VCFKEY", "gene_symbol"), all.x = TRUE)
