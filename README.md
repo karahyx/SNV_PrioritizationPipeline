@@ -868,11 +868,11 @@ The family-based script contains two new columns: <code>FM_Fam_CmpHet</code> and
 
 ## :bulb: Changes From the Old Script
 * Added <code>frameshift block substitution</code> and <code>nonframeshift block subsitution</code> to <code>eff_lof.chv</code> and <code>eff_other_sub.chv</code> upon [updates from ANNOVAR](https://annovar.openbioinformatics.org/en/latest/user-guide/gene/)
-* Replaced tag <code>F_Qual</code> with <code>F_Pass</code> for a more intuitive understanding of the column
+* Replaced <code>F_Qual_tag</code> with <code>F_Pass</code> and assigned a new definition to <code>F_Qual</code> for a more intuitive understanding of the columns
 * Changed the following criteria:
-  * High-quality variants are now defined as variants with a "PASS" FILTER and <code>DP &ge; 2</code> 
+  * High-quality variants are now defined as variants with a "PASS" FILTER and <code>DP &ge; 2</code> (i.e. <code>F_Qual = 1</code>)
   * Further divided the damage tier for type Coding LOF into 1 (Low) and 2 (High) based on the number of overlap-based match for dbSNP (i.e. the <code>dbsnp_region</code> column)
-  * Combined two criteria, <code>phylopMam_avg &ge; phylopMam_missense_cutoff</code> and <code>phylopVer100_avg &ge; phylopVert_missense_cutoff</code>, into one for defining Missense variants; also added two additional criteria <code>REVEL_score &ge; REVEL_cutoff</code> and <code>MPC_score &ge; MPC_cutoff</code> 
+  * Combined two criteria, <code>phylopMam_avg &ge; phylopMam_missense_cutoff</code> and <code>phylopVer100_avg &ge; phylopVert_missense_cutoff</code>, into one to define Missense variants; also added two additional criteria <code>REVEL_score &ge; REVEL_cutoff</code> and <code>MPC_score &ge; MPC_cutoff</code> 
   * Removed the <code> (effect_priority %in% eff_other_sub.chv & (phylopMam_avg >= 1.5 | phylopVert100_avg >= 2.0 | CADD_phred >= 13.0) & is.na (dbsnp) & is.na (dbsnp_region))</code> condition from the criteria for defining damaging variants with type Other Coding
   * Removed the SPIDEX-related criteria from Splicing predictions
 * Changed the <code>phylopMam</code>, <code>phylopVert100</code>, <code>CADD_phred</code> cutoffs for the following sections:
@@ -882,8 +882,8 @@ The family-based script contains two new columns: <code>FM_Fam_CmpHet</code> and
   * 6.6. Non-coding
 * Changed the default type for <code>F_DamageType</code> and <code>F_S_DamageType</code> to "NotDmg" and "NotLOF" for a more intuitive understanding
 * Used <code>data.table::fread</code> to achieve a faster speed when importing the original variant data
-* Added a line to remove column DP immediately after reading in the original variant data - this is because at one point the script removes the <code>{genome_name}.</code> part in columns that start with it, which includes <code>{genome_name}.DP</code>. After removal, there would be two DP columns and the first DP column would be used by default, which is not desired
-* The new script annotates all variants with a maximum allele frequency of 0.05 throughout and only outputs one annotated data set containing rare 0.05 variants. On contrary, the old script annotated the high-quality, rare 0.05 variants throughout and output rare 0.05 and high-quality, rare 0.05 variants separately. This change was made because only ~4% of variants called by DRAGEN are low-quality (i.e. they do not have a "PASS" filter)
+* Added a line to remove column DP immediately after reading in the original variant data - this is because at one point the script removes the <code>{genome_name}.</code> part in columns that start with it, which includes <code>{genome_name}.DP</code>. After the removal of <code>{genome_name}.</code>, there would be two DP columns and the first DP column would be used by default, which is not desired
+* The new script annotates all variants with a maximum allele frequency of 0.05 throughout and only outputs one annotated data set containing rare 0.05 variants. On contrary, the old script annotated the rare 0.05 variants with a "PASS" FILTER throughout and output rare 0.05 and rare 0.05 with "PASS" variants separately. This change was made because only ~4% of variants called by DRAGEN are low-quality (i.e. they do not have a "PASS" filter)
 * Changed the name of statistic from <code>VarN_Q1/2_Coding_Rare010_LOF</code> to <code>VarN_Q1/2_Coding_Rare010_LOF_TierLow</code> and added <code>VarN_Q1/2_Coding_Rare010_LOF_TierHigh</code> which describes the total number of rare 0.01 Coding LOR variants with a high damage tier in the data
 
 ## :handshake: Contributors
