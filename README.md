@@ -6,9 +6,9 @@ An adaptation of the TCAG Small Variant Prioritization Pipeline originally devel
 
 The PrioritizationPipeline script is used to annotate small variants called by DRAGEN with features including frequency and quality filters, damage type and tiers, as well as main and secondary findings for the purpose of variant prioritization. The script also generates pre-defined summary statistics such as chromosome-wise zygosity type counts and the number of variants in each category of interest. 
 
-PrioritizationPipeline relies on the TCAG Small Variant Annotation Pipeline rev27.7 developed and maintained by Thomas Nalpathamkalam. The documentation can be found here [TCAG_SMALL VARIANT_ANNOTATION_PIPELINE_rev27.7_hg38_JUN2022.pdf](./TCAG_SMALL_VARIANT_ANNOTATION_PIPELINE_rev27.7_hg38_JUN2022.pdf). In comparison, [Pipeline_v16](./R/Pipeline_v16_ILMN_GATK_rev27.4_20200818.R) relies on [TCAG_SMALL VARIANT_ANNOTATION_PIPELINE_rev27.4_hg18_AUG2022.pdf](./TCAG_SMALL_VARIANT_ANNOTATION_PIPELINE_rev27.4_hg18_AUG2022.pdf).
+The newest version of the pipeline [Pipeline_v17](./R/) relies on the TCAG Small Variant Annotation Pipeline rev27.7 developed and maintained by Thomas Nalpathamkalam. The documentation can be found here [TCAG_SMALL VARIANT_ANNOTATION_PIPELINE_rev27.7_hg38_JUN2022.pdf](./TCAG_SMALL_VARIANT_ANNOTATION_PIPELINE_rev27.7_hg38_JUN2022.pdf). In comparison, [Pipeline_v16](./R/Pipeline_v16_ILMN_GATK_rev27.4_20200818.R) relies on [TCAG_SMALL VARIANT_ANNOTATION_PIPELINE_rev27.4_hg18_AUG2022.pdf](./TCAG_SMALL_VARIANT_ANNOTATION_PIPELINE_rev27.4_hg18_AUG2022.pdf).
 
-Two versions of PrioritizationPipeline are available. [Version 1](./R/Pipeline_v17_Version1_IND) is used to process single samples, while [Version 2](./R/Pipeline_v17_Version2_FAM) provides the workflow for family-based studies. Version 2 adds the same filters as Version 1, but reads in pedigrees to identify compound heterozygotes (Version 1 only identifies potential compound heterozygotes). The shell scripts in the [bash](./bash) folder are used to receive user input and process one or multiple files at once on HPF platforms. Versions for Torque and Slurm are both included. Detailed instructions for how to run the file on HPF can be found in the **Running the Script** sections below.
+Two versions of Pipeline_v17 are available. [Version 1](./R/Pipeline_v17_Version1_IND) is used to process single samples, while [Version 2](./R/Pipeline_v17_Version2_FAM) provides the workflow for family-based studies. Version 2 adds the same filters as Version 1, but reads in pedigrees to identify compound heterozygotes (Version 1 only identifies potential compound heterozygotes). The shell scripts in the [bash](./bash) folder are used to receive user input and process one or multiple files at once on HPF platforms. Versions for Torque and Slurm are both included. Detailed instructions for how to run the file on HPF can be found in the **Running the Script** sections below.
 
 The main change from the old script is the utilization of functions that reduce the program to smaller, more manageable chunks and allow for reusability and extension. Detailed changes can be found in the **Changes From the Old Script** section below.
 
@@ -21,8 +21,8 @@ The main change from the old script is the utilization of functions that reduce 
 **If your variant data files are in the same folder:**
 1. In <code>run_prioritization_tasks.sh</code>, make sure that lines 13-31 are uncommented and lines 34-53 are commented
 2. Change the values assigned to the following variables:
-    1. <code>tool</code> on line 9 to the path of your folder that stores pipeline_new.R
-    2. <code>funcs</code> on line 10 to the path of your folder that stores pipeline_new_funcs.R
+    1. <code>tool</code> on line 9 to the path of your folder that stores <code>Pipeline_v17_ILMN_DRAGEN_rev27.7_20221021.R</code>
+    2. <code>funcs</code> on line 10 to the path of your folder that stores <code>Pipeline_v17_funcs.R</code>
     3. <code>infile_dir</code> on line 14 to the path of your folder that contains the variant data
     4. <code>output_dir</code> on line 15 to your desired output directory
 3. If your files do not end with .tsv, change the <code>'\*.tsv.gz'</code> on line 18 to <code>'\*.{your_file_format}'</code>
@@ -32,12 +32,12 @@ The main change from the old script is the utilization of functions that reduce 
 **If your variant data files are in their own folders and the folders are named after their sample IDs:**
 1. In <code>run_prioritization_tasks.sh</code>, make sure that lines 34-53 are uncommented and lines 13-31 are commented
 2. Change the values assigned to the following variables:
-    1. <code>tool</code> on line 9 to the path of your folder that stores pipeline_new.R
-    2. <code>funcs</code> on line 10 to the path of your folder that stores pipeline_new_funcs.R
+    1. <code>tool</code> on line 9 to the path of your folder that stores <code>Pipeline_v17_ILMN_DRAGEN_rev27.7_20221021.R</code>
+    2. <code>funcs</code> on line 10 to the path of your folder that stores <code>Pipeline_v17_funcs.R</code>
     3. <code>infile_dir</code> on line 35 to the path of your folder that contains the variant data
     4. <code>output_dir</code> on line 36 to your desired output directory
 3. Change the <code>'\*SUBSET\*'</code> part on line 44 to a part of the file name that's found in all the variant data file names 
-    1. For instance, the file names all have the format <code>{sample_id}.hard-filtered.vcf.gz.annovar.out_SUBSET_rev27.7_hg38.tsv</code> in the examplee
+    1. For instance, the file names all have the format <code>{sample_id}.hard-filtered.vcf.gz.annovar.out_SUBSET_rev27.7_hg38.tsv</code> in the example
     2. Thus, <code>SUBSET</code> was used as the common element in all file names
 5. Run <code>run_prioritization_tasks.sh</code> on HPF
 
