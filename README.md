@@ -23,8 +23,8 @@ The main change from the old script is the utilization of functions that reduce 
 2. Change the values assigned to the following variables:
     1. <code>tool</code> on line 9 to the path of your folder that stores <code>Pipeline_v17_ILMN_DRAGEN_rev27.7_20221021.R</code>
     2. <code>funcs</code> on line 10 to the path of your folder that stores <code>Pipeline_v17_funcs.R</code>
-    3. <code>infile_dir</code> on line 14 to the path of your folder that contains the variant data
-    4. <code>output_dir</code> on line 15 to your desired output directory
+    3. <code>infile_dir</code> on line 14 to the path of your folder that contains the variant data (make sure to add "/" at the end)
+    4. <code>output_dir</code> on line 15 to your desired output directory (make sure to add "/" at the end)
 3. If your files do not end with .tsv, change the <code>'\*.tsv.gz'</code> on line 18 to <code>'\*.{your_file_format}'</code>
 4. Change the <code>'.'</code> on line 23 to a field separator that allows you to obtain the genome name as field $1
 5. Run <code>run_prioritization_tasks.sh</code> on HPF
@@ -34,8 +34,8 @@ The main change from the old script is the utilization of functions that reduce 
 2. Change the values assigned to the following variables:
     1. <code>tool</code> on line 9 to the path of your folder that stores <code>Pipeline_v17_ILMN_DRAGEN_rev27.7_20221021.R</code>
     2. <code>funcs</code> on line 10 to the path of your folder that stores <code>Pipeline_v17_funcs.R</code>
-    3. <code>infile_dir</code> on line 35 to the path of your folder that contains the variant data
-    4. <code>output_dir</code> on line 36 to your desired output directory
+    3. <code>infile_dir</code> on line 35 to the path of your folder that contains the variant data (make sure to add "/" at the end)
+    4. <code>output_dir</code> on line 36 to your desired output directory (make sure to add "/" at the end)
 3. Change the <code>'\*SUBSET\*'</code> part on line 44 to a part of the file name that's found in all the variant data file names 
     1. For instance, the file names all have the format <code>{sample_id}.hard-filtered.vcf.gz.annovar.out_SUBSET_rev27.7_hg38.tsv</code> in the example
     2. Thus, <code>SUBSET</code> was used as the common element in all file names
