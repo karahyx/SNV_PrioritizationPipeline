@@ -471,7 +471,7 @@ The main change from the old script is the utilization of functions that reduce 
       <ul>
         <li> is a rare variant with a maximum allele frequency of 0.05 </li>
         <li> is damaging, i.e. <code>F_DamageType</code> != "NotDmg" </li>
-        <li> has zygosity <code>hom-alt</code> (homozygous alternative) </li>
+        <li> has zygosity <code>hap</code> (homozygous alternative) </li>
         <li> is found in chromosome X </li>
       </ul>
     </td>
