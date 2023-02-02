@@ -442,28 +442,18 @@ The main change from the old script is the utilization of functions that reduce 
       </td>
   </tr>
   <tr>
-    <td rowspan="3">3.5. Phenotype Filter</td>
-    <td>3.5.1. HPO dominant</td>
-    <td> Add a tag <code>G_AXD_HPO</code> that indicates whether the variant has autosomal dominant (AD) as their mode of inheritance based on the HPO annotations </td>
-    <td> <code>G_AXD_HPO</code> = 
+    <td rowspan="2"> 3.5. Phenotype Filter </td>
+    <td> 3.5.1. OMIM dominant <br> 3.5.2. CGD dominant </td>
+    <td> Add a tag <code>F_AXD</code> that indicates whether the variant has autosomal dominant (AD) as their mode of inheritance based on the OMIM and CGD annotations </td>
+    <td> <code>F_AXD</code> = 
       <ul>
-        <li> 1, if the pattern "@AD" is found in column <code>HPO</code> </li>
+        <li> 1, if the pattern "i:AD" is found in column <code>omim_phenotype</code> or the pattern "AD" is found in column <code>CGD_inheritance</code> </li>
         <li> 0, otherwise </li>
       </ul>
     </td>
   </tr>
   <tr>
-    <td>3.5.2. CGD dominant</td>
-    <td> Add a tag <code>G_AXD_CGD</code> that indicates whether the variant has autosomal dominant (AD) as their mode of inheritance based on the CGD inheritance annotations </td>
-    <td> <code>G_AXD_CGD</code> = 
-      <ul>
-        <li> 1, if the pattern "AD" is found in column <code>CGD_inheritance</code> </li>
-        <li> 0, otherwise </li>
-      </ul>
-    </td>
-  </tr>
-  <tr>
-    <td>3.5.3. Phenotype tiers</td>
+    <td> 3.5.3. Phenotype tiers </td>
     <td> Add a tag <code>F_PhenoTier</code> that indicates the phenotype tier of a variant. Here, tier 1 and 2 are used to differentiate mouse and human phenotype annotations, respectively. Human phenotype annotations take priority. </td>
     <td> <code>F_PhenoTier</code> =
       <ul>
@@ -474,8 +464,8 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td rowspan="5">3.6. Main Findings</td>
-    <td>3.6.1. Recessive homozygous</td>
+    <td rowspan="5"> 3.6. Main Findings </td>
+    <td> 3.6.1. Recessive homozygous </td>
     <td> Add a tag <code>FM_HOM</code> that indicates whether the variant is recessive homozygous </td>
     <td> <code>FM_HOM = 1</code> if the variant
       <ul>
@@ -486,11 +476,11 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td>3.6.2. X-linked haploid</td>
+    <td> 3.6.2. X-linked haploid </td>
     <td> Add a tag <code>FM_XHAP</code> that indicates whether the variant is an X-linked haploid </td>
     <td> <code>FM_XHAP = 1</code> if the variant
       <ul>
-        <li> is a rare variant with a maximum allele frequency of 0.05 </li>
+        <li> is a rare variant with a maximum allele frequency of 1e-4 or 0.0001 </li>
         <li> is damaging, i.e. <code>F_DamageType</code> != "NotDmg" </li>
         <li> has zygosity <code>hap</code> (homozygous alternative) </li>
         <li> is found in chromosome X </li>
@@ -498,7 +488,7 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td>3.6.3. Potential compound heterozygous</td>
+    <td> 3.6.3. Potential compound heterozygous </td>
     <td> <code>add_potential_compound_heterozygous_tag()</code> adds a tag <code>FM_PCHET</code> that indicates whether the variant is a potential compound heterozygote. <br>
     <br> <code>add_potential_dmg_compound_heterozygous_tag()</code> adds a tag <code>FM_PCHET_DMG</code> that indicates whether the variant is a damaging potential compound heterozygote. <br>
     <br> Note that the method used involves looking for multiple mutations on the same gene.  </td>
@@ -516,24 +506,24 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td>3.6.4. Dominant</td>
+    <td> 3.6.4. Dominant </td>
     <td> Add a tag <code>FM_AXDOM</code> that indicates whether the variant is autosomal dominant (AD) </td>
     <td> <code>FM_AXDOM = 1</code> if the variant
       <ul>
-        <li> is a rare variant with a maximum allele frequency of 0.005 </li>
+        <li> is a rare variant with a maximum allele frequency of 1e-4 or 0.0001 </li>
         <li> is damaging, i.e. <code>F_DamageType</code> != "NotDmg" </li>
-        <li> has either <code>G_AXD_CGD == 1</code> or <code>G_AXD_HPO == 1</code> </li>
+        <li> has <code>F_AXD == 1</code> </li>
       </ul>
     </td>
   </tr>
   <tr>
-    <td>3.6.5. Heterozygous hotzone</td>
-    <td> Add a tag <code>FM_HZ</code> that indicates whether the variant is part of a heterozygous hotzone </td>
-    <td> <code>FM_HZ = 1</code> if the variant
+    <td> 3.6.5. Predicted dominant </td>
+    <td> Add a tag <code>FM_PDDOM</code> that indicates whether the variant is predicted to be haploinsufficient, dominant gain-of-function, or dominant negative </td>
+    <td> <code>FM_PDDOM = 1</code> if the variant
       <ul>
-        <li> is a rare variant with a maximum allele frequency of 0.0015 </li>
+        <li> is a rare variant with a maximum allele frequency of 1e-4 or 0.0001 </li>
         <li> has zygosity <code>ref-alt</code> (heterozygous reference) </li>
-        <li> has <code>gnomAD_oe_lof_upper < 0.35</code> </li>
+        <li> has <code>F_GeneConstr == 1</code> </li>
         <li> satisfies one of the following: </li>
           <ul>
             <li> <code>F_DamageType</code> is one of "LOF", "Splc", or "OtherC" </li>
@@ -543,8 +533,8 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td rowspan="14">3.7. Secondary Findings</td>
-    <td>3.7.0. Pathogenicity flag</td>
+    <td rowspan="14"> 3.7. Secondary Findings </td>
+    <td> 3.7.0. Pathogenicity flag </td>
     <td> Add two pathogenicity related flags:
       <ul> 
         <li> flag <code>F_Clinvar_Pathg</code> indicates whether the variant has at least one record submitted with pathogenic or likely pathogenic based on ClinVar </li>
@@ -556,7 +546,7 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td>3.7.1. Tier 1</td>
+    <td> 3.7.1. Tier 1 </td>
     <td> Add a tag <code>FS1_Select</code> that indicates whether a variant belongs to tier 1 for secondary findings </td>
     <td> <code>FS1_Select = 1</code> if the variant
       <ul>
@@ -570,7 +560,7 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td>3.7.2. Tier 2</td>
+    <td> 3.7.2. Tier 2 </td>
     <td> Add a tag <code>FS2_Select</code> that indicates whether a variant belongs to tier 2 for secondary findings </td>
     <td> <code>FS2_Select = 1</code> if the variant
       <ul>
@@ -587,7 +577,7 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td>3.7.3. Tier 3</td>
+    <td> 3.7.3. Tier 3 </td>
     <td> Add a tag <code>FS3_Select</code> that indicates whether a variant belongs to tier 3 for secondary findings </td>
     <td> <code>FS3_Select = 1</code> if the variant
       <ul>
@@ -605,7 +595,7 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td>3.7.4. Dominant, pathogenic</td>
+    <td> 3.7.4. Dominant, pathogenic </td>
     <td> Add a tag <code>FS1_AD_Pathg_Any</code> that indicates whether a variant is dominant and pathogenic </td>
     <td> A variant has <code>FS1_AD_Pathg_Any = 1</code> if
       <ul>
@@ -615,7 +605,7 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td>3.7.5. Recessive, homozygous, pathogenic</td>
+    <td> 3.7.5. Recessive, homozygous, pathogenic </td>
     <td> Add a tag <code>FS1_AR_Pathg_Hom</code> that indicates whether a variant is recessive, homozygous and pathogenic </td>
     <td> A variant has <code>FS1_AR_Pathg_Hom</code> if it
       <ul>
@@ -626,7 +616,7 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td>3.7.6. Recessive, potential compound heterozygous, pathogenic</td>
+    <td> 3.7.6. Recessive, potential compound heterozygous, pathogenic </td>
     <td> Two tags are being added here:
       <ul>
         <li> Add a tag <code>F_CmpHet_S1</code> that indicates whether a variant is a potential compound heterozygote </li>
@@ -649,7 +639,7 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td>3.7.7. X-linked, homozygous/haploid, pathogenic</td>
+    <td> 3.7.7. X-linked, homozygous/haploid, pathogenic </td>
     <td> Add a tag <code>FS1_XL_Pathg_Hom</code> that indicates whether a variant is X-linked homozygous and pathogenic <br><br>
     Add a tag <code>FS1_XL_Pathg_Hap</code> that indicates whether a variant is X-linked haploid and pathogenic </td>
     <td> <code>FS1_XL_Pathg_Hom = 1</code> or <code>FS1_XL_Pathg_Hap = 1</code> if a variant
@@ -660,7 +650,7 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td>3.7.8. Complex, homozygous/haploid, pathogenic</td>
+    <td> 3.7.8. Complex, homozygous/haploid, pathogenic </td>
     <td> Add a tag <code>FS1_CX_Pathg_HomHap</code> that indicates whether a variant is complex, homozygous/haploid, and pathogenic </td>
     <td> A variant has <code>FS1_CX_Pathg_HomHap = 1</code> if it
       <ul>
@@ -671,7 +661,7 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td>3.7.9. Complex, potential compound heterozygous, pathogenic</td>
+    <td> 3.7.9. Complex, potential compound heterozygous, pathogenic </td>
     <td> Add a tag <code>FS1_CX_Pathg_PotCompHet</code> that indicates whether a variant is complex, potential compound heterozygous, and pathogenic </td>
     <td> A variant has <code>FS1_CX_Pathg_HomHap = 1</code> if it
       <ul>
@@ -682,7 +672,7 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td>3.7.10. Complex, single heterozygous, uncertain</td>
+    <td> 3.7.10. Complex, single heterozygous, uncertain </td>
     <td> Add a tag <code>FS1_CX_Uncertain</code> that indicates whether a variant is complex, single heterozygous, and pathogenicity uncertain </td>
     <td> A variant has <code>FS1_CX_Uncertain = 1</code> if it
       <ul>
@@ -694,7 +684,7 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td>3.7.11. Recessive, single heterozygous, carrier</td>
+    <td> 3.7.11. Recessive, single heterozygous, carrier </td>
     <td> Add a tag <code>FS1_AR_Carrier</code> that indicates whether a variant is recessive, single heterozygous, and a carrier </td>
     <td> A variant has <code>FS1_AR_Carrier = 1</code> if it
       <ul>
@@ -706,7 +696,7 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td>3.7.12. X-linked, heterozygous, carrier</td>
+    <td> 3.7.12. X-linked, heterozygous, carrier </td>
     <td> Add a tag <code>FS1_XL_Carrier</code> that indicates whether a variant is X-linked, heterozygous, and a carrier </td>
     <td> A variant has <code>FS1_XL_Carrier = 1</code> if it
       <ul>
@@ -718,7 +708,7 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td>3.7.13. ACMG disease</td>
+    <td> 3.7.13. ACMG disease </td>
     <td> Add two tags:
       <ul>
         <li> <code>F_ACMG</code> indicates whether the variant has an ACMG disease annotation </li>
