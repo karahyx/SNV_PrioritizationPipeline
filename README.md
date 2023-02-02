@@ -84,7 +84,7 @@ The main change from the old script is the utilization of functions that reduce 
     <td> 1.2.1. High-quality filter </td>
   </tr>
   <tr>
-    <td> 1.2.2. Damage types </td>
+    <td> 1.2.2. Define damage </td>
   </tr>
   <tr>
     <td> 1.2.3. Main findings </td>
@@ -195,71 +195,64 @@ The main change from the old script is the utilization of functions that reduce 
 </thead>
 <tbody>
   <tr>
-    <td rowspan="13"> (3) Overview <br></td>
-    <td>3.0. Alternate contigs and unlocalized/unplaced sequence filter</td>
-    <td rowspan="13">All functions used in the script can be found here</td>
-    <td rowspan="13">N/A</td>
+    <td rowspan="11"> (3) Overview <br> </td>
+    <td> 3.0. Alternate contigs and unlocalized/unplaced sequence filter </td>
+    <td rowspan="11"> All functions used in the script can be found here </td>
+    <td rowspan="11"> N/A </td>
   </tr>
   <tr>
-    <td>3.1. Frequency filter</td>
+    <td> 3.1. Frequency filter </td>
   </tr>
   <tr>
-    <td>3.2. Quality filter</td>
+    <td> 3.2. Quality filter </td>
   </tr>
   <tr>
-    <td>3.3. Coding tag</td>
+    <td> 3.3. Coding tag </td>
   </tr>
   <tr>
-    <td>3.4. Define damage</td>
+    <td> 3.4. Define damage </td>
   </tr>
   <tr>
-    <td>3.5. Phenotype filter</td>
+    <td> 3.5. Phenotype filter </td>
   </tr>
   <tr>
-    <td>3.6. Main findings</td>
+    <td> 3.6. Main findings </td>
   </tr>
   <tr>
-    <td>3.7. Secondary findings</td>
+    <td> 3.7. Secondary findings </td>
   </tr>
   <tr>
-    <td>3.8. Get final results</td>
+    <td> 3.8. Get final results </td>
   </tr>
   <tr>
-    <td>3.8.1. Get rare05 variants</td>
+    <td> 3.9. Stats </td>
   </tr>
   <tr>
-    <td>3.8.2. Get HQ variants (FILTER = "PASS")</td>
-  </tr>
-  <tr>
-    <td>3.8.3. Get HQ rare variants</td>
-  </tr>
-  <tr>
-    <td>3.9. Stats</td>
+    <td> 3.10. Change tier names to "Low" and "High" </td>
   </tr>
   <tr>
     <td> 3.0. Alternate Contigs and Unlocalized/Unplaced Sequence Filter</td>
     <td> N/A </td>
     <td> Remove <a href="https://gatk.broadinstitute.org/hc/en-us/articles/360041155232-Reference-Genome-Components"> alternate contigs and unlocalized/unplaced sequence</a> from the variant data </td>
-    <td> N/A
-    </td>
+    <td> N/A </td>
   </tr>
   <tr>
-    <td rowspan="5"> 3.1. Frequency Filter</td>
-    <td>allele frequency cutoff = 0.05</td>
-    <td rowspan="5">Add a frequency filter that filters for variants that pass a specific allele frequency cutoff</td>
-    <td rowspan="5"><code>F_Rare</code> = <br> the smallest allele frequency cutoff that the variant passes</td>
+    <td rowspan="5"> 3.1. Frequency Filter </td>
+    <td> allele frequency cutoff = 0.05 </td>
+    <td rowspan="5"> Add a frequency filter that filters for variants that pass a specific allele frequency cutoff </td>
+    <td rowspan="5"> <code>F_Rare</code> = <br> the smallest allele frequency cutoff that the variant passes </td>
   </tr>
   <tr>
-    <td>allele frequency cutoff = 0.01</td>
+    <td> allele frequency cutoff = 0.01 </td>
   </tr>
   <tr>
-    <td>allele frequency cutoff = 0.005</td>
+    <td> allele frequency cutoff = 0.001 </td>
   </tr>
   <tr>
-    <td>allele frequency cutoff = 0.0015</td>
+    <td> allele frequency cutoff = 0.0001 </td>
   </tr>
   <tr>
-    <td>allele frequency cutoff = 0</td>
+    <td> allele frequency cutoff = 0 </td>
   </tr>
   <tr>
     <td rowspan="2">3.2. Quality Filter</td>
