@@ -61,12 +61,12 @@ The main change from the old script is the utilization of functions that reduce 
   </tr>
   <tr>
     <td> 0.2. Input variables </td>
-    <td> args[1]: root path <br>
-         args[2]: sub-path and filename of second R code file defining functions <br>
-         args[3]: variant input file path <br>
-         args[4]: genome name used at columns <br>
-         args[5]: sub-path and filename of stats visualization Rmd file <br>
-         args[6]: output sub-path </td>
+    <td> <code>args[1]</code>: root path <br>
+         <code>args[2]</code>: sub-path and filename of second R code file defining functions <br>
+         <code>args[3]</code>: variant input file path <br>
+         <code>args[4]</code>: genome name used at columns <br>
+         <code>args[5]</code>: sub-path and filename of stats visualization Rmd file <br>
+         <code>args[6]</code>: output sub-path </td>
   </tr>
   <tr>
     <td> 0.3. Functions </td>
@@ -123,7 +123,12 @@ The main change from the old script is the utilization of functions that reduce 
   </tr>
   <tr>
     <td> 2.3.2. Add some fields for gene constraint </td>
-    <td> TBD </td>
+    <td> <code>F_GeneConstr</code> = 
+        <ul>
+            <li> 1, if a variant's LOF observed/expected (oe) metric from the gnomAD constraint matrix is less than or equal to 0.15 or its missense oe metric from the gnomAD constraint matrix is less than or equal to 0.70 (i.e. <code>gnomad_oe_lof &le; 0.15 | gnomad_oe_mis &le; 0.70</code>) </li>
+            <li> 0, otherwise </li>
+        </ul>
+    </td>
   </tr>
   <tr>
     <td> 2.4. Free up memory</td>
@@ -163,7 +168,16 @@ The main change from the old script is the utilization of functions that reduce 
   </tr>
   <tr>
     <td> 2.9. Output desired results as .txt files</td>
-    <td> Output all rare 0.05 variants, rare damaging variants, secondary findings, chromosome zygosity counts, and summary statistics tables to user-defined output directory </td>
+    <td> Output the following to the user-defined output directory:
+        <ul>
+            <li> Rare 5% variants </li>
+            <li> Rare 5% damaging variants </li>
+            <li> Rare 5% secondary findings variants </li> 
+            <li> chromosome zygosity counts tables </li>
+            <li> a summary statistics table </li> 
+            <li> a PDF file that visualizes the summary statistics </li>
+        </ul>
+    </td>
   </tr>
 </tbody>
 </table>
