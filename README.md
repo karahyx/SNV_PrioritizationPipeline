@@ -61,11 +61,11 @@ The main change from the old script is the utilization of functions that reduce 
   </tr>
   <tr>
     <td> 0.2. Input variables </td>
-    <td> args[1]: root path
-         args[2]: sub-path and filename of second R code file defining functions
-         args[3]: variant input file path
-         args[4]: genome name used at columns
-         args[5]: sub-path and filename of stats visualization Rmd file
+    <td> args[1]: root path <br>
+         args[2]: sub-path and filename of second R code file defining functions <br>
+         args[3]: variant input file path <br>
+         args[4]: genome name used at columns <br>
+         args[5]: sub-path and filename of stats visualization Rmd file <br>
          args[6]: output sub-path </td>
   </tr>
   <tr>
