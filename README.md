@@ -113,7 +113,18 @@ The main change from the old script is the utilization of functions that reduce 
   </tr>
   <tr>
     <td> 2.3.1. Add some fields for allele frequency </td>
+    <td> 
+      <ul>
+          <li> <code>FreqMaxSimple_AfrAmrEasNfeSasOth</code> = the maximum of a variant's allele frequencies (exomes and genomes) from the African-American/African, Latino/Admixed American, East Asian, Non-Finnish European, South Asian, and other subsets </li>
+          <li> <code>FreqHomCount_AfrAmrEasNfeSasOth</code> = the maximum between the counts of homozygous individuals in samples from the gnomAD exome dataset and from the gnomAD genome dataset </li>
+          <li> <code>dbsnp_region_count</code> = a variant's total number of overlap-based match for dbSNP </li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td> 2.3.2. Add some fields for gene constraint </td>
     <td> TBD </td>
+  </tr>
   <tr>
     <td> 2.4. Free up memory</td>
     <td> Remove <code>v_full.temp.df</code> from the current workspace </td>
