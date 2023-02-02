@@ -37,7 +37,7 @@ The main change from the old script is the utilization of functions that reduce 
     3. <code>infile_dir</code> on line 35 to the path of your folder that contains the variant data (make sure to add "/" at the end)
     4. <code>output_dir</code> on line 36 to your desired output directory (make sure to add "/" at the end)
 3. Change the <code>'\*SUBSET\*'</code> part on line 44 to a part of the file name that's found in all the variant data file names 
-    1. For instance, the file names all have the format <code>{sample_id}.hard-filtered.vcf.gz.annovar.out_SUBSET_rev27.7_hg38.tsv</code> in the example
+    1. For instance, the file names all have the format <code>{genome_name}.hard-filtered.vcf.gz.annovar.out_SUBSET_rev27.7_hg38.tsv</code> in the example
     2. Thus, <code>SUBSET</code> was used as the common element in all file names
 5. Run <code>run_prioritization_tasks.sh</code> on HPF
 
@@ -173,9 +173,9 @@ The main change from the old script is the utilization of functions that reduce 
             <li> Rare 5% variants </li>
             <li> Rare 5% damaging variants </li>
             <li> Rare 5% secondary findings variants </li> 
-            <li> chromosome zygosity counts tables </li>
-            <li> a summary statistics table </li> 
-            <li> a PDF file that visualizes the summary statistics </li>
+            <li> Chromosome zygosity counts tables </li>
+            <li> A summary statistics table </li> 
+            <li> A PDF file that visualizes the summary statistics </li>
         </ul>
     </td>
   </tr>
@@ -800,7 +800,7 @@ The family-based pipeline adds filtering tags based on the child columns and ide
   </tr>
   <tr>
     <td> 2.4. Re-format column names</td>
-    <td> Remove <code>{sample_id}:</code> from several columns using the child's sample ID to identify which columns to use to add the filtering tags </td>
+    <td> Remove <code>{genome_name}:</code> from several columns using the child's genome name to identify which columns to use to add the filtering tags </td>
   </tr>
   <tr>
     <td> 2.5. Process the original imported variant data </td>
@@ -865,13 +865,24 @@ The family-based pipeline adds filtering tags based on the child columns and ide
     <td> 
         <ul>
             <li> Change tier levels from 0, 1 and 2 to "-", "Low" and "High" in columns <code>F_DamageTier</code> and <code>F_PhenoTier</code> </li>
-            <li> Add <code>{sample_id}:</code> back to the columns </li>
+            <li> Add <code>{genome_name}:</code> back to the columns </li>
         </ul>
     </td>
   </tr>
   <tr>
     <td> 2.11. Output desired results as .txt files </td>
-    <td> Output all rare 0.05 variants, rare damaging variants, secondary findings, chromosome zygosity counts, and summary statistics tables to user-defined output directory </td>
+    <td> Output the following to the user-defined output directory:
+        <ul>
+            <li> Rare 5% variants </li>
+            <li> Rare 5% damaging variants </li>
+            <li> Rare 5% secondary findings variants </li> 
+            <li> Chromosome zygosity counts tables </li>
+            <li> A summary statistics table </li> 
+            <li> A PDF file that visualizes the summary statistics </li>
+            <li> True compound heterozygotes based on main findings </li>
+            <li> True compound heterozygotes based on secondary findings </li>
+        </ul>
+    </td>
   </tr>
 </tbody>
 </table>
@@ -938,4 +949,4 @@ The family-based script contains two new columns: <code>FM_Fam_CmpHet</code> and
 
 ## :paw_prints: Footnotes
 
-<sup id="fn1">1. Note that genome_name, sample_id, and sample_name are used interchangeably in this document.</sup>
+<sup id="fn1">TBD</sup>
