@@ -745,30 +745,43 @@ The family-based pipeline adds filtering tags based on the child columns and ide
 </thead>
 <tbody>
   <tr>
-    <td rowspan="7">(1) Variables & Cutoffs</td>
-    <td>1.1. Input variables</td>
-    <td rowspan="7">Modify file locations and cutoffs here; <br> <br> Unlike Version 1, the inputs are variant data containing the family samples, the child's sample ID, and the pedigree file. </td>
+    <td rowspan="3"> (0) Settings </td>
+    <td> 0.1. Libraries </td>
+    <td> Import all libraries used in the script </td>
   </tr>
   <tr>
-    <td>1.2. Output variables</td>
+    <td> 0.2. Input variables </td>
+    <td> <code>args[1]</code>: root path <br>
+         <code>args[2]</code>: sub-path and filename of second R code file defining functions <br>
+         <code>args[3]</code>: family variant input file path <br>
+         <code>args[4]</code>: child genome name used at columns <br>
+         <code>args[5]</code>: sub-path and filename of pedigree file <br>
+         <code>args[6]</code>: sub-path and filename of stats visualization Rmd file <br>
+         <code>args[7]</code>: output sub-path </td>
   </tr>
   <tr>
-    <td>1.3. Internal variables</td>
+    <td> 0.3. Functions </td>
+    <td> Import functions used in the script </td>
   </tr>
   <tr>
-    <td>1.4. Cutoffs</td>
+    <td rowspan="5">(1) Variables & Cutoffs</td>
+    <td> 1.1. Internal variables </td>
+    <td rowspan="5"> Modify internal variables and cutoffs here </td>
   </tr>
   <tr>
-    <td>1.4.1. High-quality filter</td>
+    <td> 1.2. Cutoffs </td>
   </tr>
   <tr>
-    <td>1.4.2. Define damage</td>
+    <td> 1.2.1. High-quality filter </td>
   </tr>
   <tr>
-    <td>1.4.3. Main findings</td>
+    <td> 1.2.2. Define damage </td>
   </tr>
   <tr>
-    <td rowspan="11">(2) Main</td>
+    <td> 1.2.3. Main findings </td>
+  </tr>
+  <tr>
+    <td rowspan="13">(2) Main</td>
     <td> 2.1. Import pedigree file </td>
     <td> See title </td>
   </tr>
@@ -796,6 +809,25 @@ The family-based pipeline adds filtering tags based on the child columns and ide
         <li> Remove variants with homozygous reference (hom-ref) or unknown zygosity from the data </li>
         <li> Calculate the alternate allele frequency </li>
       </ul>
+    </td>
+  </tr>
+    <tr>
+    <td> 2.5.1. Add some fields for allele frequency </td>
+    <td> 
+      <ul>
+          <li> <code>FreqMaxSimple_AfrAmrEasNfeSasOth</code> = the maximum of a variant's allele frequencies (exomes and genomes) from the African-American/African, Latino/Admixed American, East Asian, Non-Finnish European, South Asian, and other subsets </li>
+          <li> <code>FreqHomCount_AfrAmrEasNfeSasOth</code> = the maximum between the counts of homozygous individuals in samples from the gnomAD exome dataset and from the gnomAD genome dataset </li>
+          <li> <code>dbsnp_region_count</code> = a variant's total number of overlap-based match for dbSNP </li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td> 2.5.2. Add some fields for gene constraint </td>
+    <td> <code>F_GeneConstr</code> = 
+        <ul>
+            <li> 1, if a variant's LOF observed/expected (oe) metric from the gnomAD constraint matrix is less than or equal to 0.15 or its missense oe metric from the gnomAD constraint matrix is less than or equal to 0.70 (i.e. <code>gnomad_oe_lof &le; 0.15 | gnomad_oe_mis &le; 0.70</code>) </li>
+            <li> 0, otherwise </li>
+        </ul>
     </td>
   </tr>
   <tr>
