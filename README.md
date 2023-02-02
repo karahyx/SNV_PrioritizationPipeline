@@ -322,14 +322,14 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td>3.4.2. Missense</td>
+    <td> 3.4.2. Missense </td>
     <td> Identify variants of type <code>Missense</code> and change their <code>F_DamageTier</code> to either 1 or 2 based on specific conditions
     </td>
     <td> The variant is <code>Missense</code> and has <code>F_DamageTier = 1</code> if it
       <ul>
         <li> is coding </li> 
         <li> is a nonsynonymous SNV </li>
-        <li> satiesfies at least one of the following
+        <li> satiesfies one or more one of the following
           <ul>
             <li> <code>REVEL_score &ge; 0.25 </code> </li>
             <li> <code>phylopMam_avg &ge; 1.3</code> &amp; <code>phylopVert100_avg &ge; 3.9</code> </li>
@@ -340,7 +340,7 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td>3.4.3. Other coding</td>
+    <td> 3.4.3. Other coding </td>
     <td> Identify variants of type <code>Other coding</code> and change their <code>F_DamageTier</code> to either 1 or 2 based on specific cutoffs </td>
     <td> The variant is <code>Other coding</code> if it
       <ul>
@@ -363,7 +363,7 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td>3.4.4. Splicing predictions</td>
+    <td> 3.4.4. Splicing predictions </td>
     <td> Predict whether the variant is of type <code>Splicing</code> and change their <code>F_DamageTier</code> to either 1 or 2 based on specific conditions </td>
     <td> The variant is predicted to be <code>Splicing</code> and has <code>F_DamageTier = 1</code> if
       <ul>
@@ -375,6 +375,7 @@ The main change from the old script is the utilization of functions that reduce 
             <li> <code>spliceAI_DS_AL > 0.2</code> & <code>|spliceAI_DP_AL| &le; 50</code> </li>
             <li> <code>spliceAI_DS_DG > 0.2</code> & <code>|spliceAI_DP_DG| &le; 50</code> </li>
             <li> <code>spliceAI_DS_DL > 0.2</code> & <code>|spliceAI_DP_DL| &le; 50</code> </li>
+            <li> has variant type "del" (deletion) or "ins" (insertion) and its type of sequence overlapped is "splicing" or "exonic;splicing" </li>
           </ul>
       </ul> <br>
       The variant is predicted to be <code>Splicing</code> and has <code>F_DamageTier = 2</code> if
