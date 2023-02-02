@@ -55,6 +55,24 @@ The main change from the old script is the utilization of functions that reduce 
 </thead>
 <tbody>
   <tr>
+    <td rowspan="3"> (0) Settings </td>
+    <td> 0.1. Libraries </td>
+    <td> Import all libraries used in the script </td>
+  </tr>
+  <tr>
+    <td> 0.2. Input variables </td>
+    <td> args[1]: root path
+         args[2]: sub-path and filename of second R code file defining functions
+         args[3]: variant input file path
+         args[4]: genome name used at columns
+         args[5]: sub-path and filename of stats visualization Rmd file
+         args[6]: output sub-path </td>
+  </tr>
+  <tr>
+    <td> 0.3. Functions </td>
+    <td> Import functions used in the script </td>
+  </tr>
+  <tr>
     <td rowspan="7">(1) Variables &amp; Cutoffs</td>
     <td>1.1. Input variables</td>
     <td rowspan="7">Modify file locations and cutoffs here</td>
