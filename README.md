@@ -73,7 +73,7 @@ The main change from the old script is the utilization of functions that reduce 
     <td> Import functions used in the script </td>
   </tr>
   <tr>
-    <td rowspan="5">(1) Variables &amp; Cutoffs</td>
+    <td rowspan="5">(1) Variables & Cutoffs</td>
     <td> 1.1. Internal variables </td>
     <td rowspan="5"> Modify internal variables and cutoffs here </td>
   </tr>
@@ -332,7 +332,7 @@ The main change from the old script is the utilization of functions that reduce 
         <li> satiesfies one or more one of the following
           <ul>
             <li> <code>REVEL_score &ge; 0.25 </code> </li>
-            <li> <code>phylopMam_avg &ge; 1.3</code> &amp; <code>phylopVert100_avg &ge; 3.9</code> </li>
+            <li> <code>phylopMam_avg &ge; 1.3</code> & <code>phylopVert100_avg &ge; 3.9</code> </li>
             <li> <code>CADD_phred &ge; 30</code> or <code>MPC_score &ge; 2</code> </li>
           </ul>
         </li>
@@ -755,7 +755,7 @@ The family-based pipeline adds filtering tags based on the child columns and ide
 </thead>
 <tbody>
   <tr>
-    <td rowspan="7">(1) Variables &amp; Cutoffs</td>
+    <td rowspan="7">(1) Variables & Cutoffs</td>
     <td>1.1. Input variables</td>
     <td rowspan="7">Modify file locations and cutoffs here; <br> <br> Unlike Version 1, the inputs are variant data containing the family samples, the child's sample ID, and the pedigree file. </td>
   </tr>
