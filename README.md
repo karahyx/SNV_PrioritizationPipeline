@@ -255,10 +255,10 @@ The main change from the old script is the utilization of functions that reduce 
     <td> allele frequency cutoff = 0 </td>
   </tr>
   <tr>
-    <td rowspan="2">3.2. Quality Filter</td>
-    <td>3.2.1. Pass tag</td>
-    <td>Add a pass tag that indicates whether the variant has FILTER = "PASS"</td>
-    <td><code>F_Pass</code> = 
+    <td rowspan="3"> 3.2. Quality Filter </td>
+    <td> 3.2.1. Pass tag </td>
+    <td> Add a pass tag that indicates whether the variant has FILTER = "PASS" </td>
+    <td> <code>F_Pass</code> = 
       <ul>
         <li> 1, if the variant has a "PASS" FILTER </li>
         <li> 0, otherwise </li>
@@ -266,93 +266,76 @@ The main change from the old script is the utilization of functions that reduce 
     </td>
   </tr>
   <tr>
-    <td>3.2.2. Quality tag</td>
-    <td>Add a quality tag that indicates whether variants with a "PASS" FILTER pass the DP cutoff</td>
-    <td><code>F_Qual</code> = 
+    <td rowspan="2"> 3.2.2. Quality tag </td>
+    <td> If single sample, add a quality tag that indicates whether variants with a "PASS" FILTER pass the DP cutoff </td>
+    <td> <code>F_Qual</code> = 
       <ul>
-        <li>1, if the variant has a "PASS" FILTER and DP &ge; 2</li>
-        <li>0, otherwise </li>
+        <li> 1, if the variant has a "PASS" FILTER and DP &ge; 2 </li>
+        <li> 0, otherwise </li>
       </ul>
     </td>
   </tr>
   <tr>
-    <td>3.3. Coding Tag</td>
-    <td>Add coding tags to the variant data</td>
-    <td>Add a coding tag that indicates whether a variant's type of sequence overlapped with respect to known genes/transcripts is Coding, ncRNA, or Other</td>
-    <td><code>F_Coding</code> = 
-      <ul>
-        <li>"Coding" if the variant's <code>typeseq_priority</code> is one of <code>exonic</code>, <code>exonic;splicing</code>, or <code>splicing</code></li>
-        <li>"ncRNA" if the variant's <code>typeseq_priority</code> is one of <code>ncRNA_exonic</code>, <code>ncRNA_splicing</code>, or <code>ncRNA_exonic;ncRNA_splicing</code></li>
-        <li>"Other" otherwise </li>
-      </ul>
-    </td>
-  </tr>
-  <tr>
-    <td rowspan="7">3.4. Define Damage</td>
-    <td>3.4.0. Variable initialization <br><br> :point_up:can be found in the <code>get_rare05_variants()</code> function</td>
-    <td>Initialize the following columns:<br><code>F_DamageType = "NotDmg"</code><br><code>F_DamageTier = 0</code><br><code>F_S_DamageType = "NotLOF"</code></td>
-    <td><code>F_DamageType</code> = a variant's damage type
-      <ul>
-        <li> one of <code>LOF</code>, <code>Missense</code>, <code>OtherC</code>, <code>Splc</code>, <code>UTR</code>, <code>DmgNcRNA</code>, or <code>NotDmg</code></li>
-      </ul>
-      <br><code>F_DamageTier</code> = a variant's damage tier &isin; {0, 1, 2}
+      <td> If multi-sample, add a quality tag that indicates whether variants with a "PASS" FT (i.e. sample genotype filter indicating if this genotype was "called") pass the DP cutoff  </td>
+      <td> <code>F_Qual</code> = 
         <ul>
-          <li>Note that the higher the tier, the more damaging a variant is</li>
-        </ul>
-       <br><code>F_S_DamageType</code> = <br> a more stringent Coding LOF damage type tag with the distance from the nearest exon boundary as an additional condition
-        <ul>
-          <li>Note that F_S_DamageType is specific to the Coding LOF category, thus one of <code>LOF</code> or <code>NotLOF</code></li>
-          <li>May be used if more stringent Coding LOF variants are desired</li>
+          <li> 1, if the variant has a "PASS" FT and DP &ge; 2 </li>
+          <li> 0, otherwise </li>
         </ul>
     </td>
   </tr>
   <tr>
-    <td>3.4.1. Coding LOF</td>
-    <td><code>add_coding_lof_tag()</code> identify variants of type <code>Coding LOF</code> and change their <code>F_DamageTier</code> to either 1 or 2 based on specific conditions;<br><br><code>add_coding_lof_spliceJunction_tag()</code> identifies variants of type <code>Coding LOF</code> with <code>distance_spliceJunction &lt; 3</code>; note that no change is made to <code>F_DamageTier</code> here</td>
+    <td> 3.3. Coding Tag </td>
+    <td> Add coding tags to the variant data </td>
+    <td> Add a coding tag that indicates whether a variant's type of sequence overlapped with respect to known genes/transcripts is Coding, ncRNA, or Other </td>
+    <td> <code>F_Coding</code> = 
+      <ul>
+        <li> "Coding" if the variant's <code>typeseq_priority</code> is one of <code>exonic</code>, <code>exonic;splicing</code>, or <code>splicing</code> </li>
+        <li> "ncRNA" if the variant's <code>typeseq_priority</code> is one of <code>ncRNA_exonic</code>, <code>ncRNA_splicing</code>, or <code>ncRNA_exonic;ncRNA_splicing</code> </li>
+        <li> "Other" otherwise </li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td rowspan="7"> 3.4. Define Damage </td>
+    <td> 3.4.0. Variable initialization <br><br> :point_up:can be found in the <code>get_rare05_variants()</code> function </td>
+    <td> Initialize the following columns:<br><code>F_DamageType = "NotDmg"</code><br><code>F_DamageTier = 0</code> </td>
+    <td> <code>F_DamageType</code> = a variant's damage type
+      <ul>
+        <li> one of <code>LOF</code>, <code>Missense</code>, <code>OtherC</code>, <code>Splc</code>, <code>UTR</code>, <code>DmgNcRNA</code>, or <code>NotDmg</code> </li>
+      </ul>
+      <br> <code>F_DamageTier</code> = a variant's damage tier &isin; {0, 1, 2}
+        <ul>
+          <li> Note that the higher the tier, the more damaging a variant is </li>
+        </ul>
+    </td>
+  </tr>
+  <tr>
+    <td> 3.4.1. Coding LOF </td>
+    <td> <code>add_coding_lof_tag()</code> identify variants of type <code>Coding LOF</code> and change their <code>F_DamageTier</code> to 1 based on specific conditions </td>
     <td>The variant is <code>Coding LOF</code> and has <code>F_DamageTier = 1</code> if it
       <ul>
         <li> is coding </li>
-        <li> causes frameshift or point mutations in the coding sequence; or its type of sequence overlapped is splicing or exonic splicing </li>
-        <li> has more than one overlap-based match for dbSNP </li>
-      </ul>
-      <br>The variant is <code>Coding LOF</code> and has <code>F_DamageTier = 2</code> if it
-      <ul>
-        <li> is coding </li>
-        <li> causes frameshift or point mutations in the coding sequence; or its type of sequence overlapped is splicing or exonic splicing </li>
-        <li> has zero or one overlap-based match for dbSNP </li> 
-      </ul>
-      <br>The <code>F_S_DamageType</code> is changed to "LOF" from "NotLOF" when
-      <ul>
-        <li> the variant is Coding LOF (i.e. satisfies the two conditions above) </li>
-        <li> the variant's <code>distance_spliceJunction < 3</code></li>
+        <li> causes frameshift or point mutations in the coding sequence; or its type of sequence overlapped is "splicing" </li>
+        <li> has <code>distance_spliceJunction &le; 2</code> </li>
       </ul>
     </td>
   </tr>
   <tr>
     <td>3.4.2. Missense</td>
-    <td> Identify variants of type <code>Missense</code> and change their <code>F_DamageTier</code> to either 1 or 2 based on specific conditions. <br><br> The method first compares the variant's SIFT, Polyphen2, MA, phylopMam, phylopVert, CADD_phred, REVEL, and MPC scores to their corresponding cutoffs and documents the results (0 or 1) in a matrix with individual variants on each row. Next, the sum of the scores for each variant are calculated (each variant has a max score of 7) and compared to tier 1 and 2 cutoffs to decide which damage tier it belongs to. 
+    <td> Identify variants of type <code>Missense</code> and change their <code>F_DamageTier</code> to either 1 or 2 based on specific conditions
     </td>
     <td> The variant is <code>Missense</code> and has <code>F_DamageTier = 1</code> if it
       <ul>
         <li> is coding </li> 
         <li> is a nonsynonymous SNV </li>
-        <li> has a sum score &ge; 2 </li>
-      </ul>
-      <br> The variant is <code>Missense</code> and has <code>F_DamageTier = 2</code> if it
-      <ul>
-        <li> is coding </li> 
-        <li> is a nonsynonymous SNV </li>
-        <li> has a sum score &ge; 4 </li>
-      </ul>
-      <br> "1" is documented in the sum score matrix if the variant's
-      <ul>
-        <li> <code>sift_score < 0.05</code> </li> 
-        <li> <code>polyphen_score &ge; 0.9</code> </li>
-        <li> <code>ma_score &ge; 1.9</code> </li>
-        <li> <code>phylopMam_avg &ge; 1.3 OR phylopVert100_avg &ge; 3.9</code> </li>
-        <li> <code>CADD_phred &ge; 21.1</code> </li>
-        <li> <code>REVEL_score &ge; 0.75</code> </li>
-        <li> <code>MPC_score &ge; 2</code> </li>
+        <li> satiesfies at least one of the following
+          <ul>
+            <li> <code>REVEL_score &ge; 0.25 </code> </li>
+            <li> <code>phylopMam_avg &ge; 1.3</code> &amp; <code>phylopVert100_avg &ge; 3.9</code> </li>
+            <li> <code>CADD_phred &ge; 30</code> or <code>MPC_score &ge; 2</code> </li>
+          </ul>
+        </li>
       </ul>
     </td>
   </tr>
