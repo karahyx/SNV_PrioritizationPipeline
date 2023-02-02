@@ -73,32 +73,30 @@ The main change from the old script is the utilization of functions that reduce 
     <td> Import functions used in the script </td>
   </tr>
   <tr>
-    <td rowspan="7">(1) Variables &amp; Cutoffs</td>
-    <td>1.1. Input variables</td>
-    <td rowspan="7">Modify file locations and cutoffs here</td>
+    <td rowspan="5">(1) Variables &amp; Cutoffs</td>
+    <td> 1.1. Internal variables </td>
+    <td rowspan="5"> Modify internal variables and cutoffs here </td>
   </tr>
   <tr>
-    <td>1.2. Output variables</td>
+    <td> 1.2. Cutoffs </td>
   </tr>
   <tr>
-    <td>1.3. Internal variables</td>
+    <td> 1.2.1. High-quality filter </td>
   </tr>
   <tr>
-    <td>1.4. Cutoffs</td>
+    <td> 1.2.2. Damage types </td>
   </tr>
   <tr>
-    <td>1.4.1. High-quality filter</td>
+    <td> 1.2.3. Main findings </td>
   </tr>
   <tr>
-    <td>1.4.2. Define damage</td>
-  </tr>
-  <tr>
-    <td>1.4.3. Main findings</td>
-  </tr>
-  <tr>
-    <td rowspan="9">(2) Main</td>
-    <td> 2.1. File import</td>
+    <td rowspan="12"> (2) Main </td>
+    <td> 2.1. File import </td>
     <td> Imports the original variant data </td>
+  </tr>
+  <tr>
+    <td> 2.1.1. Check if multi-sample </td>
+    <td> Check if the imported variant data contains only one sample or multiple samples </td>
   </tr>
   <tr>
     <td> 2.2. Re-format column names</td>
@@ -113,6 +111,9 @@ The main change from the old script is the utilization of functions that reduce 
       </ul>
     </td>
   </tr>
+  <tr>
+    <td> 2.3.1. Add some fields for allele frequency </td>
+    <td> TBD </td>
   <tr>
     <td> 2.4. Free up memory</td>
     <td> Remove <code>v_full.temp.df</code> from the current workspace </td>
