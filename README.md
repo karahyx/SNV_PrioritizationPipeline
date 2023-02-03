@@ -10,7 +10,7 @@ The newest version of the pipeline [Pipeline_v17](./R/) relies on the TCAG Small
 
 Two versions of Pipeline_v17 are available. [Version 1](./R/Pipeline_v17_Version1_IND) is used to process single samples, while [Version 2](./R/Pipeline_v17_Version2_FAM) provides the workflow for family-based studies. Version 2 adds the same filters as Version 1, but reads in pedigrees to identify compound heterozygotes (Version 1 only identifies potential compound heterozygotes). The shell scripts in the [bash](./bash) folder are used to receive user input and process one or multiple files at once on HPF platforms. Versions for Torque and Slurm are both included. Detailed instructions for how to run the file on HPF can be found in the **Running the Script** sections below.
 
-The main change from the old script is the utilization of functions that reduce the program to smaller, more manageable chunks and allow for reusability and extension. Detailed changes can be found in the **Changes From the Old Script** section below.
+The main changes from the previous version include updates of cutoffs and definitions, minor error fixes, and the utilization of functions that reduce the program to smaller, more manageable chunks that allow for reusability and extension. Detailed changes can be found in the **Changes From the Old Script** section below.
 
 ## :desktop_computer: Instructions
 
