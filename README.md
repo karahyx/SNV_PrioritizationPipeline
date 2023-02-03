@@ -923,7 +923,9 @@ The family-based script contains two new columns: <code>FM_Fam_CmpHet</code> and
 ## :bulb: Changes From the Old Script
 * Updated arguments to avoid path repetition
 * Added <code>frameshift block substitution</code> and <code>nonframeshift block subsitution</code> to <code>eff_lof.chv</code> and <code>eff_other_sub.chv</code> upon [updates from ANNOVAR](https://annovar.openbioinformatics.org/en/latest/user-guide/gene/)
-* When reading in data table, indicated "." as an NA value to maintain numeric as numeric
+* Used <code>data.table::fread</code> to achieve a faster speed when importing the original variant data
+  * When reading in data table, indicated "." as an NA value to maintain numeric as numeric
+* Added a line to remove column DP immediately after reading in the original variant data - this is because at one point the script removes the <code>{genome_name}.</code> part in columns that start with it, which includes <code>{genome_name}.DP</code>. After the removal of <code>{genome_name}.</code>, there would be two DP columns and the first DP column would be used by default, which is not desired
 * Added a simple definition of max frequency (i.e. column <code>FreqMaxSimple_AfrAmrEasNfeSasOth</code>) based on simple max over major populations (AFR, AMR, EAS, NFE, SAS, OTH) for manual filtering
 * Added the column <code>dbsnp_region_count</code> for manual filtering
 * Created a definition for constrained genes (i.e. column <code>F_GeneConstr</code>), used for predicted dominant and manual filtering
@@ -935,23 +937,34 @@ The family-based script contains two new columns: <code>FM_Fam_CmpHet</code> and
   * Restricted LOF with a splicing mechanism to intronic variants within 2 nucleotides from the splice junction (i.e. <code> "typeseq_priority" %in% c("splicing") & distance_spliceJunction <= 2</code>)
     * Retired <code>F_DamageTier = 1</code> for more suspicious splicing LOF variants, this issue is taken care by the updated splicing LOF definition
     * Retired <code>add_coding_lof_spliceJunction_tag</code>, this issue is taken care by the updated splicing LOF definition
-  * Combined two criteria, <code>phylopMam_avg &ge; phylopMam_missense_cutoff</code> and <code>phylopVer100_avg &ge; phylopVert_missense_cutoff</code>, into one to define Missense variants; also added two additional criteria <code>REVEL_score &ge; REVEL_cutoff</code> and <code>MPC_score &ge; MPC_cutoff</code> 
+  * Retired <code>sift_score</code>, <code>polyphen_score</code>, and <code>ma_score</code> from the Missense criteria and changed how Missense variants are defined
+  * Splicing predictions
+    * Removed the SPIDEX-related criteria
+    * Added indels with a splicing effect and an unrestricted distance from the splice site (i.e. defaulting to Annovar's cutoff) to the lowest splicing damage tier (i.e. = 1) by adding <code>| (var_type %in% c("del", "ins") & typeseq_priority %in% c("splicing", "exonic;splicing"))</code>
   * Removed the <code> (effect_priority %in% eff_other_sub.chv & (phylopMam_avg >= 1.5 | phylopVert100_avg >= 2.0 | CADD_phred >= 13.0) & is.na (dbsnp) & is.na (dbsnp_region))</code> condition from the criteria for defining damaging variants with type Other Coding
-  * Removed the SPIDEX-related criteria from Splicing predictions
 * Changed the <code>phylopMam</code>, <code>phylopVert100</code>, <code>CADD_phred</code> cutoffs for the following sections:
   * 6.2. Missense
   * 6.3. Other coding
   * 6.5. UTR
   * 6.6. Non-coding
-* Changed the default type for <code>F_DamageType</code> and <code>F_S_DamageType</code> to "NotDmg" and "NotLOF" for a more intuitive understanding
-* Used <code>data.table::fread</code> to achieve a faster speed when importing the original variant data
-* Added a line to remove column DP immediately after reading in the original variant data - this is because at one point the script removes the <code>{genome_name}.</code> part in columns that start with it, which includes <code>{genome_name}.DP</code>. After the removal of <code>{genome_name}.</code>, there would be two DP columns and the first DP column would be used by default, which is not desired
+* Changed the default type for <code>F_DamageType</code> to "NotDmg" for a more intuitive understanding
+* Created a new definition for dominant genes, by grepping "i:AD" from <code>omim_phenotype</code> and "AD" from <code>CGD_inheritance</code>
+* Retired <code>add_stats_pheno_filter</code> as the separate OMIM and CGD definitions make less sense
+* Changed allele frequency cutoff for dominant, X-linked haploid and predicted dominant to 0.0001
+* Fixed zygosity filter for X-linked haploid
 * The new script annotates all variants with a maximum allele frequency of 0.05 throughout and only outputs one annotated data set containing rare 0.05 variants. On contrary, the old script annotated the rare 0.05 variants with a "PASS" FILTER throughout and output rare 0.05 and rare 0.05 with "PASS" variants separately. This change was made because only ~4% of variants called by DRAGEN are low-quality (i.e. they do not have a "PASS" filter)
-* Changed the name of statistic from <code>VarN_Q1/2_Coding_Rare010_LOF</code> to <code>VarN_Q1/2_Coding_Rare010_LOF_TierLow</code> and added <code>VarN_Q1/2_Coding_Rare010_LOF_TierHigh</code> which describes the total number of rare 0.01 Coding LOR variants with a high damage tier in the data
-* Added <code>VarN_FM_True_CmpHet</code> and <code>VarN_FS_True_CmpHet</code> to the family pipeline variant stats that indicate how many true compound heterozygotes are there in total using the Main and Secondary Findings
+* Summary statistics
+  * Removed the extra "0" from the frequencies in the stats names (e.g. <code>050</code> to <code>05</code>, <code>010</code> to <code>01</code>)
+  * Changed the frequencies from <code>050</code>, <code>010</code>, <code>005</code>, <code>0015</code>, and <code>000</code> to <code>05</code>, <code>01</code>, <code>001</code>, <code>0001</code>, and <code>00</code>
+  * Changed <code>Q1</code> to <code>Q2</code> to <code>LQ</code> and <code>HQ</code>, respectively
+  * Changed <code>VarN_Q[12]_Coding_Rare010_LOF</code> to <code>VarN_[LH]Q_Coding_Rare01_LOF_TierLow</code> and added <code>VarN_[LH]Q_Coding_Rare01_LOF_TierHigh</code> which describes the total number of rare 1% Coding LOF variants with a high damage tier (i.e. = 1)
+  * Removed <code>VarN_[LH]Q_Coding_Rare010_Dmg_AXD_[HPO|CGD|All]</code>
+  * Changed <code>HI</code> to <code>PDDom</code> in <code>VarN_[LH]Q_Rare005_DmgT2_HI_PhenoTier[All|Low]</code> and added <code>VarN_[LH]Q_Rare005_DmgT2_PDDom_PhenoTierHigh</code>
+  * Added <code>VarN_FM_True_CmpHet</code> and <code>VarN_FS_True_CmpHet</code> to the family pipeline variant stats that indicate how many true compound heterozygotes are there in total using the Main and Secondary Findings, respectively
+* Writing session info to file
 
 ## :handshake: Contributors
-* Daniele Merico - Original creator of the pipeline
+* Dr. Daniele Merico - Original creator of the pipeline
 * [Bhooma Thiruvahindrapuram](https://github.com/bthiruv)
 * [Dr. Worrawat Engchuan](https://github.com/naibank)
 * [Thomas Nalpathamkalam](https://github.com/TNalpat)
