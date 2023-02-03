@@ -921,8 +921,11 @@ The family-based script contains two new columns: <code>FM_Fam_CmpHet</code> and
 #### :arrow_forward: Running the Script
 
 ## :bulb: Changes From the Old Script
+* Updated arguments to avoid path repetition
 * Added <code>frameshift block substitution</code> and <code>nonframeshift block subsitution</code> to <code>eff_lof.chv</code> and <code>eff_other_sub.chv</code> upon [updates from ANNOVAR](https://annovar.openbioinformatics.org/en/latest/user-guide/gene/)
 * Replaced <code>F_Qual_tag</code> with <code>F_Pass</code> and assigned a new definition to <code>F_Qual</code> for a more intuitive understanding of the columns
+* Added a filtering step that removes alternate contigs and unlocalized/unplaced sequence from the variants before adding other filters
+* Changed the frequency filter from 0.05, 0.01, 0.005, 0.0015, 0 to 0.05, 0.01, 0.001, 0.0001, 0
 * Changed the following criteria:
   * High-quality variants are now defined as variants with a "PASS" FILTER and <code>DP &ge; 2</code> (i.e. <code>F_Qual = 1</code>)
   * Further divided the damage tier for type Coding LOF into 1 (Low) and 2 (High) based on the number of overlap-based match for dbSNP (i.e. the <code>dbsnp_region</code> column)
