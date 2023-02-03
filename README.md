@@ -959,7 +959,8 @@ The family-based script contains two new columns: <code>FM_Fam_CmpHet</code> and
   * Changed <code>Q1</code> to <code>Q2</code> to <code>LQ</code> and <code>HQ</code>, respectively
   * Changed <code>VarN_Q[12]_Coding_Rare010_LOF</code> to <code>VarN_[LH]Q_Coding_Rare01_LOF_TierLow</code> and added <code>VarN_[LH]Q_Coding_Rare01_LOF_TierHigh</code> which describes the total number of rare 1% Coding LOF variants with a high damage tier (i.e. = 1)
   * Removed <code>VarN_[LH]Q_Coding_Rare010_Dmg_AXD_[HPO|CGD|All]</code>
-  * Changed <code>HI</code> to <code>PDDom</code> in <code>VarN_[LH]Q_Rare005_DmgT2_HI_PhenoTier[All|Low]</code> and added <code>VarN_[LH]Q_Rare005_DmgT2_PDDom_PhenoTierHigh</code>
+  * Changed the frequency for Xhap, AXDom, and PDDom (previously HI) from <code>Rare005</code> to <code>Rare0001</code>
+  * Changed <code>HI</code> to <code>PDDom</code> in <code>VarN_[LH]Q_Rare0001_DmgT2_HI_PhenoTier[All|Low]</code> and added <code>VarN_[LH]Q_Rare005_DmgT2_PDDom_PhenoTierHigh</code>
   * Added <code>VarN_FM_True_CmpHet</code> and <code>VarN_FS_True_CmpHet</code> to the family pipeline variant stats that indicate how many true compound heterozygotes are there in total using the Main and Secondary Findings, respectively
 * Writing session info to file
 
