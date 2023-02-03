@@ -923,12 +923,18 @@ The family-based script contains two new columns: <code>FM_Fam_CmpHet</code> and
 ## :bulb: Changes From the Old Script
 * Updated arguments to avoid path repetition
 * Added <code>frameshift block substitution</code> and <code>nonframeshift block subsitution</code> to <code>eff_lof.chv</code> and <code>eff_other_sub.chv</code> upon [updates from ANNOVAR](https://annovar.openbioinformatics.org/en/latest/user-guide/gene/)
-* Replaced <code>F_Qual_tag</code> with <code>F_Pass</code> and assigned a new definition to <code>F_Qual</code> for a more intuitive understanding of the columns
+* When reading in data table, indicated "." as an NA value to maintain numeric as numeric
+* Added a simple definition of max frequency (i.e. column <code>FreqMaxSimple_AfrAmrEasNfeSasOth</code>) based on simple max over major populations (AFR, AMR, EAS, NFE, SAS, OTH) for manual filtering
+* Added the column <code>dbsnp_region_count</code> for manual filtering
+* Created a definition for constrained genes (i.e. column <code>F_GeneConstr</code>), used for predicted dominant and manual filtering
 * Added a filtering step that removes alternate contigs and unlocalized/unplaced sequence from the variants before adding other filters
-* Changed the frequency filter from 0.05, 0.01, 0.005, 0.0015, 0 to 0.05, 0.01, 0.001, 0.0001, 0
+* Replaced <code>F_Qual_tag</code> with <code>F_Pass</code> and assigned a new definition to <code>F_Qual</code> for a more intuitive understanding of the columns
+* Changed the frequency filter tags from <code>0.05</code>, <code>0.01</code>, <code>0.005</code>, <code>0.0015</code>, <code>0</code> to <code>0.05</code>, <code>0.01</code>, <code>0.001</code>, <code>0.0001</code>, <code>0</code>
 * Changed the following criteria:
   * High-quality variants are now defined as variants with a "PASS" FILTER and <code>DP &ge; 2</code> (i.e. <code>F_Qual = 1</code>)
-  * Further divided the damage tier for type Coding LOF into 1 (Low) and 2 (High) based on the number of overlap-based match for dbSNP (i.e. the <code>dbsnp_region</code> column)
+  * Restricted LOF with a splicing mechanism to intronic variants within 2 nucleotides from the splice junction (i.e. <code> "typeseq_priority" %in% c("splicing") & distance_spliceJunction <= 2</code>)
+    * Retired <code>F_DamageTier = 1</code> for more suspicious splicing LOF variants, this issue is taken care by the updated splicing LOF definition
+    * Retired <code>add_coding_lof_spliceJunction_tag</code>, this issue is taken care by the updated splicing LOF definition
   * Combined two criteria, <code>phylopMam_avg &ge; phylopMam_missense_cutoff</code> and <code>phylopVer100_avg &ge; phylopVert_missense_cutoff</code>, into one to define Missense variants; also added two additional criteria <code>REVEL_score &ge; REVEL_cutoff</code> and <code>MPC_score &ge; MPC_cutoff</code> 
   * Removed the <code> (effect_priority %in% eff_other_sub.chv & (phylopMam_avg >= 1.5 | phylopVert100_avg >= 2.0 | CADD_phred >= 13.0) & is.na (dbsnp) & is.na (dbsnp_region))</code> condition from the criteria for defining damaging variants with type Other Coding
   * Removed the SPIDEX-related criteria from Splicing predictions
