@@ -8,38 +8,13 @@ The PrioritizationPipeline script is used to annotate small variants called by D
 
 The newest version of the pipeline [Pipeline_v17](./R/) relies on the TCAG Small Variant Annotation Pipeline rev27.7 developed and maintained by Thomas Nalpathamkalam. The documentation can be found here [TCAG_SMALL VARIANT_ANNOTATION_PIPELINE_rev27.7_hg38_JUN2022.pdf](./docs/TCAG_SMALL_VARIANT_ANNOTATION_PIPELINE_rev27.7_hg38_JUN2022.pdf). In comparison, [Pipeline_v16](./R/Pipeline_v16_ILMN_GATK_rev27.4_20200818.R) relies on [TCAG_SMALL VARIANT_ANNOTATION_PIPELINE_rev27.4_hg18_AUG2020.pdf](./docs/TCAG_SMALL_VARIANT_ANNOTATION_PIPELINE_rev27.4_hg19_AUG2020.pdf).
 
-Two versions of Pipeline_v17 are available. [Version 1](./R/Pipeline_v17_Version1_IND) is used to process single samples, while [Version 2](./R/Pipeline_v17_Version2_FAM) provides the workflow for family-based studies. Version 2 adds the same filters as Version 1, but reads in pedigrees to identify compound heterozygotes (Version 1 only identifies potential compound heterozygotes). The shell scripts in the [bash](./bash) folder are used to receive user input and process one or multiple files at once on high-performance computing (HPC) systems using the job scheduler SLURM. Detailed instructions for how to run the file on HPF can be found in the **Running the Script** sections below.
+Two versions of Pipeline_v17 are available. [Version 1](./R/Pipeline_v17_Version1_IND) is used to process single samples, while [Version 2](./R/Pipeline_v17_Version2_FAM) provides the workflow for family-based studies. Version 2 adds the same filters as Version 1, but reads in pedigrees to identify compound heterozygotes (Version 1 only identifies potential compound heterozygotes). The shell scripts in the [bash](./bash) folder are used to receive user input and process one or multiple files at once on high-performance computing (HPC) systems using the job scheduler SLURM.
 
 The main changes from the previous version include updates of cutoffs and definitions, minor error fixes, and the utilization of functions that reduce the program to smaller, more manageable chunks that allow for reusability and extension. Detailed changes can be found in the **Changes From the Old Script** section below.
 
 ## :desktop_computer: Instructions
 
 ### :brain: Working with PrioritizationPipeline v17 Version 1 (Single Samples)
-
-#### :arrow_forward: Running the Script (NOTE: The following apply to both Torque and Slurm)
-
-**If your variant data files are in the same folder:**
-1. In <code>run_prioritization_tasks.sh</code>, make sure that lines 13-31 are uncommented and lines 34-53 are commented
-2. Change the values assigned to the following variables:
-    1. <code>tool</code> on line 9 to the path of your folder that stores <code>Pipeline_v17_ILMN_DRAGEN_rev27.7_20221021.R</code>
-    2. <code>funcs</code> on line 10 to the path of your folder that stores <code>Pipeline_v17_funcs.R</code>
-    3. <code>infile_dir</code> on line 14 to the path of your folder that contains the variant data (make sure to add "/" at the end)
-    4. <code>output_dir</code> on line 15 to your desired output directory (make sure to add "/" at the end)
-3. If your files do not end with .tsv, change the <code>'\*.tsv.gz'</code> on line 18 to <code>'\*.{your_file_format}'</code>
-4. Change the <code>'.'</code> on line 23 to a field separator that allows you to obtain the genome name as field $1
-5. Run <code>run_prioritization_tasks.sh</code> on HPF
-
-**If your variant data files are in their own folders and the folders are named after their sample IDs:**
-1. In <code>run_prioritization_tasks.sh</code>, make sure that lines 34-53 are uncommented and lines 13-31 are commented
-2. Change the values assigned to the following variables:
-    1. <code>tool</code> on line 9 to the path of your folder that stores <code>Pipeline_v17_ILMN_DRAGEN_rev27.7_20221021.R</code>
-    2. <code>funcs</code> on line 10 to the path of your folder that stores <code>Pipeline_v17_funcs.R</code>
-    3. <code>infile_dir</code> on line 35 to the path of your folder that contains the variant data (make sure to add "/" at the end)
-    4. <code>output_dir</code> on line 36 to your desired output directory (make sure to add "/" at the end)
-3. Change the <code>'\*SUBSET\*'</code> part on line 44 to a part of the file name that's found in all the variant data file names 
-    1. For instance, the file names all have the format <code>{genome_name}.hard-filtered.vcf.gz.annovar.out_SUBSET_rev27.7_hg38.tsv</code> in the example
-    2. Thus, <code>SUBSET</code> was used as the common element in all file names
-5. Run <code>run_prioritization_tasks.sh</code> on HPF
 
 #### :mag_right: Script Structure Overview
 
@@ -918,8 +893,6 @@ The family-based script contains two new columns: <code>FM_Fam_CmpHet</code> and
 </tbody>
 </table>
 
-#### :arrow_forward: Running the Script
-
 ## :bulb: Changes From the Old Script
 * Updated arguments to avoid path repetition
 * Added <code>frameshift block substitution</code> and <code>nonframeshift block subsitution</code> to <code>eff_lof.chv</code> and <code>eff_other_sub.chv</code> upon [updates from ANNOVAR](https://annovar.openbioinformatics.org/en/latest/user-guide/gene/)
@@ -965,7 +938,7 @@ The family-based script contains two new columns: <code>FM_Fam_CmpHet</code> and
 * Writing session info to file
 
 ## :handshake: Contributors
-* Dr. Daniele Merico - Original creator of the pipeline
+* Dr. Daniele Merico (original creator of the prioritization pipeline)
 * [Bhooma Thiruvahindrapuram](https://github.com/bthiruv)
 * [Dr. Worrawat Engchuan](https://github.com/naibank)
 * [Thomas Nalpathamkalam](https://github.com/TNalpat)
