@@ -75,7 +75,7 @@ The main changes from the previous version include updates of cutoffs and defini
   </tr>
   <tr>
     <td> 2.2. Re-format column names</td>
-    <td> Remove <code>{genome_name}:</code><sup><a href="#fn1" id="ref1">1</a></sup> from several columns for easier access and processing </td>
+    <td> Remove <code>{genome_name}:</code> from several columns for easier access and processing </td>
   </tr>
   <tr>
     <td> 2.3. Process the original imported variant data </td>
@@ -942,7 +942,3 @@ The family-based script contains two new columns: <code>FM_Fam_CmpHet</code> and
 * [Bhooma Thiruvahindrapuram](https://github.com/bthiruv)
 * [Dr. Worrawat Engchuan](https://github.com/naibank)
 * [Thomas Nalpathamkalam](https://github.com/TNalpat)
-
-## :paw_prints: Footnotes
-
-<sup id="fn1">TBD</sup>
