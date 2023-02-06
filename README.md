@@ -914,7 +914,7 @@ The family-based script contains two new columns: <code>FM_Fam_CmpHet</code> and
   * Splicing predictions
     * Removed the SPIDEX-related criteria
     * Added indels with a splicing effect and an unrestricted distance from the splice site (i.e. defaulting to Annovar's cutoff) to the lowest splicing damage tier (i.e. = 1) by adding <code>| (var_type %in% c("del", "ins") & typeseq_priority %in% c("splicing", "exonic;splicing"))</code>
-  * Removed the <code> (effect_priority %in% eff_other_sub.chv & (phylopMam_avg >= 1.5 | phylopVert100_avg >= 2.0 | CADD_phred >= 13.0) & is.na (dbsnp) & is.na (dbsnp_region))</code> condition from the criteria for defining damaging variants with type Other Coding
+  * Removed the <code>(effect_priority %in% eff_other_sub.chv & (phylopMam_avg >= 1.5 | phylopVert100_avg >= 2.0 | CADD_phred >= 13.0) & is.na (dbsnp) & is.na (dbsnp_region))</code> condition from the criteria for defining damaging variants with type Other Coding
 * Changed the <code>phylopMam</code>, <code>phylopVert100</code>, <code>CADD_phred</code> cutoffs for the following sections:
   * 6.2. Missense
   * 6.3. Other coding
