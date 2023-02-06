@@ -907,7 +907,7 @@ The family-based script contains two new columns: <code>FM_Fam_CmpHet</code> and
 * Changed the frequency filter tags from <code>0.05</code>, <code>0.01</code>, <code>0.005</code>, <code>0.0015</code>, <code>0</code> to <code>0.05</code>, <code>0.01</code>, <code>0.001</code>, <code>0.0001</code>, <code>0</code>
 * Changed the following criteria:
   * High-quality variants are now defined as variants with a "PASS" FILTER and <code>DP &ge; 2</code> (i.e. <code>F_Qual = 1</code>)
-  * Restricted LOF with a splicing mechanism to intronic variants within 2 nucleotides from the splice junction (i.e. <code> "typeseq_priority" %in% c("splicing") & distance_spliceJunction <= 2</code>)
+  * Restricted LOF with a splicing mechanism to intronic variants within 2 nucleotides from the splice junction (i.e. <code>"typeseq_priority" %in% c("splicing") & distance_spliceJunction <= 2</code>)
     * Retired <code>F_DamageTier = 1</code> for more suspicious splicing LOF variants, this issue is taken care by the updated splicing LOF definition
     * Retired <code>add_coding_lof_spliceJunction_tag</code>, this issue is taken care by the updated splicing LOF definition
   * Retired <code>sift_score</code>, <code>polyphen_score</code>, and <code>ma_score</code> from the Missense criteria and changed how Missense variants are defined
