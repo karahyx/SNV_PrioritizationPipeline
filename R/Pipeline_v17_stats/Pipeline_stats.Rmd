@@ -1,0 +1,520 @@
+---
+title: "Variant Prioritization Pipeline v17: Statistics Visualization"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+# geometry: left=0.6cm, right=0.6cm, top=3cm, bottom=3cm
+output:
+  html_document:
+    toc: true
+    toc_depth: '2'
+    number_sections: true
+    df_print: paged
+  pdf_document:
+    toc: true
+    toc_depth: 3
+    number_sections: true
+toc-title: "Table of Contents"
+---
+
+<style type="text/css">
+.main-container {
+  max-width: 1800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+h1.title{
+  text-align: center;
+}
+
+h4.date{
+  text-align: center;
+}
+
+#TOC{
+  position: relative;
+}
+
+body{
+  font-size: 14pt;
+  margin-top: 20px;
+  margin-bottom: 60px;
+  margin-left: 80px;
+  margin-right: 80px;
+}
+</style> 
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(eval = TRUE, echo = FALSE, fig.align = 'center')
+ifelse(exists("input_child_genome.name"), show.text <- TRUE, show.text <- FALSE)
+```
+
+```{r load_libraries, include=FALSE}
+if (!require(ggplot2)) {
+  install.packages("ggplot2")
+  library(ggplot2)
+}
+
+if (!require(cowplot)) {
+  install.packages("cowplot")
+  library(cowplot)
+}
+
+if (!require(ggrepel)) {
+  install.packages("ggrepel")
+  library(ggrepel)
+}
+
+if (!require(forcats)) {
+  install.packages("forcats")
+  library(forcats)
+}
+
+if (!require(knitr)) {
+  install.packages("knitr")
+  library(knitr)
+}
+
+if (!require(kableExtra)) {
+  install.packages("kableExtra")
+  library(kableExtra)
+}
+
+if (!require(ggsci)) {
+  install.packages("ggsci")
+  library("ggsci")
+}
+```
+
+<br>
+
+# Introduction
+
+Here, we visualize the variant statistics of sample `r ifelse(show.text, input_child_genome.name, input_var_genome.name)` `r if(show.text) paste0("found in family ", child$Family)` using figures and tables. The statistics were obtained from Variant Prioritization Pipeline v17. Please refer to <https://github.com/karahyx/PrioritizationPipeline> for details.
+
+<br>
+
+# Facet
+
+## All
+
+```{r bar_prep}
+stats.df.all$Count <- as.numeric(stats.df.all$Count)
+```
+
+```{r bar_all, fig.width=12, fig.height=8}
+ggplot(stats.df.all[c(1:3), ], aes(x = Name, y = Count, fill = Name)) +
+  geom_bar(stat = "identity", width = 0.6, color = "black") +
+  geom_text(aes(y = Count + 100000, label = Count), size = 4, fontface = "bold") +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
+  scale_fill_d3() +
+  theme_bw() +
+  theme(axis.text.x = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.title = element_blank(),
+        axis.text.y = element_text(face = "bold"),
+        legend.title = element_blank(),
+        legend.text = element_text(size = 11, face = "bold"),
+        legend.position = "bottom",
+        legend.justification = "center")
+```
+
+## AllSeq, Coding, ncRNA
+
+```{r bar_seq_type, fig.width=12, fig.height=8}
+
+AllSeq <- stats.df.all[grep("[LH]Q_(AllSeq|Coding|ncRNA)_AllFreq$|HQ_(AllSeq|Coding|ncRNA)_Rare0[015]$", stats.df.all$Name), ]
+AllSeq$Type <- character(nrow(AllSeq))
+AllSeq[grepl("AllSeq", AllSeq$Name), ]$Type <- "AllSeq"
+AllSeq[grepl("Coding", AllSeq$Name), ]$Type <- "Coding"
+AllSeq[grepl("ncRNA", AllSeq$Name), ]$Type <- "ncRNA"
+AllSeq <- AllSeq %>% arrange(Type)
+
+AllSeq$Name <- rep(c("LQ_AllFreq", "HQ_AllFreq", "HQ_Rare05", "HQ_Rare01", "HQ_Rare00"), 3)
+AllSeq$Name <- factor(AllSeq$Name, levels = c("LQ_AllFreq", "HQ_AllFreq", "HQ_Rare05", "HQ_Rare01", "HQ_Rare00"))
+
+ggplot(AllSeq, aes(x = Name, y = Count, fill = Name)) +
+  geom_bar(stat = "identity", color = "black") +
+  geom_text(aes(label = Count), size = 4, nudge_y = 100000, fontface = "bold") +
+  facet_wrap(~ Type) +
+  labs(x = "", y = "") +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
+  scale_fill_nejm() +
+  theme_bw() +
+  theme(axis.text.x = element_blank(),
+        axis.ticks = element_blank(),
+        axis.text.y = element_text(face = "bold"),
+        legend.title = element_blank(),
+        legend.text = element_text(size = 12, face = "bold"), 
+        legend.position = "bottom",
+        legend.justification = "center",
+        strip.text.x = element_text(face = "bold", size = 15))
+```
+
+## Genotypes
+
+```{r bar_genotype, fig.width=12, fig.height=8}
+gt <- stats.df.all[grep("HQ_AllSeq_(AllFreq|Rare05)_(Xhom|Xhet|Hom|HetR|HetA)$", stats.df.all$Name), ]
+gt$Type <- character(nrow(gt))
+gt[grepl("Xhom", gt$Name), ]$Type <- "Xhom"
+gt[grepl("Xhet", gt$Name), ]$Type <- "Xhet"
+gt[grepl("Hom", gt$Name), ]$Type <- "Hom"
+gt[grepl("HetR", gt$Name), ]$Type <- "HetR"
+gt[grepl("HetA", gt$Name), ]$Type <- "HetA"
+gt <- gt %>% arrange(Type)
+
+gt$Type <- factor(gt$Type, levels = c("Xhom", "Hom", "HetR", "HetA", "Xhet"))
+gt$Freq <- ifelse(grepl("Rare05", gt$Name), "HQ_Rare05", "HQ_AllFreq")
+
+ggplot(gt, aes(x = Type, y = Count, fill = Freq)) +
+  geom_bar(width = 0.7, stat = "identity", position = "dodge", color = "black") +
+  geom_text(aes(y = Count + 100000, label = Count), size = 4, position = position_dodge(width = 0.7),
+            fontface = "bold") +
+  labs(x = "", y = "") +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
+  scale_fill_jco() +
+  theme_bw() +
+  theme(axis.text.x = element_text(size = 10, face = "bold"),
+        axis.text.y = element_text(face = "bold"),
+        legend.title = element_blank(),
+        legend.text = element_text(size = 12, face = "bold"), 
+        legend.position = "bottom",
+        legend.justification = "center")
+
+```
+
+## Damage Types
+
+```{r bar_dmg_type, fig.width=12, fig.height=8}
+dmg <- stats.df.all[grep("HQ_(Coding|ncRNA)_Rare01_(LOF|MissDmg|Splc|Dmg)_TierHigh$|HQ_Coding_Rare01_OtherDmg$", stats.df.all$Name), ]
+
+ggplot(dmg, aes(x = Name, y = Count, fill = Name)) +
+  geom_bar(width = 0.7, stat = "identity", color = "black") +
+  geom_text(aes(y = Count + 5, label = Count), size = 4, fontface = "bold") +
+  labs(x = "", y = "") +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
+  scale_fill_locuszoom() + 
+  theme_bw() +
+  theme(axis.text.x = element_blank(),
+        axis.ticks = element_blank(),
+        axis.text.y = element_text(face = "bold"),
+        legend.title = element_blank(),
+        legend.text = element_text(size = 11, face = "bold"),
+        legend.position = "bottom",
+        legend.justification = "center") +
+  guides(fill = guide_legend(nrow = 2))
+```
+
+## Phenotypes
+
+```{r bar_phenotype, fig.width=12, fig.height=8}
+pheno <- stats.df.all[grep("HQ_Coding_Rare01_Dmg_PhenoTier(Low|High)$", stats.df.all$Name), ]
+
+ggplot(pheno, aes(x = Name, y = Count, fill = Name)) +
+  geom_bar(width = 0.5, stat = "identity", color = "black") +
+  geom_text(aes(y = Count + 8, label = Count), size = 4, fontface = "bold") +
+  labs(x = "", y = "") +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
+  scale_fill_manual(values = c("#ED254EFF", "#F9DC5CFF", "#F4FFFDFF", "#011936FF")) + 
+  theme_bw() +
+  theme(axis.text.x = element_blank(),
+        axis.ticks = element_blank(),
+        axis.text.y = element_text(face = "bold"),
+        legend.title = element_blank(),
+        legend.text = element_text(size = 12, face = "bold"),
+        legend.position = "bottom",
+        legend.justification = "center") +
+  guides(fill = guide_legend(nrow = 2))
+```
+
+## Main Findings
+
+```{r bar_mf, fig.width=12, fig.height=8}
+mf <- stats.df.all[grep("HQ_Rare00*[15]_DmgT[12]_(Hom|Xhap|CmpHet|AXDom|PDDom)_(PhenoTierAll|PhenoTierHigh)", stats.df.all$Name), ]
+
+mf$Type <- character(nrow(mf))
+mf[grepl("Hom", mf$Name), ]$Type <- "HQ_Rare05_DmgT2_Hom"
+mf[grepl("Xhap", mf$Name), ]$Type <- "HQ_Rare0001_DmgT2_Xhap"
+mf[grepl("CmpHet", mf$Name), ]$Type <- "HQ_Rare05_DmgT1_CmpHet"
+mf[grepl("AXDom", mf$Name), ]$Type <- "HQ_Rare0001_DmgT2_AXDom"
+mf[grepl("PDDom", mf$Name), ]$Type <- "HQ_Rare0001_DmgT2_PDDom"
+
+mf$PhenoTier <- ifelse(grepl("PhenoTierAll", mf$Name), "PhenoTierAll", "PhenoTierHigh")
+
+ggplot(mf, aes(x = Type, y = Count, fill = PhenoTier)) +
+  geom_bar(width = 0.7, stat = "identity", position = "dodge", color = "black") +
+  geom_text(aes(y = Count + 2, label = Count), size = 4, position = position_dodge(width = 0.7),
+            fontface = "bold") +
+  labs(x = "", y = "") +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
+  scale_fill_manual(values = c("#603F83FF", "#C7D3D4FF")) +
+  theme_bw() +
+  theme(axis.text.x = element_text(size = 10, face = "bold", color = "black"),
+        axis.text.y = element_text(face = "bold"),
+        legend.title = element_blank(),
+        legend.text = element_text(size = 12, face = "bold"), 
+        legend.position = "bottom",
+        legend.justification = "center")
+```
+
+## Secondary Findings
+
+### Tiers
+
+```{r bar_sf_tiers, fig.width=12, fig.height=8}
+
+# Tiers
+
+sf_tier <- stats.df.all[grep("FS[123]_[LH]Q_Rare0[15]_(Tot$|Dmg_Tot$)", stats.df.all$Name), ]
+
+ggplot(sf_tier, aes(x = Name, y = Count, fill = Name)) +
+  geom_bar(width = 0.5, stat = "identity", color = "black") +
+  geom_text(aes(y = Count + 500, label = Count), size = 4, fontface = "bold") +
+  labs(x = "", y = "") +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
+  scale_fill_manual(values = c("#FCF6F5FF", "#EDC2D8FF", "#8ABAD3FF")) +
+  theme_bw() +
+  theme(axis.text.x = element_blank(),
+        axis.ticks = element_blank(),
+        axis.text.y = element_text(face = "bold"),
+        legend.title = element_blank(),
+        legend.text = element_text(size = 12, face = "bold"),
+        legend.position = "bottom",
+        legend.justification = "center")
+```
+
+### Specific Phenotypes
+
+```{r bar_sf_pheno, fig.width=12, fig.height=8}
+# Specific phenotype
+
+sf_pheno <- stats.df.all[grep("FS[123]_[LH]Q_Rare0[15]_(Dmg_)?(AD|AR|XL)_Pathg_(Any|Hom|Hap)",
+                              stats.df.all$Name), ]
+sf_pheno$Type <- character(nrow(sf_pheno))
+sf_pheno[grepl("AD_Pathg_Any", sf_pheno$Name), ]$Type <- "AD_Pathg_Any"
+sf_pheno[grepl("AR_Pathg_Hom", sf_pheno$Name), ]$Type <- "AR_Pathg_Hom"
+sf_pheno[grepl("XL_Pathg_Hap", sf_pheno$Name), ]$Type <- "XL_Pathg_Hap"
+sf_pheno[grepl("XL_Pathg_Hom", sf_pheno$Name), ]$Type <- "XL_Pathg_Hom"
+
+sf_pheno$Name <- c(rep("FS1_LQ_Rare05", 4), rep("FS2_HQ_Rare01", 4), rep("FS3_HQ_Rare01_Dmg", 4))
+
+ggplot(sf_pheno, aes(x = Name, y = Count, fill = Name)) +
+  geom_bar(width = 0.5, stat = "identity", color = "black") +
+  geom_text(aes(y = Count + 1, label = Count), size = 4, fontface = "bold") +
+  facet_wrap(~ Type) +
+  labs(x = "", y = "") +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
+  scale_fill_aaas() +
+  theme_bw() +
+  theme(axis.text.x = element_blank(),
+        axis.ticks = element_blank(),
+        axis.text.y = element_text(face = "bold"),
+        legend.title = element_blank(),
+        legend.text = element_text(size = 12, face = "bold"),
+        legend.position = "bottom",
+        legend.justification = "center",
+        strip.text.x = element_text(face = "bold", size = 15))
+
+```
+
+## ACMG
+
+```{r bar_acmg, fig.width=12, fig.height=8}
+acmg <- stats.df.all[grep("ACMG", stats.df.all$Name), ]
+
+ggplot(acmg, aes(x = Name, y = Count, fill = Name)) +
+  geom_bar(stat = "identity", width = 0.4, color = "black") +
+  geom_text(aes(y = Count + 10, label = Count), size = 4, fontface = "bold") +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
+  scale_fill_manual(values = c("#00203FFF", "#ADEFD1FF")) +
+  theme_bw() +
+  theme(axis.title = element_blank(),
+        axis.text.x = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.text.y = element_text(face = "bold"),
+        legend.title = element_blank(),
+        legend.text = element_text(size = 12, face = "bold"),
+        legend.position = "bottom",
+        legend.justification = "center")
+```
+
+
+# Pie Charts
+
+<br>
+
+```{r pie_func}
+plot_pie_charts <- function(data, label_size = 5, p1_keywidth = NULL, p1_keyheight = NULL,
+                            p2_keywidth = NULL, p2_keyheight = NULL,
+                            legend_text_size = 12, scale = c(1, 1)) {
+  
+  data <- data[order(data$Freq), ]
+  
+  data2 <- data %>% 
+            mutate(csum = rev(cumsum(rev(Freq))), 
+                   pos = Freq/2 + lead(csum, 1),
+                   pos = if_else(is.na(pos), Freq/2, pos))
+
+  p1 <- ggplot(data, aes(x = "" , y = Freq, fill = fct_inorder(fct_drop(Type)))) +
+               geom_col(width = 1, color = 1, show.legend = FALSE) +
+               coord_polar(theta = "y") +
+               geom_label_repel(data = data2,
+                                aes(y = pos, label = Freq),
+                                size = label_size, nudge_x = 1, show.legend = FALSE, label.padding = 0.1) +
+               scale_fill_manual(values = c('#e6194B', '#3cb44b', '#ffe119', '#4363d8', '#f58231', 
+                                '#911eb4', '#42d4f4', '#f032e6', '#bfef45', '#fabed4', 
+                                '#469990', '#dcbeff', '#9A6324', '#fffac8', '#800000', 
+                                '#aaffc3', '#808000', '#ffd8b1', '#000075', '#a9a9a9')) +
+               guides(fill = guide_legend(title = NULL, 
+                                          label.theme = element_text(size = legend_text_size),
+                                          keywidth = p1_keywidth, keyheight = p1_keyheight)) +
+               theme_void() +
+               theme(plot.margin = margin(l = 100, r = 0))
+  
+  p2 <- ggplot(data, aes(x = "" , y = Freq, fill = fct_inorder(fct_drop(Type)))) +
+               geom_col(width = 1, color = 1) +
+               coord_polar(theta = "y") +
+               geom_label_repel(data = data2,
+                                aes(y = pos, label = paste0(round(Freq / sum(Freq) * 100, 2), "%")),
+                                size = label_size, nudge_x = 1, show.legend = FALSE, label.padding = 0.1) +
+               scale_fill_manual(values = c('#e6194B', '#3cb44b', '#ffe119', '#4363d8', '#f58231', 
+                                '#911eb4', '#42d4f4', '#f032e6', '#bfef45', '#fabed4', 
+                                '#469990', '#dcbeff', '#9A6324', '#fffac8', '#800000', 
+                                '#aaffc3', '#808000', '#ffd8b1', '#000075', '#a9a9a9')) +
+               guides(fill = guide_legend(title = NULL, 
+                                          label.theme = element_text(size = legend_text_size, face = "bold"),
+                                          keywidth = p2_keywidth, keyheight = p2_keyheight)) +
+               theme_void()
+  
+  plot_grid(p1, p2, scale = scale)
+}
+```
+
+## Damage Types
+
+```{r pie_dmg, fig.width=17, fig.height=10}
+dmg_df <- as.data.frame(table(v_full_r05.df$F_DamageType))
+names(dmg_df)[1] <- "Type"
+plot_pie_charts(dmg_df)
+
+dmg_df2 <- dmg_df[-c(4), ]
+rownames(dmg_df2) <- c(1:nrow(dmg_df2))
+plot_pie_charts(dmg_df2)
+```
+
+<br>
+
+## Secondary Findings
+
+```{r pie_sf_helper}
+count_pos <- function(col) {
+  total_pos <- sum(col == 1)
+  return(total_pos)
+}
+```
+
+```{r pie_sf, fig.width=17, fig.height=12}
+col_names <- c("FS1_AD_Pathg_Any", "FS1_AR_Pathg_Hom", "F_CmpHet_S1", "FS1_AR_Pathg_PotCompHet",
+               "FS1_XL_Pathg_Hom", "FS1_XL_Pathg_Hap", "FS1_CX_Pathg_HomHap", "FS1_CX_Pathg_PotCompHet",
+               "FS1_CX_Uncertain", "FS1_AR_Carrier", "FS1_XL_Carrier")
+
+count_ls <- lapply(v_full_r05.df[, col_names], count_pos)
+sf_tb <- unlist(count_ls[1:length(count_ls)])
+sf_df <- as.data.frame(sf_tb)
+sf_df <- rownames_to_column(sf_df, "Type")
+names(sf_df)[2] <- "Freq"
+
+plot_pie_charts(sf_df, label_size = 4, p1_keywidth = 1, p1_keyheight = 1,
+                p2_keywidth = 1.2, p2_keyheight = 1.2,
+                legend_text_size = 12, scale = c(1, 1.15))
+```
+
+
+# Chromosome-wise Zygosity Count Tables {.tabset}
+
+<br>
+
+## All Quality, All Frequency
+
+```{r chr_tb_all}
+kbl(chr_zygosity_stats_full, caption = "Chromosome-wise Zygosity Counts for All Variants",
+    table.attr = "style='width:80%;'") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"))
+```
+
+## High Quality, All Frequency
+
+```{r chr_tb_hq}
+kbl(chr_zygosity_stats_full_hq, caption = "Chromosome-wise Zygosity Counts for \"PASS\" Variants",
+    table.attr = "style='width:80%;'") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"))
+```
+
+## All Quality, 5% Frequency
+
+```{r chr_tb_r05}
+kbl(chr_zygosity_stats_full_r05, caption = "Chromosome-wise Zygosity Counts for Rare 5% Variants",
+      table.attr = "style='width:80%;'") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"))
+```
+
+
+```{r fam_pedigree, eval=show.text}
+asis_output("# Family \n")
+asis_output("## Pedigree \n")
+asis_output("<br>")
+
+kbl(pedigree, table.attr = "style='width:80%;'") %>% 
+  kable_styling(bootstrap_options = c("striped", "hover"))
+asis_output("<br>")
+```
+
+```{r fam_cmp_het_count, fig.width=15, fig.height=10, eval=show.text}
+asis_output("## Compound Heterozygotes \n")
+asis_output("<br>")
+
+num_true_ch_mf <- get_num_var(v_full_r05.df, expression(FM_Fam_CmpHet == "True"))
+num_true_ch_sf <- get_num_var(v_full_r05.df, expression(FS_Fam_CmpHet == "True"))
+num_pot_ch_mf <- get_num_var(v_full_r05.df, expression(FM_PCHET >= 1))
+num_pot_ch_sf <- get_num_var(v_full_r05.df, expression(F_CmpHet_S1 >= 1))
+
+type <- c(rep("Main Findings", 2), rep("Secondary Findings", 2))
+count <- c(num_pot_ch_mf - num_true_ch_mf,
+           num_true_ch_mf,
+           num_pot_ch_sf - num_true_ch_sf,
+           num_true_ch_sf)
+condition <- c("Non Compound Heterozygous", "True Compound Heterozygous", 
+               "Non Compound Heterozygous", "True Compound Heterozygous")
+
+cmp_het.df <- data.frame(type, condition, count)
+
+cmp_het_p1 <- ggplot(cmp_het.df, aes(x = type, y = count, fill = condition)) +
+                geom_bar(position = "stack", stat = "identity") +
+                scale_fill_manual(breaks = c("True Compound Heterozygous", "Non Compound Heterozygous"),
+                                  values = c("#FFCC66", "#669933")) +
+                ylab("Frequency") +
+                xlab("Type") + 
+                ggtitle("Number of True Compound Heterozygotes") +
+                theme_cowplot() +
+                theme(plot.title = element_text(hjust = 0.5),
+                      legend.title = element_blank(),
+                      legend.text = element_text(face = "bold"),
+                      axis.text = element_text(face = "bold"),
+                      axis.title = element_text(face = "bold"))
+
+cmp_het_p2 <- ggplot(cmp_het.df, aes(x = type, y = count, fill = condition)) +
+                geom_bar(position = "fill", stat = "identity") +
+                scale_y_continuous(labels = scales::percent) +
+                scale_fill_manual(breaks = c("True Compound Heterozygous", "Non Compound Heterozygous"),
+                                  values = c("#FFCC66", "#669933")) +
+                ylab("Percentage") +
+                xlab("Type") + 
+                ggtitle("Percentage of True Compound Heterozygotes") +
+                theme_cowplot() +
+                theme(plot.title = element_text(hjust = 0.5),
+                      legend.title = element_blank(),
+                      legend.text = element_text(face = "bold"),
+                      axis.text = element_text(face = "bold"),
+                      axis.title = element_text(face = "bold"))
+
+plot_grid(cmp_het_p1, cmp_het_p2)
+```
