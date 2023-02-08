@@ -1,8 +1,8 @@
 #!/bin/bash
 
 #SBATCH -N 1 -c 2
-#SBATCH --mem=32G
-#SBATCH --tmp=32G
+#SBATCH --mem=50G
+#SBATCH --tmp=50G
 #SBATCH -t 1:00:00
 
 module load R/4.2.1
