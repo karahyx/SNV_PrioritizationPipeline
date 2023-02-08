@@ -75,7 +75,7 @@ The main changes from the previous version include updates of cutoffs and defini
   </tr>
   <tr>
     <td> 2.2. Re-format column names</td>
-    <td> Remove <code>{genome_name}:</code><sup><a href="#fn1" id="ref1">1</a></sup> from several columns for easier access and processing </td>
+    <td> Remove <code>{genome_name}:</code> from several columns for easier access and processing </td>
   </tr>
   <tr>
     <td> 2.3. Process the original imported variant data </td>
@@ -907,14 +907,14 @@ The family-based script contains two new columns: <code>FM_Fam_CmpHet</code> and
 * Changed the frequency filter tags from <code>0.05</code>, <code>0.01</code>, <code>0.005</code>, <code>0.0015</code>, <code>0</code> to <code>0.05</code>, <code>0.01</code>, <code>0.001</code>, <code>0.0001</code>, <code>0</code>
 * Changed the following criteria:
   * High-quality variants are now defined as variants with a "PASS" FILTER and <code>DP &ge; 2</code> (i.e. <code>F_Qual = 1</code>)
-  * Restricted LOF with a splicing mechanism to intronic variants within 2 nucleotides from the splice junction (i.e. <code> "typeseq_priority" %in% c("splicing") & distance_spliceJunction <= 2</code>)
+  * Restricted LOF with a splicing mechanism to intronic variants within 2 nucleotides from the splice junction (i.e. <code>"typeseq_priority" %in% c("splicing") & distance_spliceJunction <= 2</code>)
     * Retired <code>F_DamageTier = 1</code> for more suspicious splicing LOF variants, this issue is taken care by the updated splicing LOF definition
     * Retired <code>add_coding_lof_spliceJunction_tag</code>, this issue is taken care by the updated splicing LOF definition
   * Retired <code>sift_score</code>, <code>polyphen_score</code>, and <code>ma_score</code> from the Missense criteria and changed how Missense variants are defined
   * Splicing predictions
     * Removed the SPIDEX-related criteria
     * Added indels with a splicing effect and an unrestricted distance from the splice site (i.e. defaulting to Annovar's cutoff) to the lowest splicing damage tier (i.e. = 1) by adding <code>| (var_type %in% c("del", "ins") & typeseq_priority %in% c("splicing", "exonic;splicing"))</code>
-  * Removed the <code> (effect_priority %in% eff_other_sub.chv & (phylopMam_avg >= 1.5 | phylopVert100_avg >= 2.0 | CADD_phred >= 13.0) & is.na (dbsnp) & is.na (dbsnp_region))</code> condition from the criteria for defining damaging variants with type Other Coding
+  * Removed the <code>(effect_priority %in% eff_other_sub.chv & (phylopMam_avg >= 1.5 | phylopVert100_avg >= 2.0 | CADD_phred >= 13.0) & is.na (dbsnp) & is.na (dbsnp_region))</code> condition from the criteria for defining damaging variants with type Other Coding
 * Changed the <code>phylopMam</code>, <code>phylopVert100</code>, <code>CADD_phred</code> cutoffs for the following sections:
   * 6.2. Missense
   * 6.3. Other coding
@@ -942,7 +942,3 @@ The family-based script contains two new columns: <code>FM_Fam_CmpHet</code> and
 * [Bhooma Thiruvahindrapuram](https://github.com/bthiruv)
 * [Dr. Worrawat Engchuan](https://github.com/naibank)
 * [Thomas Nalpathamkalam](https://github.com/TNalpat)
-
-## :paw_prints: Footnotes
-
-<sup id="fn1">TBD</sup>
