@@ -24,7 +24,7 @@ for file in $files
 do  
     infile_path="$infile_dir$file" # args[3]
     genome=$(echo $file | awk -F '.' '{print $1}') # args[4]
-    output_path="$root_path$output_dir$genome" # args[6]
+    output_path="$output_dir$genome" # args[6]
     mkdir "$output_path"
     echo "The genome is $genome"
     echo "The infile_path is $infile_path"
