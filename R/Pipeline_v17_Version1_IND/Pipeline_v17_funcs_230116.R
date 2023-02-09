@@ -271,16 +271,16 @@ add_potential_compound_heterozygous_tag <- function(data, secondary_findings = F
   if (secondary_findings == TRUE) {
     col_name <- "F_CmpHet_S1"
     # used F_Pass == 1 instead of F_Qual > 1 in the original script for variants with PASS FILTER
-    cmp_hets_r1_df <- subset(data, subset = F_Qual == 1 & FS1_Select == 1, select = c(gene_symbol, Original_VCFKEY))
-    cmp_hets_r2_df <- subset(data, subset = F_Qual == 2 & FS1_Select == 1, select = c(gene_symbol, Original_VCFKEY))
+    cmp_hets_r1_df <- subset(data, subset = F_Pass == 1 & FS1_Select == 1, select = c(gene_symbol, Original_VCFKEY))
+    cmp_hets_r2_df <- subset(data, subset = F_Qual == 1 & FS1_Select == 1, select = c(gene_symbol, Original_VCFKEY))
   }
   else {
     col_name <- "FM_PCHET"
     cmp_hets_r1_df <- subset(data, 
-                             subset = F_Rare <= 0.05 & F_DamageType != "NotDmg" & F_Qual == 1, 
+                             subset = F_Rare <= 0.05 & F_DamageType != "NotDmg", 
                              select = c(gene_symbol, Original_VCFKEY))
     cmp_hets_r2_df <- subset(data, 
-                             subset = F_Rare <= 0.05 & F_DamageType != "NotDmg" & F_Qual == 2, 
+                             subset = F_Rare <= 0.05 & F_DamageType != "NotDmg" & F_Qual == 1, 
                              select = c(gene_symbol, Original_VCFKEY))
   }
   
