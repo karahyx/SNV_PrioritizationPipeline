@@ -513,11 +513,11 @@ The main changes from the previous version include updates of cutoffs and defini
     <td> Add two pathogenicity related flags:
       <ul> 
         <li> flag <code>F_Clinvar_Pathg</code> indicates whether the variant has at least one record submitted with pathogenic or likely pathogenic based on ClinVar </li>
-        <li> flag <code>F_Clinvar_notPathg</code> indicates whether the variant has no current value of pathogenic based on ClinVar </li>
+        <li> flag <code>F_Clinvar_notPathg</code> indicates whether the variant has no current value of pathogenicity based on ClinVar </li>
       </ul>
     </td>
-    <td> <code>F_Clinvar_Pathg = 1</code> if <code>Clinvar_SIG_Simple = 1</code>
-    <br><br> <code>F_Clinvar_notPathg = 1</code> if <code>Clinvar_SIG_Simple = 0</code>
+    <td> <code>F_Clinvar_Pathg = 1</code> if <code>Clinvar_SIG_Submission</code> is one of <code>Pathogenic</code>, <code>Pathogenic\x2c_low_penetrance</code>, <code>Likely_pathogenic</code>, <code>Likely_pathogenic\x2c_low_penetrance</code>, <code>Established_risk_allele</code>, <code>Likely_risk_allele</code>, or <code>risk_factor</code>
+    <br><br> <code>F_Clinvar_notPathg = 1</code> if <code>Clinvar_SIG_Submission</code> is not NA or one of <code>Pathogenic</code>, <code>Pathogenic\x2c_low_penetrance</code>, <code>Likely_pathogenic</code>, <code>Likely_pathogenic\x2c_low_penetrance</code>, <code>Established_risk_allele</code>, <code>Likely_risk_allele</code>, or <code>risk_factor</code>
     </td>
   </tr>
   <tr>
